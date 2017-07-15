@@ -8,13 +8,21 @@ public class GameManager : MonoBehaviour {
     public int width;
     public int moves;
 
+    public enum EnemyClass
+    {
+        MELEE,
+        RANGED
+    }
+
     public enum States
     {
         EXPLORATION,
+        ENGAGE_ENEMY,
         SELECT,
         MOVE,
         END_MOVE
     }
+    [SerializeField]
     public static States currentState;
 
     TileManager tileManager;
@@ -34,7 +42,7 @@ public class GameManager : MonoBehaviour {
                 TileManager.moveCount = moves;
                 tileManager.UpdateGrid();
             }
-            else if(currentState == States.EXPLORATION)
+            else if(currentState == States.EXPLORATION || currentState == States.MOVE)
             {
                 tileManager.MovePlayer();
             }

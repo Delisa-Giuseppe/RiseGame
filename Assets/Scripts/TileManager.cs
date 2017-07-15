@@ -8,6 +8,7 @@ public class TileManager : MonoBehaviour {
     public GameObject gridCell;
     public GameObject player;
     public GameObject target;
+    public GameObject enemy;
     public static List<GameObject> tileListCollision;
     public static int moveCount;
 
@@ -22,6 +23,7 @@ public class TileManager : MonoBehaviour {
         {
             moveCount--;
             tileObj.GetComponent<Tile>().isChecked = true;
+            tileObj.GetComponent<Tile>().isWalkable = true;
             tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
         }
     }
@@ -34,6 +36,7 @@ public class TileManager : MonoBehaviour {
             foreach (GameObject tileObj in tileObjs)
             {
                 tileObj.GetComponent<Tile>().isChecked = true;
+                tileObj.GetComponent<Tile>().isWalkable = true;
                 tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
             }
         }
@@ -51,11 +54,22 @@ public class TileManager : MonoBehaviour {
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-        if (hit.collider != null && hit.collider.tag == "Tile")
+        if (GameManager.currentState == GameManager.States.EXPLORATION)
         {
-            Destroy(targetInstance);
-            targetInstance = Instantiate(target, hit.collider.transform);
-            playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
+            if (hit.collider != null)
+            {
+                Destroy(targetInstance);
+                targetInstance = Instantiate(target, hit.collider.transform);
+                playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
+            }
+        }
+        else if (GameManager.currentState == GameManager.States.MOVE)
+        {
+            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
+            {
+                GameManager.currentState = GameManager.States.END_MOVE;
+                playerInstance.GetComponent<AILerp>().target = hit.collider.transform;
+            }
         }
     }
 
@@ -69,6 +83,7 @@ public class TileManager : MonoBehaviour {
         {
             TileManager.SetTrigger(hit.collider.gameObject);
         }
+
     }
 
     public void ResetGrid()
@@ -113,14 +128,7 @@ public class TileManager : MonoBehaviour {
         {
             for (int y = 0; y < height; y++)
             {
-                /** TO REMOVE **/
-                //if (x == 1 && y == 0)
-                //{
-                //    GameObject obstacleInstance = Instantiate(obstacle);
-                //    obstacleInstance.transform.parent = grid.transform;
-                //    obstacleInstance.transform.position = new Vector3(obstacleInstance.transform.position.x + (sizeX * x) + grid.transform.position.x, obstacleInstance.transform.position.y + (sizeY * y) + grid.transform.position.y);
-                //}
-                /** END TO REMOVE **/
+                
                 GameObject tileInstance = Instantiate(gridCell);
                 tileInstance.transform.parent = grid.transform;
                 tileInstance.transform.position = new Vector3(tileInstance.transform.position.x + (sizeX * x) + grid.transform.position.x, tileInstance.transform.position.y + (sizeY * y) + grid.transform.position.y);
@@ -128,9 +136,16 @@ public class TileManager : MonoBehaviour {
                 tiles[x, y].Position = tileInstance.transform.position;
                 tiles[x, y].ArrayX = x;
                 tiles[x, y].ArrayY = y;
-                tiles[x, y].isWalkable = true;
                 tiles[x, y].TileObject = tileInstance;
 
+                /** TO REMOVE **/
+                if (x == 1 && y == 0)
+                {
+                    GameObject enemyInstance = Instantiate(enemy);
+                    enemyInstance.transform.parent = grid.transform;
+                    enemyInstance.transform.position = new Vector3(enemyInstance.transform.position.x + (sizeX * x) + grid.transform.position.x, enemyInstance.transform.position.y + (sizeY * y) + grid.transform.position.y);
+                }
+                /** END TO REMOVE **/
 
                 //Instance of the player
                 if (x == 2 && y == 2)
@@ -138,6 +153,7 @@ public class TileManager : MonoBehaviour {
                     playerInstance = Instantiate(player);
                     playerInstance.transform.parent = grid.transform;
                     playerInstance.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    playerInstance.GetComponent<PlayerController>().playerTile = tiles[x, y];
                 }
             }
         }

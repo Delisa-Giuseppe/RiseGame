@@ -15,6 +15,25 @@ public class Tile : MonoBehaviour {
     public bool isWalkable;
     public bool isChecked = false;
 
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked)
+        {
+            TileManager.tileListCollision.Add(collision.gameObject);    
+        }
+
+        tileObject.GetComponent<BoxCollider2D>().isTrigger = false;
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.tag == "Tile")
+        {
+            TileManager.SetTrigger(TileManager.tileListCollision);
+        }
+    }
+
     public int ArrayX
     {
         get
@@ -78,22 +97,5 @@ public class Tile : MonoBehaviour {
         {
             tileObject = value;
         }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        //if(!collision.GetComponent<Tile>().isChecked && collision.GetComponent<Tile>().isWalkable)
-        //{
-            TileManager.tileListCollision.Add(collision.gameObject);    
-        //}
-
-        tileObject.GetComponent<BoxCollider2D>().isTrigger = false;
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-
-        TileManager.SetTrigger(TileManager.tileListCollision);
-
     }
 }
