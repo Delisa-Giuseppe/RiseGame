@@ -26,32 +26,65 @@ public class GameManager : MonoBehaviour {
     public static States currentState;
 
     TileManager tileManager;
+    TurnManager turnManager;
+
     // Use this for initialization
     void Start () {
         tileManager = GetComponent<TileManager>();
+        turnManager = GetComponent<TurnManager>();
+
         InitLevel();
 	}
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (currentState == States.SELECT && turnManager.actualPhaseTurn != TurnManager.PhaseTurnState.EXECUTE)
         {
-            if(currentState == States.SELECT)
+            tileManager.UpdateGrid(turnManager.GetNextTurn());
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {   
+           if(currentState == States.EXPLORATION)
             {
-                TileManager.moveCount = moves;
-                tileManager.UpdateGrid();
+                tileManager.MovePlayer(0);
             }
-            else if(currentState == States.EXPLORATION || currentState == States.MOVE)
+
+           if(currentState == States.MOVE)
             {
-                tileManager.MovePlayer();
+                if(turnManager.currentObjectTurn.tag == "Player")
+                {
+                    tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                }
+                else if(turnManager.currentObjectTurn.tag == "Enemy")
+                {
+                    //Enemy Attack
+                    currentState = States.EXPLORATION;
+                }
             }
             
+        }
+
+        if(currentState == States.ENGAGE_ENEMY)
+        {
+            tileManager.ShowGrid();
+            turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
+            tileManager.PositionBattle();
         }
 
         if (currentState == States.END_MOVE)
         {
             tileManager.ResetGrid();
+            if (turnManager.IsAllTurnFinished())
+            {
+                currentState = States.EXPLORATION;
+            }
+            else
+            {
+                currentState = States.SELECT;
+                turnManager.actualPhaseTurn = TurnManager.PhaseTurnState.INIT;
+            }
         }
     }
 

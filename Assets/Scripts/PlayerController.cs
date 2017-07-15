@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    public Tile playerTile;
+    public GameObject playerTile;
+    public int pointAction;
+    public int playerNumber;
+    public int health;
+    public int prority;
 
     // Use this for initialization
     void Start () {
@@ -30,7 +34,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     if (ray.collider.tag == "Enemy")
                     {
-                        GameManager.currentState = GameManager.States.SELECT;
+                        GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
                         break;
                     }
                 }
@@ -39,16 +43,8 @@ public class PlayerController : MonoBehaviour {
         
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void OnDamage(int damage)
     {
-        if(collision.tag == "Enemy")
-        {
-            GetComponent<BoxCollider2D>().enabled = false;
-            GetComponent<BoxCollider2D>().isTrigger = false;
-            GetComponent<AILerp>().target = null;
-            collision.GetComponent<BoxCollider2D>().enabled = false;
-            collision.GetComponent<BoxCollider2D>().isTrigger = false;
-            GameManager.currentState = GameManager.States.SELECT;
-        }
+        health -= damage; 
     }
 }

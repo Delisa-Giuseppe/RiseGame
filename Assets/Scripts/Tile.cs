@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
-    [SerializeField]
     Vector3 position;
-    [SerializeField]
     int arrayX;
-    [SerializeField]
     int arrayY;
     GameObject tileObject;
 
@@ -18,7 +15,7 @@ public class Tile : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked)
+        if(collision.tag == "Tile")// && !collision.GetComponent<Tile>().isChecked)
         {
             TileManager.tileListCollision.Add(collision.gameObject);    
         }
@@ -35,19 +32,6 @@ public class Tile : MonoBehaviour {
     }
 
     public int ArrayX
-    {
-        get
-        {
-            return ArrayX1;
-        }
-
-        set
-        {
-            ArrayX1 = value;
-        }
-    }
-
-    public int ArrayX1
     {
         get
         {

@@ -6,13 +6,14 @@ public class TileManager : MonoBehaviour {
 
     
     public GameObject gridCell;
-    public GameObject player;
+    public GameObject[] player;
     public GameObject target;
-    public GameObject enemy;
+    public GameObject[] enemy;
     public static List<GameObject> tileListCollision;
     public static int moveCount;
 
-    static GameObject playerInstance;
+    public static GameObject[] playerInstance;
+    public static GameObject[] enemyInstance;
     static GameObject targetInstance;
     Tile[,] tiles;
     
@@ -23,6 +24,7 @@ public class TileManager : MonoBehaviour {
         {
             moveCount--;
             tileObj.GetComponent<Tile>().isChecked = true;
+            Debug.Log("POSTION TILE UNO : " + tileObj.GetComponent<Tile>().ArrayX + "  " + tileObj.GetComponent<Tile>().ArrayY);
             tileObj.GetComponent<Tile>().isWalkable = true;
             tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
         }
@@ -47,10 +49,17 @@ public class TileManager : MonoBehaviour {
                 tileObj.GetComponent<SpriteRenderer>().color = Color.red;
             }
         }
-        GameManager.currentState = GameManager.States.MOVE;
     }
 
-    public void MovePlayer()
+    public void ShowGrid()
+    {
+        foreach(Tile tile in tiles)
+        {
+            tile.TileObject.GetComponent<SpriteRenderer>().enabled = true;
+        }
+    }
+
+    public void MovePlayer(int playerNumber)
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
@@ -60,32 +69,49 @@ public class TileManager : MonoBehaviour {
             {
                 Destroy(targetInstance);
                 targetInstance = Instantiate(target, hit.collider.transform);
-                playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
+                for(int i=0; i<playerInstance.Length; i++)
+                {
+                    if(i==0)
+                    {
+                        playerInstance[i].GetComponent<AILerp>().target = targetInstance.transform;
+                    }
+                    else
+                    {
+                        playerInstance[i].GetComponent<AILerp>().target = playerInstance[i-1].transform;
+                    }
+                }
             }
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
             {
-                GameManager.currentState = GameManager.States.END_MOVE;
+                Destroy(targetInstance);
                 targetInstance = Instantiate(target, hit.collider.transform);
-                playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
+                playerInstance[playerNumber].GetComponent<AILerp>().enabled = true;
+                playerInstance[playerNumber].GetComponent<AILerp>().target = targetInstance.transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
+                GameManager.currentState = GameManager.States.END_MOVE;
             }
         }
     }
 
-    public void UpdateGrid()
+    public void UpdateGrid(GameObject objectTurn)
     {
         Destroy(targetInstance);
         TileManager.tileListCollision.Clear();
-        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
-        if (hit.collider != null && GameObject.FindGameObjectWithTag("Player") != null &&
-            hit.collider.transform.position == GameObject.FindGameObjectWithTag("Player").transform.position)
+        if(objectTurn.tag == "Player")
         {
-            TileManager.SetTrigger(hit.collider.gameObject);
+            moveCount = objectTurn.GetComponent<PlayerController>().pointAction;
+            SetTrigger(objectTurn.GetComponent<PlayerController>().playerTile);
+        }
+        else if(objectTurn.tag == "Enemy")
+        {
+
         }
 
+        GameManager.currentState = GameManager.States.MOVE;
     }
 
     public void ResetGrid()
@@ -96,15 +122,34 @@ public class TileManager : MonoBehaviour {
             tileObj.GetComponent<Tile>().isWalkable = false;
             tileObj.GetComponent<BoxCollider2D>().isTrigger = false;
             tileObj.GetComponent<SpriteRenderer>().color = Color.white;
-
-            GameManager.currentState = GameManager.States.EXPLORATION;
         }
+    }
+
+    public void PositionBattle()
+    {
+        foreach(GameObject player in playerInstance)
+        {
+            player.GetComponent<AILerp>().enabled = false;
+            player.GetComponent<AILerp>().target = null;
+        }
+
+        playerInstance[1].transform.parent = null;
+        playerInstance[0].transform.position = tiles[3, 3].Position;
+        playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[3, 3].TileObject;
+        playerInstance[1].transform.position = tiles[1, 3].Position;
+        playerInstance[1].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
+        enemyInstance[0].transform.position = tiles[6, 3].Position;
+
+        GameManager.currentState = GameManager.States.SELECT;
     }
 
     public void CreateGrid(int width, int height)
     {
         tileListCollision = new List<GameObject>();
         tiles = new Tile[width, height];
+
+        playerInstance = new GameObject[player.Length];
+        enemyInstance = new GameObject[enemy.Length];
 
         //Create the parent game object
         GameObject grid = new GameObject("Grid");
@@ -140,23 +185,31 @@ public class TileManager : MonoBehaviour {
                 tiles[x, y].ArrayY = y;
                 tiles[x, y].TileObject = tileInstance;
 
-                /** TO REMOVE **/
-                if (x == 1 && y == 0)
-                {
-                    GameObject enemyInstance = Instantiate(enemy);
-                    enemyInstance.transform.parent = grid.transform;
-                    enemyInstance.transform.position = new Vector3(enemyInstance.transform.position.x + (sizeX * x) + grid.transform.position.x, enemyInstance.transform.position.y + (sizeY * y) + grid.transform.position.y);
-                }
-                /** END TO REMOVE **/
 
-                //Instance of the player
-                if (x == 2 && y == 2)
+                if(x==3 && y==1)
                 {
-                    playerInstance = Instantiate(player);
-                    playerInstance.transform.parent = grid.transform;
-                    playerInstance.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
-                    playerInstance.GetComponent<PlayerController>().playerTile = tiles[x, y];
+                    enemyInstance[0] = Instantiate(enemy[0]);
+                    enemyInstance[0].transform.position = tileInstance.transform.position;
                 }
+
+                if(x==0 && y==0)
+                {
+                    playerInstance[1] = Instantiate(player[1]);
+                    playerInstance[1].transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    playerInstance[1].GetComponent<PlayerController>().playerTile = tileInstance;
+                    playerInstance[1].GetComponent<PlayerController>().playerNumber = 1;
+                    
+                }
+                
+                if(x==1 && y==0)
+                {
+                    playerInstance[0] = Instantiate(player[0]);
+                    playerInstance[0].transform.position = tileInstance.transform.position;
+                    playerInstance[0].GetComponent<PlayerController>().playerTile = tileInstance;
+                    playerInstance[0].GetComponent<PlayerController>().playerNumber = 0;
+                    playerInstance[1].transform.parent = playerInstance[0].transform;
+                }
+                
             }
         }
     }

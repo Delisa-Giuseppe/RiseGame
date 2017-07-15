@@ -18,14 +18,6 @@ public class EnemyController : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
-        {
-            GetComponent<BoxCollider2D>().enabled = false;
-            GetComponent<BoxCollider2D>().isTrigger = false;
-            collision.GetComponent<BoxCollider2D>().enabled = false;
-            collision.GetComponent<BoxCollider2D>().isTrigger = false;
-            collision.GetComponent<AILerp>().target = null;
-            GameManager.currentState = GameManager.States.SELECT;
-        }
+       
     }
 }
