@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour {
         MOVE,
         END_MOVE
     }
-    [SerializeField]
+
     public static States currentState;
 
     TileManager tileManager;
@@ -61,18 +61,4 @@ public class GameManager : MonoBehaviour {
         tileManager.CreateGrid(width, height);
     }
 
-    void UpdateGrid()
-    {
-        TileManager.tileListCollision.Clear();
-        TileManager.moveCount = moves;
-        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-
-        if (hit.collider != null)
-        {
-            //if (hit.collider.transform.position == GameObject.FindGameObjectWithTag("Player").transform.position)
-            //{
-            TileManager.SetTrigger(hit.collider.gameObject);
-            //}
-        }
-    }
 }

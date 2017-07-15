@@ -68,13 +68,15 @@ public class TileManager : MonoBehaviour {
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
             {
                 GameManager.currentState = GameManager.States.END_MOVE;
-                playerInstance.GetComponent<AILerp>().target = hit.collider.transform;
+                targetInstance = Instantiate(target, hit.collider.transform);
+                playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
             }
         }
     }
 
     public void UpdateGrid()
     {
+        Destroy(targetInstance);
         TileManager.tileListCollision.Clear();
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
@@ -95,7 +97,7 @@ public class TileManager : MonoBehaviour {
             tileObj.GetComponent<BoxCollider2D>().isTrigger = false;
             tileObj.GetComponent<SpriteRenderer>().color = Color.white;
 
-            GameManager.currentState = GameManager.States.SELECT;
+            GameManager.currentState = GameManager.States.EXPLORATION;
         }
     }
 

@@ -23,7 +23,7 @@ public class Tile : MonoBehaviour {
             TileManager.tileListCollision.Add(collision.gameObject);    
         }
 
-        tileObject.GetComponent<BoxCollider2D>().isTrigger = false;
+        this.GetComponent<BoxCollider2D>().isTrigger = false;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
