@@ -4,13 +4,23 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-    public TileManager tileManager;
     public int height;
     public int width;
     public int moves;
 
+    public enum States
+    {
+        EXPLORATION,
+        SELECT,
+        MOVE,
+        END_MOVE
+    }
+    public static States currentState;
+
+    TileManager tileManager;
     // Use this for initialization
     void Start () {
+        tileManager = GetComponent<TileManager>();
         InitLevel();
 	}
 
@@ -19,12 +29,27 @@ public class GameManager : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0))
         {
-            UpdateGrid();
+            if(currentState == States.SELECT)
+            {
+                TileManager.moveCount = moves;
+                tileManager.UpdateGrid();
+            }
+            else if(currentState == States.EXPLORATION)
+            {
+                tileManager.MovePlayer();
+            }
+            
+        }
+
+        if (currentState == States.END_MOVE)
+        {
+            tileManager.ResetGrid();
         }
     }
 
     void InitLevel()
     {
+        currentState = States.EXPLORATION;
         tileManager.CreateGrid(width, height);
     }
 

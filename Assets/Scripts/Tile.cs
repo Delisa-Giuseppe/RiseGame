@@ -96,5 +96,4 @@ public class Tile : MonoBehaviour {
         TileManager.SetTrigger(TileManager.tileListCollision);
 
     }
-
 }

@@ -7,12 +7,14 @@ public class TileManager : MonoBehaviour {
     
     public GameObject gridCell;
     public GameObject player;
-    public GameObject obstacle;
+    public GameObject target;
     public static List<GameObject> tileListCollision;
-
-    GameObject playerInstance;
-    Tile[,] tiles;
     public static int moveCount;
+
+    static GameObject playerInstance;
+    static GameObject targetInstance;
+    Tile[,] tiles;
+    
 
     public static void SetTrigger(GameObject tileObj)
     {
@@ -41,6 +43,44 @@ public class TileManager : MonoBehaviour {
             {
                 tileObj.GetComponent<SpriteRenderer>().color = Color.red;
             }
+        }
+        GameManager.currentState = GameManager.States.MOVE;
+    }
+
+    public void MovePlayer()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+        if (hit.collider != null && hit.collider.tag == "Tile")
+        {
+            Destroy(targetInstance);
+            targetInstance = Instantiate(target, hit.collider.transform);
+            playerInstance.GetComponent<AILerp>().target = targetInstance.transform;
+        }
+    }
+
+    public void UpdateGrid()
+    {
+        TileManager.tileListCollision.Clear();
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+        if (hit.collider != null && GameObject.FindGameObjectWithTag("Player") != null &&
+            hit.collider.transform.position == GameObject.FindGameObjectWithTag("Player").transform.position)
+        {
+            TileManager.SetTrigger(hit.collider.gameObject);
+        }
+    }
+
+    public void ResetGrid()
+    {
+        foreach (GameObject tileObj in tileListCollision)
+        {
+            tileObj.GetComponent<Tile>().isChecked = false;
+            tileObj.GetComponent<Tile>().isWalkable = false;
+            tileObj.GetComponent<BoxCollider2D>().isTrigger = false;
+            tileObj.GetComponent<SpriteRenderer>().color = Color.white;
+
+            GameManager.currentState = GameManager.States.SELECT;
         }
     }
 
@@ -93,12 +133,12 @@ public class TileManager : MonoBehaviour {
 
 
                 //Instance of the player
-                //if (x == 2 && y == 2)
-                //{
-                //    playerInstance = Instantiate(player);
-                //    playerInstance.transform.parent = grid.transform;
-                //    playerInstance.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
-                //}
+                if (x == 2 && y == 2)
+                {
+                    playerInstance = Instantiate(player);
+                    playerInstance.transform.parent = grid.transform;
+                    playerInstance.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                }
             }
         }
     }
