@@ -27,7 +27,7 @@ public class Tile : MonoBehaviour {
     {
         if(collision.tag == "Tile")
         {
-            TileManager.SetTrigger(TileManager.tileListCollision);
+            //TileManager.SetTrigger(TileManager.tileListCollision);
         }
     }
 

@@ -21,10 +21,10 @@ public class PlayerController : MonoBehaviour {
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
             {
-                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 0.8f),
-                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 0.8f),
-                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 0.8f),
-                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 0.8f)
+                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("Default"))
             };
 
 

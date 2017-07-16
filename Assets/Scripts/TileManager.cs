@@ -10,6 +10,7 @@ public class TileManager : MonoBehaviour {
     public GameObject target;
     public GameObject[] enemy;
     public static List<GameObject> tileListCollision;
+    public static List<GameObject> tileListCollider;
     public static int moveCount;
 
     public static GameObject[] playerInstance;
@@ -18,37 +19,92 @@ public class TileManager : MonoBehaviour {
     Tile[,] tiles;
     
 
-    public static void SetTrigger(GameObject tileObj)
+    public void SetTrigger(GameObject tileObj)
     {
-        if(moveCount > 0)
+
+        tileObj.GetComponent<Tile>().isChecked = true;
+        Debug.Log("POSTION TILE UNO : " + tileObj.GetComponent<Tile>().ArrayX + "  " + tileObj.GetComponent<Tile>().ArrayY);
+        tileObj.GetComponent<Tile>().isWalkable = true;
+        float moves = moveCount;
+
+        if(moveCount <= 3)
         {
-            moveCount--;
-            tileObj.GetComponent<Tile>().isChecked = true;
-            Debug.Log("POSTION TILE UNO : " + tileObj.GetComponent<Tile>().ArrayX + "  " + tileObj.GetComponent<Tile>().ArrayY);
-            tileObj.GetComponent<Tile>().isWalkable = true;
-            tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
+            moves = moveCount * 0.5f;
         }
+
+        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
+        {
+            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), moves, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), moves, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), moves, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), moves, 1 << LayerMask.NameToLayer("GridMap"))
+        };
+
+        for(int i=0; i < hits.Capacity; i++)
+        {
+            for(int x=0; x < hits[i].Length; x++)
+            {
+                if(hits[i][x].collider.transform.position != tileObj.transform.position)
+                {
+                    tileListCollider.Add(hits[i][x].collider.gameObject);
+                }
+            }
+        }
+        int size = tileListCollider.Count;
+        for (int i=0; i < size; i++)
+        {
+            GetNeighbour(tileListCollider[i]);
+        }
+
+        foreach (GameObject tileCollider in tileListCollider)
+        {
+            tileCollider.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+
     }
 
-    public static void SetTrigger(List<GameObject> tileObjs)
+
+    public void GetNeighbour(GameObject tileObj)
     {
-        if (moveCount > 0)
-        {
-            moveCount--;
-            foreach (GameObject tileObj in tileObjs)
+        tileObj.GetComponent<Tile>().isChecked = true;
+        tileObj.GetComponent<Tile>().isWalkable = true;
+        tileListCollider.Add(tileObj);
+        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
             {
-                tileObj.GetComponent<Tile>().isChecked = true;
-                tileObj.GetComponent<Tile>().isWalkable = true;
-                tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
+                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), 1f , 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+            };
+
+        for (int i = 0; i < hits.Capacity; i++)
+        {
+            for (int x = 0; x < hits[i].Length; x++)
+            {
+                if (hits[i][x].collider.transform.position != tileObj.transform.position)
+                {
+                    hits[i][x].collider.GetComponent<Tile>().isChecked = true;
+                    hits[i][x].collider.GetComponent<Tile>().isWalkable = true;
+                    tileListCollider.Add(hits[i][x].collider.gameObject);
+                }
             }
         }
-        else
-        {
-            foreach (GameObject tileObj in tileObjs)
-            {
-                tileObj.GetComponent<SpriteRenderer>().color = Color.red;
-            }
-        }
+
+
+        //    foreach (GameObject tileObj in tileObjs)
+        //    {
+        //        tileObj.GetComponent<Tile>().isChecked = true;
+        //        tileObj.GetComponent<Tile>().isWalkable = true;
+        //        tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
+        //    }
+        //}
+        //else
+        //{
+        //    foreach (GameObject tileObj in tileObjs)
+        //    {
+        //        tileObj.GetComponent<SpriteRenderer>().color = Color.red;
+        //    }
+        //}
     }
 
     public void ShowGrid()
@@ -87,9 +143,7 @@ public class TileManager : MonoBehaviour {
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
             {
                 Destroy(targetInstance);
-                targetInstance = Instantiate(target, hit.collider.transform);
-                playerInstance[playerNumber].GetComponent<AILerp>().enabled = true;
-                playerInstance[playerNumber].GetComponent<AILerp>().target = targetInstance.transform;
+                playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
                 GameManager.currentState = GameManager.States.END_MOVE;
             }
@@ -99,7 +153,8 @@ public class TileManager : MonoBehaviour {
     public void UpdateGrid(GameObject objectTurn)
     {
         Destroy(targetInstance);
-        TileManager.tileListCollision.Clear();
+        tileListCollision.Clear();
+        tileListCollider.Clear();
 
         if(objectTurn.tag == "Player")
         {
@@ -116,36 +171,44 @@ public class TileManager : MonoBehaviour {
 
     public void ResetGrid()
     {
-        foreach (GameObject tileObj in tileListCollision)
+        foreach (GameObject tileObj in tileListCollider)
         {
             tileObj.GetComponent<Tile>().isChecked = false;
             tileObj.GetComponent<Tile>().isWalkable = false;
-            tileObj.GetComponent<BoxCollider2D>().isTrigger = false;
             tileObj.GetComponent<SpriteRenderer>().color = Color.white;
         }
+        tileListCollider.Clear();
     }
 
     public void PositionBattle()
     {
-        foreach(GameObject player in playerInstance)
-        {
-            player.GetComponent<AILerp>().enabled = false;
-            player.GetComponent<AILerp>().target = null;
-        }
-
         playerInstance[1].transform.parent = null;
-        playerInstance[0].transform.position = tiles[3, 3].Position;
-        playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[3, 3].TileObject;
-        playerInstance[1].transform.position = tiles[1, 3].Position;
-        playerInstance[1].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
+        playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
+        playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
+        playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
+        playerInstance[1].GetComponent<PlayerController>().playerTile = tiles[3, 3].TileObject;
         enemyInstance[0].transform.position = tiles[6, 3].Position;
+
+        GameManager.currentState = GameManager.States.WAIT;
+
+        StartCoroutine(BeginBattle());
+    }
+
+    IEnumerator BeginBattle()
+    {
+        while(!playerInstance[0].GetComponent<AILerp>().targetReached)
+        {
+            yield return null;
+        }
 
         GameManager.currentState = GameManager.States.SELECT;
     }
 
+
     public void CreateGrid(int width, int height)
     {
         tileListCollision = new List<GameObject>();
+        tileListCollider = new List<GameObject>();
         tiles = new Tile[width, height];
 
         playerInstance = new GameObject[player.Length];

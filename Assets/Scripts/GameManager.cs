@@ -20,7 +20,8 @@ public class GameManager : MonoBehaviour {
         ENGAGE_ENEMY,
         SELECT,
         MOVE,
-        END_MOVE
+        END_MOVE,
+        WAIT
     }
 
     public static States currentState;
@@ -39,6 +40,7 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(currentState);
         if (currentState == States.SELECT && turnManager.actualPhaseTurn != TurnManager.PhaseTurnState.EXECUTE)
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
