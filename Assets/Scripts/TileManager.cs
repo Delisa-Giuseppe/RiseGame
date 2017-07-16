@@ -100,12 +100,13 @@ public class TileManager : MonoBehaviour {
 
     public IEnumerator WaitMoves(GameObject mover)
     {
-        mover.GetComponent<AILerp>().ForceSearchPath();
+        yield return new WaitForSeconds(1);
+
         while (!mover.GetComponent<AILerp>().targetReached)
         {
             yield return null;
         }
-        GameManager.currentState = GameManager.States.END_MOVE;
+        GameManager.currentState = GameManager.States.SELECT;
     }
 
     public void MovePlayer(int playerNumber)
@@ -138,7 +139,7 @@ public class TileManager : MonoBehaviour {
                 Destroy(targetInstance);
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
-                GameManager.currentState = GameManager.States.IS_MOVING;
+                GameManager.currentState = GameManager.States.END_MOVE;
             }
         }
     }

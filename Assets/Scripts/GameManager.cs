@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour {
         ENGAGE_ENEMY,
         SELECT,
         MOVE,
-        IS_MOVING,
         END_MOVE,
         WAIT
     }
@@ -63,11 +62,6 @@ public class GameManager : MonoBehaviour {
             
         }
 
-        if (currentState == States.IS_MOVING)
-        {
-            StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn));
-        }
-
         if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy")
         {
             tileManager.EnemyIA();
@@ -89,7 +83,8 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                currentState = States.SELECT;
+                currentState = States.WAIT;
+                StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn));
                 turnManager.actualPhaseTurn = TurnManager.PhaseTurnState.INIT;
             }
         }
