@@ -43,6 +43,19 @@ public class TurnManager : MonoBehaviour {
         return currentObjectTurn;
     }
 
+    public GameObject GetPreviousTurn()
+    {
+        int tmp = currentTurn - 2;
+        if(tmp >=0)
+        {
+            return turns[tmp];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     public void RecalculateTurn()
     {
 

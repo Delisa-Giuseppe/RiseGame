@@ -23,7 +23,6 @@ public class TileManager : MonoBehaviour {
     {
 
         tileObj.GetComponent<Tile>().isChecked = true;
-        Debug.Log("POSTION TILE UNO : " + tileObj.GetComponent<Tile>().ArrayX + "  " + tileObj.GetComponent<Tile>().ArrayY);
         tileObj.GetComponent<Tile>().isWalkable = true;
         float moves = moveCount;
 
@@ -89,22 +88,6 @@ public class TileManager : MonoBehaviour {
                 }
             }
         }
-
-
-        //    foreach (GameObject tileObj in tileObjs)
-        //    {
-        //        tileObj.GetComponent<Tile>().isChecked = true;
-        //        tileObj.GetComponent<Tile>().isWalkable = true;
-        //        tileObj.GetComponent<BoxCollider2D>().isTrigger = true;
-        //    }
-        //}
-        //else
-        //{
-        //    foreach (GameObject tileObj in tileObjs)
-        //    {
-        //        tileObj.GetComponent<SpriteRenderer>().color = Color.red;
-        //    }
-        //}
     }
 
     public void ShowGrid()
@@ -113,6 +96,16 @@ public class TileManager : MonoBehaviour {
         {
             tile.TileObject.GetComponent<SpriteRenderer>().enabled = true;
         }
+    }
+
+    public IEnumerator WaitMoves(GameObject mover)
+    {
+        mover.GetComponent<AILerp>().ForceSearchPath();
+        while (!mover.GetComponent<AILerp>().targetReached)
+        {
+            yield return null;
+        }
+        GameManager.currentState = GameManager.States.END_MOVE;
     }
 
     public void MovePlayer(int playerNumber)
@@ -145,7 +138,7 @@ public class TileManager : MonoBehaviour {
                 Destroy(targetInstance);
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
-                GameManager.currentState = GameManager.States.END_MOVE;
+                GameManager.currentState = GameManager.States.IS_MOVING;
             }
         }
     }
@@ -163,7 +156,8 @@ public class TileManager : MonoBehaviour {
         }
         else if(objectTurn.tag == "Enemy")
         {
-
+            moveCount = objectTurn.GetComponent<EnemyController>().pointAction;
+            SetTrigger(objectTurn.GetComponent<EnemyController>().enemyTile);
         }
 
         GameManager.currentState = GameManager.States.MOVE;
@@ -180,6 +174,12 @@ public class TileManager : MonoBehaviour {
         tileListCollider.Clear();
     }
 
+    public void EnemyIA()
+    {
+        Debug.Log("ENEMY");
+
+    }
+
     public void PositionBattle()
     {
         playerInstance[1].transform.parent = null;
@@ -187,7 +187,8 @@ public class TileManager : MonoBehaviour {
         playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
         playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
         playerInstance[1].GetComponent<PlayerController>().playerTile = tiles[3, 3].TileObject;
-        enemyInstance[0].transform.position = tiles[6, 3].Position;
+        enemyInstance[0].GetComponent<EnemyController>().enemyTile = tiles[6, 3].TileObject;
+        enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
 
         GameManager.currentState = GameManager.States.WAIT;
 
@@ -253,6 +254,7 @@ public class TileManager : MonoBehaviour {
                 {
                     enemyInstance[0] = Instantiate(enemy[0]);
                     enemyInstance[0].transform.position = tileInstance.transform.position;
+                    enemyInstance[0].GetComponent<EnemyController>().enemyTile = tileInstance;
                 }
 
                 if(x==0 && y==0)

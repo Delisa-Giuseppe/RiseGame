@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour {
         ENGAGE_ENEMY,
         SELECT,
         MOVE,
+        IS_MOVING,
         END_MOVE,
         WAIT
     }
@@ -40,7 +41,6 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(currentState);
         if (currentState == States.SELECT && turnManager.actualPhaseTurn != TurnManager.PhaseTurnState.EXECUTE)
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
@@ -59,16 +59,21 @@ public class GameManager : MonoBehaviour {
                 {
                     tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
                 }
-                else if(turnManager.currentObjectTurn.tag == "Enemy")
-                {
-                    //Enemy Attack
-                    currentState = States.EXPLORATION;
-                }
             }
             
         }
 
-        if(currentState == States.ENGAGE_ENEMY)
+        if (currentState == States.IS_MOVING)
+        {
+            StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn));
+        }
+
+        if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy")
+        {
+            tileManager.EnemyIA();
+        }
+
+        if (currentState == States.ENGAGE_ENEMY)
         {
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);

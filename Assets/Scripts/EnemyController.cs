@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
 
-    public Tile enemyTile;
+    public GameObject enemyTile;
+    public int pointAction; 
 
     // Use this for initialization
     void Start () {
