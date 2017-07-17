@@ -35,8 +35,8 @@ public class TurnManager : MonoBehaviour {
         turns = new GameObject[players.Length + enemies.Length];
         int i = 0;
 
-        IComparer myComparer = new MyMonsterSorter();
-        Array.Sort(players, myComparer);
+        //IComparer myComparer = new MyMonsterSorter();
+        //Array.Sort(players, myComparer);
 
         
         foreach(GameObject player in players)
