@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour {
@@ -17,12 +17,28 @@ public class TurnManager : MonoBehaviour {
 
     public PhaseTurnState actualPhaseTurn;
 
-	//Calculate turns
+    public class MyMonsterSorter : IComparer
+    {
+        // Calls CaseInsensitiveComparer.Compare on the monster name string.
+        int IComparer.Compare(System.Object x, System.Object y)
+        {
+            return ((new CaseInsensitiveComparer()).Compare(((PlayerController)x).skill, ((PlayerController)y).skill));
+        }
+
+    }
+
+
+    //Calculate turns
     public void CalculateTurns(GameObject[] players, GameObject[] enemies)
     {
         actualPhaseTurn = PhaseTurnState.INIT;
         turns = new GameObject[players.Length + enemies.Length];
         int i = 0;
+
+        IComparer myComparer = new MyMonsterSorter();
+        Array.Sort(players, myComparer);
+
+        
         foreach(GameObject player in players)
         {
             turns[i] = player;

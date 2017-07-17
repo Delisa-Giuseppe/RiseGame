@@ -9,7 +9,6 @@ public class TileManager : MonoBehaviour {
     public GameObject[] player;
     public GameObject target;
     public GameObject[] enemy;
-    public static List<GameObject> tileListCollision;
     public static List<GameObject> tileListCollider;
     public static int moveCount;
 
@@ -134,11 +133,17 @@ public class TileManager : MonoBehaviour {
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
+            Destroy(targetInstance);
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
             {
-                Destroy(targetInstance);
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
+                GameManager.currentState = GameManager.States.END_MOVE;
+            }
+            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().enemyTile.GetComponent<Tile>().isWalkable)
+            {
+                playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy().transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy();
                 GameManager.currentState = GameManager.States.END_MOVE;
             }
         }
@@ -147,17 +152,16 @@ public class TileManager : MonoBehaviour {
     public void UpdateGrid(GameObject objectTurn)
     {
         Destroy(targetInstance);
-        tileListCollision.Clear();
         tileListCollider.Clear();
 
         if(objectTurn.tag == "Player")
         {
-            moveCount = objectTurn.GetComponent<PlayerController>().pointAction;
+            moveCount = objectTurn.GetComponent<PlayerController>().moves;
             SetTrigger(objectTurn.GetComponent<PlayerController>().playerTile);
         }
         else if(objectTurn.tag == "Enemy")
         {
-            moveCount = objectTurn.GetComponent<EnemyController>().pointAction;
+            moveCount = objectTurn.GetComponent<EnemyController>().moves;
             SetTrigger(objectTurn.GetComponent<EnemyController>().enemyTile);
         }
 
@@ -175,14 +179,15 @@ public class TileManager : MonoBehaviour {
         tileListCollider.Clear();
     }
 
-    public void EnemyIA()
+    public void MoveEnemy(GameObject enemy)
     {
-        Debug.Log("ENEMY");
-
+        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tileListCollider);
+        GameManager.currentState = GameManager.States.WAIT;
     }
 
     public void PositionBattle()
     {
+        
         playerInstance[1].transform.parent = null;
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
         playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
@@ -198,7 +203,9 @@ public class TileManager : MonoBehaviour {
 
     IEnumerator BeginBattle()
     {
-        while(!playerInstance[0].GetComponent<AILerp>().targetReached)
+        yield return new WaitForSeconds(1);
+
+        while (!playerInstance[0].GetComponent<AILerp>().targetReached)
         {
             yield return null;
         }
@@ -209,7 +216,6 @@ public class TileManager : MonoBehaviour {
 
     public void CreateGrid(int width, int height)
     {
-        tileListCollision = new List<GameObject>();
         tileListCollider = new List<GameObject>();
         tiles = new Tile[width, height];
 

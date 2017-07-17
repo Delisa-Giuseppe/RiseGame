@@ -5,14 +5,25 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public GameObject playerTile;
-    public int pointAction;
+    
     public int playerNumber;
+    public int strength; // Attributo forza
+    public int constitution; // Attributo costituzione
+    public int skill; // Attributo destrezza
+    public int mind; // Attributo intelligenza
+
+    //Stats of single player
     public int health;
-    public int prority;
+    public int physicAttack;
+    public int magicAttack;
+    public int moves;
+    public int critic;
+    public int evasion;
+
 
     // Use this for initialization
-    void Start () {
-		
+    void Awake () {
+        CalculateStatistics();
 	}
 	
 	// Update is called once per frame
@@ -43,8 +54,19 @@ public class PlayerController : MonoBehaviour {
         
     }
 
+    private void CalculateStatistics()
+    {
+        health = 2 * strength + 6 * constitution + 2 * mind;
+        magicAttack = 5 * mind;
+        physicAttack = 3 * strength + constitution;
+        moves = skill;
+        critic = skill;
+        evasion = skill;
+    }
+
     public void OnDamage(int damage)
     {
         health -= damage; 
     }
+
 }

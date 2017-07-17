@@ -6,13 +6,6 @@ public class GameManager : MonoBehaviour {
 
     public int height;
     public int width;
-    public int moves;
-
-    public enum EnemyClass
-    {
-        MELEE,
-        RANGED
-    }
 
     public enum States
     {
@@ -40,6 +33,7 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //
         if (currentState == States.SELECT && turnManager.actualPhaseTurn != TurnManager.PhaseTurnState.EXECUTE)
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
@@ -64,7 +58,7 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy")
         {
-            tileManager.EnemyIA();
+            tileManager.MoveEnemy(turnManager.currentObjectTurn);
         }
 
         if (currentState == States.ENGAGE_ENEMY)

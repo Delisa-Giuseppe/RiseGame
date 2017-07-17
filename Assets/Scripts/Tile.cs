@@ -13,24 +13,6 @@ public class Tile : MonoBehaviour {
     public bool isChecked = false;
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if(collision.tag == "Tile")// && !collision.GetComponent<Tile>().isChecked)
-        {
-            TileManager.tileListCollision.Add(collision.gameObject);    
-        }
-
-        this.GetComponent<BoxCollider2D>().isTrigger = false;
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if(collision.tag == "Tile")
-        {
-            //TileManager.SetTrigger(TileManager.tileListCollision);
-        }
-    }
-
     public int ArrayX
     {
         get
