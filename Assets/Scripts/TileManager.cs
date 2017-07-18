@@ -9,85 +9,161 @@ public class TileManager : MonoBehaviour {
     public GameObject[] player;
     public GameObject target;
     public GameObject[] enemy;
-    public static List<GameObject> tileListCollider;
-    public static int moveCount;
+    //public static List<GameObject> tileListCollider;
+    public static int moves;
 
     public static GameObject[] playerInstance;
     public static GameObject[] enemyInstance;
     static GameObject targetInstance;
     Tile[,] tiles;
-    
 
-    public void SetTrigger(GameObject tileObj)
+    public static List<GameObject> tilesSelectable;
+
+    private Vector2[] quadInitialPoint;
+    private Vector2[] polygonInitialPoint;
+    private GameObject tileSelected = null;
+
+    public TileManager()
     {
+        tilesSelectable = new List<GameObject>();
 
-        tileObj.GetComponent<Tile>().isChecked = true;
-        tileObj.GetComponent<Tile>().isWalkable = true;
-        float moves = moveCount;
-
-        if(moveCount <= 3)
-        {
-            moves = moveCount * 0.5f;
-        }
-
-        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
-        {
-            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), moves, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), moves, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), moves, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), moves, 1 << LayerMask.NameToLayer("GridMap"))
+        quadInitialPoint = new Vector2[] {
+            new Vector2(-0.58f, 0.58f),
+            new Vector2(-0.58f, -0.58f),
+            new Vector2(0.58f, -0.58f),
+            new Vector2(0.58f, 0.58f)
         };
 
-        for(int i=0; i < hits.Capacity; i++)
-        {
-            for(int x=0; x < hits[i].Length; x++)
-            {
-                if(hits[i][x].collider.transform.position != tileObj.transform.position)
-                {
-                    tileListCollider.Add(hits[i][x].collider.gameObject);
-                }
-            }
-        }
-        int size = tileListCollider.Count;
-        for (int i=0; i < size; i++)
-        {
-            GetNeighbour(tileListCollider[i]);
-        }
-
-        foreach (GameObject tileCollider in tileListCollider)
-        {
-            tileCollider.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-
+        polygonInitialPoint = new Vector2[] {
+            new Vector2(-1.18f, 0f),
+            new Vector2(0f, -1.18f),
+            new Vector2(1.18f, 0f),
+            new Vector2(0f, 1.18f)
+        };
     }
 
-
-    public void GetNeighbour(GameObject tileObj)
+    public void SetTrigger(GameObject tile)
     {
-        tileObj.GetComponent<Tile>().isChecked = true;
-        tileObj.GetComponent<Tile>().isWalkable = true;
-        tileListCollider.Add(tileObj);
-        List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
-            {
-                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), 1f , 1 << LayerMask.NameToLayer("GridMap")),
-                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
-                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
-                Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+
+        //if (TileManager.tilesSelectable.Count > 0 && tileSelected != "" && tile.name != tileSelected)
+        //{
+        //    GameObject oldTile = GameObject.Find(tileSelected);
+        //    ResetTiles(oldTile);
+        //}
+
+        if (!tile.GetComponent<Tile>().isChecked)
+        {
+            tileSelected = tile;
+            tile.layer = LayerMask.NameToLayer("GridBattle");
+            tile.GetComponent<Tile>().isChecked = true;
+
+            Vector2[] newPoints = {
+                new Vector2(
+                    polygonInitialPoint[0].x*moves,
+                    polygonInitialPoint[0].y*moves),
+                new Vector2(
+                    polygonInitialPoint[1].x*moves,
+                    polygonInitialPoint[1].y*moves),
+                new Vector2(
+                    polygonInitialPoint[2].x*moves,
+                    polygonInitialPoint[2].y*moves),
+                new Vector2(
+                    polygonInitialPoint[3].x*moves,
+                    polygonInitialPoint[3].y*moves)
             };
 
-        for (int i = 0; i < hits.Capacity; i++)
-        {
-            for (int x = 0; x < hits[i].Length; x++)
-            {
-                if (hits[i][x].collider.transform.position != tileObj.transform.position)
-                {
-                    hits[i][x].collider.GetComponent<Tile>().isChecked = true;
-                    hits[i][x].collider.GetComponent<Tile>().isWalkable = true;
-                    tileListCollider.Add(hits[i][x].collider.gameObject);
-                }
-            }
+            //tilesSelectable.Add(tile);
+            tile.GetComponent<PolygonCollider2D>().SetPath(0, newPoints);
+            tile.GetComponent<PolygonCollider2D>().isTrigger = true;
+
         }
     }
+
+    //private void ResetTiles(GameObject oldTile)
+    //{
+    //    Debug.Log(oldTile.name);
+
+    //    oldTile.GetComponent<Tile>().isChecked = false;
+    //    oldTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+
+    //    foreach (GameObject tile in TileManager.tilesSelectable)
+    //    {
+    //        tile.GetComponent<SpriteRenderer>().color = Color.white;
+    //    }
+    //    TileManager.tilesSelectable.Clear();
+
+    //}
+
+    //public void SetTrigger(GameObject tileObj)
+    //{
+
+    //    tileObj.GetComponent<Tile>().isChecked = true;
+    //    tileObj.GetComponent<Tile>().isWalkable = true;
+    //    float moves = moveCount;
+
+    //    if(moveCount <= 3)
+    //    {
+    //        moves = moveCount * 0.5f;
+    //    }
+
+    //    List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
+    //    {
+    //        Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), moves, 1 << LayerMask.NameToLayer("GridMap")),
+    //        Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), moves, 1 << LayerMask.NameToLayer("GridMap")),
+    //        Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), moves, 1 << LayerMask.NameToLayer("GridMap")),
+    //        Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), moves, 1 << LayerMask.NameToLayer("GridMap"))
+    //    };
+
+    //    for(int i=0; i < hits.Capacity; i++)
+    //    {
+    //        for(int x=0; x < hits[i].Length; x++)
+    //        {
+    //            if(hits[i][x].collider.transform.position != tileObj.transform.position)
+    //            {
+    //                tileListCollider.Add(hits[i][x].collider.gameObject);
+    //            }
+    //        }
+    //    }
+    //    int size = tileListCollider.Count;
+    //    for (int i=0; i < size; i++)
+    //    {
+    //        GetNeighbour(tileListCollider[i]);
+    //    }
+
+    //    foreach (GameObject tileCollider in tileListCollider)
+    //    {
+    //        tileCollider.GetComponent<SpriteRenderer>().color = Color.red;
+    //    }
+
+    //}
+
+
+    //public void GetNeighbour(GameObject tileObj)
+    //{
+    //    tileObj.GetComponent<Tile>().isChecked = true;
+    //    tileObj.GetComponent<Tile>().isWalkable = true;
+    //    tileListCollider.Add(tileObj);
+    //    List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
+    //        {
+    //            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, 1), 1f , 1 << LayerMask.NameToLayer("GridMap")),
+    //            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+    //            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+    //            Physics2D.RaycastAll(tileObj.GetComponent<Tile>().Position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+    //        };
+
+    //    for (int i = 0; i < hits.Capacity; i++)
+    //    {
+    //        for (int x = 0; x < hits[i].Length; x++)
+    //        {
+    //            if (hits[i][x].collider.transform.position != tileObj.transform.position)
+    //            {
+    //                hits[i][x].collider.GetComponent<Tile>().isChecked = true;
+    //                hits[i][x].collider.GetComponent<Tile>().isWalkable = true;
+    //                tileListCollider.Add(hits[i][x].collider.gameObject);
+    //            }
+    //        }
+    //    }
+    //}
 
     public void ShowGrid()
     {
@@ -130,14 +206,16 @@ public class TileManager : MonoBehaviour {
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
+            playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+
             Destroy(targetInstance);
-            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
+            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected)
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
-            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isWalkable)
+            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isSelected)
             {
                 GameObject tileNearEnemy = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy();
                 playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
@@ -151,16 +229,18 @@ public class TileManager : MonoBehaviour {
     public void UpdateGrid(GameObject objectTurn)
     {
         Destroy(targetInstance);
-        tileListCollider.Clear();
+        tilesSelectable.Clear();
 
-        if(objectTurn.tag == "Player")
+        //objectTurn.GetComponent<Seeker>().startEndModifier.mask = LayerMask.NameToLayer("GridBattle");
+
+        if (objectTurn.tag == "Player")
         {
-            moveCount = objectTurn.GetComponent<PlayerController>().moves;
+            moves = objectTurn.GetComponent<PlayerController>().moves;
             SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
         }
         else if(objectTurn.tag == "Enemy")
         {
-            moveCount = objectTurn.GetComponent<EnemyController>().moves;
+            moves = objectTurn.GetComponent<EnemyController>().moves;
             SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
@@ -169,24 +249,42 @@ public class TileManager : MonoBehaviour {
 
     public void ResetGrid()
     {
-        foreach (GameObject tileObj in tileListCollider)
+        tileSelected.GetComponent<Tile>().isChecked = false;
+        tileSelected.layer = LayerMask.NameToLayer("GridMap");
+        foreach (GameObject tileObj in tilesSelectable)
         {
+            tileObj.layer = LayerMask.NameToLayer("GridMap");
+            tileObj.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
             tileObj.GetComponent<Tile>().isChecked = false;
-            tileObj.GetComponent<Tile>().isWalkable = false;
+            tileObj.GetComponent<Tile>().isSelected = false;
+            //tileObj.GetComponent<Tile>().isWalkable = false;
             tileObj.GetComponent<SpriteRenderer>().color = Color.white;
         }
-        tileListCollider.Clear();
+        tilesSelectable.Clear();
     }
 
     public void MoveEnemy(GameObject enemy)
     {
-        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tileListCollider);
+        StartCoroutine(WaitListTile(enemy));
         StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
     }
 
+    IEnumerator WaitListTile(GameObject enemy)
+    {
+        yield return new WaitForSeconds(0.8f);
+
+        if(tilesSelectable.Count == 0)
+        {
+            yield return null;
+        }
+
+        enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
+    }
+
+
     public void PositionBattle()
     {
-        
         playerInstance[1].transform.parent = null;
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
         playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
@@ -218,7 +316,6 @@ public class TileManager : MonoBehaviour {
 
     public void CreateGrid(int width, int height)
     {
-        tileListCollider = new List<GameObject>();
         tiles = new Tile[width, height];
 
         playerInstance = new GameObject[player.Length];

@@ -27,12 +27,14 @@ public class GameManager : MonoBehaviour {
     void Start () {
         tileManager = GetComponent<TileManager>();
         turnManager = GetComponent<TurnManager>();
+        pathfind = GameObject.FindGameObjectWithTag("Pathfind");
         InitLevel();
 	}
 
     // Update is called once per frame
     void Update()
     {
+        pathfind.GetComponent<AstarPath>().Scan();
         if (currentState == States.EXPLORATION)
         {
             tileManager.HideGrid();
@@ -69,6 +71,7 @@ public class GameManager : MonoBehaviour {
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
             tileManager.PositionBattle();
+            //pathfind.GetComponent<AstarPath>().graphs[0].
         }
 
         if (currentState == States.END_MOVE)

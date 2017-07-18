@@ -109,11 +109,12 @@ public class EnemyController : ObjectController {
 
         set
         {
-            if (enemyTile != null)
+            if (enemyTile != null && value != null)
             {
-                enemyTile.GetComponent<Tile>().isBusy = false;
-                value.GetComponent<Tile>().isBusy = true;
+                enemyTile.GetComponent<Tile>().isWalkable = true;
+                value.GetComponent<Tile>().isWalkable = false;
             }
+
             enemyTile = value;
         }
     }

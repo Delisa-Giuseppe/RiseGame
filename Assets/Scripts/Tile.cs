@@ -10,8 +10,20 @@ public class Tile : MonoBehaviour {
     GameObject tileObject;
 
     public bool isWalkable;
-    public bool isChecked = false;
-    public bool isBusy;
+    public bool isChecked;
+    public bool isSelected;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked && collision.GetComponent<Tile>().isWalkable)
+        {
+            TileManager.tilesSelectable.Add(collision.gameObject);
+            collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
+            collision.GetComponent<SpriteRenderer>().color = Color.red;
+            collision.GetComponent<Tile>().isSelected = true;
+        }
+    }
 
     public int ArrayX
     {

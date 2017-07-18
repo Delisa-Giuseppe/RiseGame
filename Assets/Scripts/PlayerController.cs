@@ -18,10 +18,10 @@ public class PlayerController : ObjectController
 
         set
         {
-            if(playerTile != null)
+            if(playerTile != null && value != null)
             {
-                playerTile.GetComponent<Tile>().isBusy = false;
-                value.GetComponent<Tile>().isBusy = true;
+                playerTile.GetComponent<Tile>().isWalkable = true;
+                value.GetComponent<Tile>().isWalkable = false;
             }
             playerTile = value;
         }
@@ -33,10 +33,10 @@ public class PlayerController : ObjectController
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
             {
-                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("Default")),
-                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("Default")),
-                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("Default")),
-                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("Default"))
+                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("World")),
+                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("World")),
+                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("World")),
+                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("World"))
             };
 
 
