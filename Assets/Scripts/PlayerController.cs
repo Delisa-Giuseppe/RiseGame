@@ -1,33 +1,34 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerController : ObjectController
+{
 
-    public GameObject playerTile;
-    
+    GameObject playerTile;
     public int playerNumber;
-    public int strength; // Attributo forza
-    public int constitution; // Attributo costituzione
-    public int skill; // Attributo destrezza
-    public int mind; // Attributo intelligenza
 
-    //Stats of single player
-    public int health;
-    public int physicAttack;
-    public int magicAttack;
-    public int moves;
-    public int critic;
-    public int evasion;
+    public GameObject PlayerTile
+    {
+        get
+        {
+            return playerTile;
+        }
 
+        set
+        {
+            if(playerTile != null)
+            {
+                playerTile.GetComponent<Tile>().isBusy = false;
+                value.GetComponent<Tile>().isBusy = true;
+            }
+            playerTile = value;
+        }
+    }
 
-    // Use this for initialization
-    void Awake () {
-        CalculateStatistics();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update () {
         if(GameManager.currentState == GameManager.States.EXPLORATION)
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
@@ -54,19 +55,14 @@ public class PlayerController : MonoBehaviour {
         
     }
 
-    private void CalculateStatistics()
-    {
-        health = 2 * strength + 6 * constitution + 2 * mind;
-        magicAttack = 5 * mind;
-        physicAttack = 3 * strength + constitution;
-        moves = skill;
-        critic = skill;
-        evasion = skill;
-    }
 
-    public void OnDamage(int damage)
+    public void PhysicAttack(GameObject target)
     {
-        health -= damage; 
+        OnHit(target.GetComponent<ObjectController>());
+        if (IsDead(target.GetComponent<ObjectController>().health))
+        {
+            Destroy(target);
+            TileManager.enemyInstance[target.GetComponent<EnemyController>().positionArray] = null;
+        }
     }
-
 }

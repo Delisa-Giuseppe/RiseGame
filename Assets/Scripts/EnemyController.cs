@@ -2,28 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : ObjectController {
 
-    public GameObject enemyTile;
+    private GameObject enemyTile;
+    public int positionArray;
     private List<GameObject> enemyTileNeighbour;
 
-    public int strength; // Attributo forza
-    public int constitution; // Attributo costituzione
-    public int skill; // Attributo destrezza
-    public int mind; // Attributo intelligenza
-
-    //Stats of single enemy
-    public int health;
-    public int physicAttack;
-    public int magicAttack;
-    public int moves;
-    public int critic;
-    public int evasion;
-
-    private void Awake()
-    {
-        CalculateStatistics();
-    }
 
     public void EnemyIA(GameObject[] players, List<GameObject> selectableTile)
     {
@@ -64,6 +48,7 @@ public class EnemyController : MonoBehaviour {
             }
         }
 
+        EnemyTile = closerTile;
         GetComponent<AILerp>().target = closerTile.transform;
     }
 
@@ -72,17 +57,17 @@ public class EnemyController : MonoBehaviour {
         EnemyTileNeighbour = new List<GameObject>();
         List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
         {
-            Physics2D.RaycastAll(enemyTile.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(enemyTile.transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(enemyTile.transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
-            Physics2D.RaycastAll(enemyTile.transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
         };
 
         foreach (RaycastHit2D[] rayCast in hits)
         {
             foreach (RaycastHit2D ray in rayCast)
             {
-                if (ray.collider != null && ray.collider.tag == "Tile" && ray.collider.transform != enemyTile.transform)
+                if (ray.collider != null && ray.collider.tag == "Tile" && ray.collider.transform != EnemyTile.transform)
                 {
                     EnemyTileNeighbour.Add(ray.collider.gameObject);
                 }
@@ -102,16 +87,6 @@ public class EnemyController : MonoBehaviour {
         return tileSelected;
     }
 
-    private void CalculateStatistics()
-    {
-        health = 2 * strength + 6 * constitution + 2 * mind;
-        magicAttack = 5 * mind;
-        physicAttack = 3 * strength + constitution;
-        moves = skill;
-        critic = skill;
-        evasion = skill;
-    }
-
     public List<GameObject> EnemyTileNeighbour
     {
         get
@@ -122,6 +97,24 @@ public class EnemyController : MonoBehaviour {
         set
         {
             enemyTileNeighbour = value;
+        }
+    }
+
+    public GameObject EnemyTile
+    {
+        get
+        {
+            return enemyTile;
+        }
+
+        set
+        {
+            if (enemyTile != null)
+            {
+                enemyTile.GetComponent<Tile>().isBusy = false;
+                value.GetComponent<Tile>().isBusy = true;
+            }
+            enemyTile = value;
         }
     }
 }

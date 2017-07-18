@@ -21,20 +21,23 @@ public class GameManager : MonoBehaviour {
 
     TileManager tileManager;
     TurnManager turnManager;
+    GameObject pathfind;
 
     // Use this for initialization
     void Start () {
         tileManager = GetComponent<TileManager>();
         turnManager = GetComponent<TurnManager>();
-
         InitLevel();
 	}
 
     // Update is called once per frame
     void Update()
     {
-        //
-        if (currentState == States.SELECT && turnManager.actualPhaseTurn != TurnManager.PhaseTurnState.EXECUTE)
+        if (currentState == States.EXPLORATION)
+        {
+            tileManager.HideGrid();
+        }
+        if (currentState == States.SELECT)
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
         }
@@ -73,13 +76,11 @@ public class GameManager : MonoBehaviour {
             tileManager.ResetGrid();
             if (turnManager.IsAllTurnFinished())
             {
-                currentState = States.EXPLORATION;
+                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
             }
             else
             {
-                currentState = States.WAIT;
-                StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn));
-                turnManager.actualPhaseTurn = TurnManager.PhaseTurnState.INIT;
+                StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn, States.SELECT, false, null));
             }
         }
     }

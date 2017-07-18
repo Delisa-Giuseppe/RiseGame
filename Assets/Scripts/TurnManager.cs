@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour {
@@ -8,38 +9,15 @@ public class TurnManager : MonoBehaviour {
     public GameObject currentObjectTurn;
     int currentTurn = 0;
 
-    public enum PhaseTurnState
-    {
-        INIT,
-        EXECUTE,
-        FINISH
-    }
-
-    public PhaseTurnState actualPhaseTurn;
-
-    public class MyMonsterSorter : IComparer
-    {
-        // Calls CaseInsensitiveComparer.Compare on the monster name string.
-        int IComparer.Compare(System.Object x, System.Object y)
-        {
-            return ((new CaseInsensitiveComparer()).Compare(((PlayerController)x).skill, ((PlayerController)y).skill));
-        }
-
-    }
-
-
     //Calculate turns
     public void CalculateTurns(GameObject[] players, GameObject[] enemies)
     {
-        actualPhaseTurn = PhaseTurnState.INIT;
         turns = new GameObject[players.Length + enemies.Length];
+        ObjectController[] orderTurn = new ObjectController[players.Length + enemies.Length];
         int i = 0;
 
-        //IComparer myComparer = new MyMonsterSorter();
-        //Array.Sort(players, myComparer);
 
-        
-        foreach(GameObject player in players)
+        foreach (GameObject player in players)
         {
             turns[i] = player;
             i++;
@@ -49,13 +27,20 @@ public class TurnManager : MonoBehaviour {
             turns[i] = enemy;
             i++;
         }
+
+        turns = turns.OrderBy(c => c.GetComponent<ObjectController>().skill).ToArray();
+
+        foreach (GameObject turn in turns)
+        {
+            Debug.Log(turn.name);
+        }
     }
 
     public GameObject GetNextTurn()
     {
-        actualPhaseTurn = PhaseTurnState.EXECUTE;
         currentObjectTurn = turns[currentTurn];
         currentTurn++;
+        Debug.Log("ACTUAL TURN : " + currentObjectTurn.name);
         return currentObjectTurn;
     }
 
@@ -72,16 +57,56 @@ public class TurnManager : MonoBehaviour {
         }
     }
 
-    public void RecalculateTurn()
+    public IEnumerator RecalculateTurn(GameObject[] players, GameObject[] enemies)
     {
+        GameManager.currentState = GameManager.States.WAIT;
+        yield return new WaitForEndOfFrame();
+        currentTurn = 0;
+        if(AreEnemiesAlive(enemies))
+        {
+            CalculateTurns(players, enemies);
+            GameManager.currentState = GameManager.States.SELECT;
+        }
+        else
+        {
+            GameManager.currentState = GameManager.States.EXPLORATION;
+        }
+        
 
     }
 
     public bool IsAllTurnFinished()
     {
         if (currentTurn == turns.Length)
+        {
             return true;
+        }
         else
+        {
             return false;
+        }
+            
+    }
+
+    public bool AreEnemiesAlive(GameObject[] enemies)
+    {
+        bool found = false;
+        if (enemies.Length > 0)
+        {
+            foreach(GameObject enemy in enemies)
+            {
+                if(enemy != null)
+                {
+                    found = true;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            
+        }
+
+        return found;
     }
 }

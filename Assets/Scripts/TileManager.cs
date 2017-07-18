@@ -97,15 +97,12 @@ public class TileManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator WaitMoves(GameObject mover)
+    public void HideGrid()
     {
-        yield return new WaitForSeconds(1);
-
-        while (!mover.GetComponent<AILerp>().targetReached)
+        foreach (Tile tile in tiles)
         {
-            yield return null;
+            tile.TileObject.GetComponent<SpriteRenderer>().enabled = false;
         }
-        GameManager.currentState = GameManager.States.SELECT;
     }
 
     public void MovePlayer(int playerNumber)
@@ -137,14 +134,16 @@ public class TileManager : MonoBehaviour {
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isWalkable)
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
-                playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.gameObject;
-                GameManager.currentState = GameManager.States.END_MOVE;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
-            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().enemyTile.GetComponent<Tile>().isWalkable)
+            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isWalkable)
             {
-                playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy().transform;
-                playerInstance[playerNumber].GetComponent<PlayerController>().playerTile = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy();
-                GameManager.currentState = GameManager.States.END_MOVE;
+                GameObject tileNearEnemy = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy();
+                playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, hit.collider.gameObject));
             }
         }
     }
@@ -157,12 +156,12 @@ public class TileManager : MonoBehaviour {
         if(objectTurn.tag == "Player")
         {
             moveCount = objectTurn.GetComponent<PlayerController>().moves;
-            SetTrigger(objectTurn.GetComponent<PlayerController>().playerTile);
+            SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
         }
         else if(objectTurn.tag == "Enemy")
         {
             moveCount = objectTurn.GetComponent<EnemyController>().moves;
-            SetTrigger(objectTurn.GetComponent<EnemyController>().enemyTile);
+            SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
         GameManager.currentState = GameManager.States.MOVE;
@@ -182,7 +181,7 @@ public class TileManager : MonoBehaviour {
     public void MoveEnemy(GameObject enemy)
     {
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tileListCollider);
-        GameManager.currentState = GameManager.States.WAIT;
+        StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
     }
 
     public void PositionBattle()
@@ -190,29 +189,32 @@ public class TileManager : MonoBehaviour {
         
         playerInstance[1].transform.parent = null;
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
-        playerInstance[0].GetComponent<PlayerController>().playerTile = tiles[1, 3].TileObject;
+        playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
         playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
-        playerInstance[1].GetComponent<PlayerController>().playerTile = tiles[3, 3].TileObject;
-        enemyInstance[0].GetComponent<EnemyController>().enemyTile = tiles[6, 3].TileObject;
+        playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
+        enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
 
-        GameManager.currentState = GameManager.States.WAIT;
-
-        StartCoroutine(BeginBattle());
+        StartCoroutine(WaitMoves(playerInstance[0], GameManager.States.SELECT, false, null));
     }
 
-    IEnumerator BeginBattle()
+    public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
+        GameManager.currentState = GameManager.States.WAIT;
         yield return new WaitForSeconds(1);
 
-        while (!playerInstance[0].GetComponent<AILerp>().targetReached)
+        while (!mover.GetComponent<AILerp>().targetReached)
         {
             yield return null;
         }
 
-        GameManager.currentState = GameManager.States.SELECT;
-    }
+        if(attack)
+        {
+            mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
+        }
 
+        GameManager.currentState = nextState;
+    }
 
     public void CreateGrid(int width, int height)
     {
@@ -261,14 +263,15 @@ public class TileManager : MonoBehaviour {
                 {
                     enemyInstance[0] = Instantiate(enemy[0]);
                     enemyInstance[0].transform.position = tileInstance.transform.position;
-                    enemyInstance[0].GetComponent<EnemyController>().enemyTile = tileInstance;
+                    enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tileInstance;
+                    enemyInstance[0].GetComponent<EnemyController>().positionArray = 0;
                 }
 
                 if(x==0 && y==0)
                 {
                     playerInstance[1] = Instantiate(player[1]);
                     playerInstance[1].transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
-                    playerInstance[1].GetComponent<PlayerController>().playerTile = tileInstance;
+                    playerInstance[1].GetComponent<PlayerController>().PlayerTile = tileInstance;
                     playerInstance[1].GetComponent<PlayerController>().playerNumber = 1;
                     
                 }
@@ -277,7 +280,7 @@ public class TileManager : MonoBehaviour {
                 {
                     playerInstance[0] = Instantiate(player[0]);
                     playerInstance[0].transform.position = tileInstance.transform.position;
-                    playerInstance[0].GetComponent<PlayerController>().playerTile = tileInstance;
+                    playerInstance[0].GetComponent<PlayerController>().PlayerTile = tileInstance;
                     playerInstance[0].GetComponent<PlayerController>().playerNumber = 0;
                     playerInstance[1].transform.parent = playerInstance[0].transform;
                 }

@@ -11,7 +11,7 @@ public class Tile : MonoBehaviour {
 
     public bool isWalkable;
     public bool isChecked = false;
-
+    public bool isBusy;
 
     public int ArrayX
     {
