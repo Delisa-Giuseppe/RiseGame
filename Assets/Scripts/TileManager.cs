@@ -175,6 +175,11 @@ public class TileManager : MonoBehaviour {
 
     public void HideGrid()
     {
+        AstarPath.active.graphs[0].GetGridGraph().collision.mask = (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("World"));
+        foreach(GameObject player in playerInstance)
+        {
+            player.GetComponent<AILerp>().canMove = true;
+        }
         foreach (Tile tile in tiles)
         {
             tile.TileObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -215,13 +220,22 @@ public class TileManager : MonoBehaviour {
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
-            else if(hit.collider != null && hit.collider.tag == "Enemy" && hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isSelected)
+            else
             {
-                GameObject tileNearEnemy = hit.collider.GetComponent<EnemyController>().GetTileNearEnemy();
-                playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
-                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-                
-                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, hit.collider.gameObject));
+                foreach(GameObject enemy in enemyInstance)
+                {
+                    if(enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
+                    {
+                        GameObject tileNearEnemy = enemy.GetComponent<EnemyController>().GetTileNearEnemy();
+                        playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                        playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+
+                        StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemy));
+
+                        break;
+                    }
+                }
+
             }
         }
     }
@@ -244,6 +258,7 @@ public class TileManager : MonoBehaviour {
             SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
+        objectTurn.GetComponent<AILerp>().canMove = true;
         GameManager.currentState = GameManager.States.MOVE;
     }
 
@@ -266,7 +281,6 @@ public class TileManager : MonoBehaviour {
     public void MoveEnemy(GameObject enemy)
     {
         StartCoroutine(WaitListTile(enemy));
-        StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
     }
 
     IEnumerator WaitListTile(GameObject enemy)
@@ -280,11 +294,13 @@ public class TileManager : MonoBehaviour {
 
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
+        StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
     }
 
 
     public void PositionBattle()
     {
+        StartCoroutine(StartBattle(playerInstance));
         playerInstance[1].transform.parent = null;
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
         playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
@@ -292,16 +308,30 @@ public class TileManager : MonoBehaviour {
         playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
         enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
-
-        StartCoroutine(WaitMoves(playerInstance[0], GameManager.States.SELECT, false, null));
     }
+    public IEnumerator StartBattle(GameObject[] mover)
+    { 
+        GameManager.currentState = GameManager.States.WAIT;
+        yield return new WaitForSeconds(1);
+
+        foreach(GameObject player in mover)
+        {
+            while (!player.GetComponent<AILerp>().targetReached)
+            {
+                yield return null;
+            }
+        }
+
+        GameManager.currentState = GameManager.States.SELECT;
+    }
+
 
     public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
         yield return new WaitForSeconds(1);
 
-        while (!mover.GetComponent<AILerp>().targetReached)
+        while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
             yield return null;
         }
@@ -311,6 +341,7 @@ public class TileManager : MonoBehaviour {
             mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
         }
 
+        yield return new WaitForSeconds(0.5f);
         GameManager.currentState = nextState;
     }
 

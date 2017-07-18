@@ -9,9 +9,21 @@ public class TurnManager : MonoBehaviour {
     public GameObject currentObjectTurn;
     int currentTurn = 0;
 
+    public enum TurnStates
+    {
+        INIT,
+        EXECUTE,
+        EXECUTED,
+        WAIT,
+        FINISH
+    }
+
+    public static TurnStates currentTurnState;
+
     //Calculate turns
     public void CalculateTurns(GameObject[] players, GameObject[] enemies)
     {
+        currentTurnState = TurnStates.INIT;
         turns = new GameObject[players.Length + enemies.Length];
         ObjectController[] orderTurn = new ObjectController[players.Length + enemies.Length];
         int i = 0;
@@ -38,6 +50,7 @@ public class TurnManager : MonoBehaviour {
 
     public GameObject GetNextTurn()
     {
+        currentTurnState = TurnStates.EXECUTE;
         currentObjectTurn = turns[currentTurn];
         currentTurn++;
         Debug.Log("ACTUAL TURN : " + currentObjectTurn.name);
@@ -77,6 +90,7 @@ public class TurnManager : MonoBehaviour {
 
     public bool IsAllTurnFinished()
     {
+        currentTurnState = TurnStates.FINISH;
         if (currentTurn == turns.Length)
         {
             return true;

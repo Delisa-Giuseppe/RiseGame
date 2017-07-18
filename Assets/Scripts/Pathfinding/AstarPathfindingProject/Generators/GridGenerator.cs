@@ -79,8 +79,14 @@ namespace Pathfinding {
 	 * in the correct layer (the layer should be included in the 'Collision Testing' mask).
 	 */
 	public class GridGraph : NavGraph, IUpdatableGraph, ITransformedGraph {
-		/** This function will be called when this graph is destroyed */
-		public override void OnDestroy () {
+        
+        public override GridGraph GetGridGraph()
+        {
+            return this;
+        }
+
+        /** This function will be called when this graph is destroyed */
+        public override void OnDestroy () {
 			base.OnDestroy();
 
 			// Clean up a reference in a static variable which otherwise should point to this graph forever and stop the GC from collecting it
@@ -2015,7 +2021,7 @@ namespace Pathfinding {
 				}
 			}
 		}
-	}
+    }
 
 	/** Number of neighbours for a single grid node.
 	 * \since The 'Six' item was added in 3.6.1

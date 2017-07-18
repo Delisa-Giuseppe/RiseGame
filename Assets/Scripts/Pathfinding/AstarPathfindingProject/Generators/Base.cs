@@ -6,8 +6,10 @@ using Pathfinding.Serialization;
 namespace Pathfinding {
 	/**  Base class for all graphs */
 	public abstract class NavGraph {
-		/** Reference to the AstarPath object in the scene */
-		public AstarPath active;
+
+        
+        /** Reference to the AstarPath object in the scene */
+        public AstarPath active;
 
 		/** Used as an ID of the graph, considered to be unique.
 		 * \note This is Pathfinding.Util.Guid not System.Guid. A replacement for System.Guid was coded for better compatibility with iOS
@@ -71,7 +73,8 @@ namespace Pathfinding {
 			});
 		}
 
-		/** Calls a delegate with all nodes in the graph.
+
+        /** Calls a delegate with all nodes in the graph.
 		 * This is the primary way of iterating through all nodes in a graph.
 		 *
 		 * Do not change the graph structure inside the delegate.
@@ -88,7 +91,7 @@ namespace Pathfinding {
 		 * myGraph.GetNodes(nodes.Add);
 		 * \endcode
 		 */
-		public abstract void GetNodes (System.Action<GraphNode> action);
+        public abstract void GetNodes (System.Action<GraphNode> action);
 
 		/** A matrix for translating/rotating/scaling the graph.
 		 * \deprecated Use the transform field (only available on some graph types) instead
@@ -341,7 +344,10 @@ namespace Pathfinding {
 		/** Called when temporary meshes used in OnDrawGizmos need to be unloaded to prevent memory leaks */
 		internal virtual void UnloadGizmoMeshes () {
 		}
-	}
+
+        public abstract GridGraph GetGridGraph();
+
+    }
 
 
 	/** Handles collision checking for graphs.

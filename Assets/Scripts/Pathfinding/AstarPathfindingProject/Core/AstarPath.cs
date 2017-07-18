@@ -568,7 +568,7 @@ public class AstarPath : VersionedMonoBehaviour {
 			}
 		};
 	}
-
+    
 	/** Returns tag names.
 	 * Makes sure that the tag names array is not null and of length 32.
 	 * If it is null or not of length 32, it creates a new array and fills it with 0,1,2,3,4 etc...

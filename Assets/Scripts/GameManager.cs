@@ -35,11 +35,13 @@ public class GameManager : MonoBehaviour {
     void Update()
     {
         pathfind.GetComponent<AstarPath>().Scan();
-        if (currentState == States.EXPLORATION)
+
+        if (currentState == States.EXPLORATION && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
         {
+            TurnManager.currentTurnState = TurnManager.TurnStates.WAIT;
             tileManager.HideGrid();
         }
-        if (currentState == States.SELECT)
+        if (currentState == States.SELECT && (TurnManager.currentTurnState == TurnManager.TurnStates.INIT || TurnManager.currentTurnState == TurnManager.TurnStates.FINISH))
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
         }
@@ -55,28 +57,31 @@ public class GameManager : MonoBehaviour {
             {
                 if(turnManager.currentObjectTurn.tag == "Player")
                 {
+                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
                     tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
                 }
             }
             
         }
 
-        if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy")
+        if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy" && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
         {
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             tileManager.MoveEnemy(turnManager.currentObjectTurn);
         }
 
         if (currentState == States.ENGAGE_ENEMY)
         {
+            AstarPath.active.graphs[0].GetGridGraph().collision.mask = (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
             tileManager.PositionBattle();
-            //pathfind.GetComponent<AstarPath>().graphs[0].
         }
 
-        if (currentState == States.END_MOVE)
+        if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
             tileManager.ResetGrid();
+            turnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             if (turnManager.IsAllTurnFinished())
             {
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));

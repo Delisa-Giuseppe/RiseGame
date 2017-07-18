@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Pathfinding.Serialization;
+using System;
 
 namespace Pathfinding {
 	/** Basic point graph.
@@ -451,5 +452,10 @@ namespace Pathfinding {
 				nodes[i].DeserializeNode(ctx);
 			}
 		}
-	}
+
+        public override GridGraph GetGridGraph()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

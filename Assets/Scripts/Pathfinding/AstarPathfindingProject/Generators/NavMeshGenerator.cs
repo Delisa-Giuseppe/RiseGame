@@ -2,10 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 
 namespace Pathfinding {
-	using Pathfinding.Util;
-	using Pathfinding.Serialization;
+    using Pathfinding.Util;
+    using Pathfinding.Serialization;
+    using System;
 
-	public interface INavmesh {
+    public interface INavmesh {
 		void GetNodes (System.Action<GraphNode> del);
 	}
 
@@ -239,5 +240,10 @@ namespace Pathfinding {
 			scale = ctx.reader.ReadSingle();
 			nearestSearchOnlyXZ = !ctx.reader.ReadBoolean();
 		}
-	}
+
+        public override GridGraph GetGridGraph()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
