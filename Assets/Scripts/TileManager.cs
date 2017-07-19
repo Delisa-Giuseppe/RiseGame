@@ -337,12 +337,16 @@ public class TileManager : MonoBehaviour {
     public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
-        yield return new WaitForSeconds(1);
-
         if (nextState == GameManager.States.MOVE && mover.tag == "Player")
         {
+            yield return new WaitForSeconds(0.5f);
             mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         }
+        else
+        {
+            yield return new WaitForSeconds(1);
+        }
+        
 
         while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
