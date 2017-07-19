@@ -229,10 +229,13 @@ public class TileManager : MonoBehaviour {
                         break;
                     }
                 }
-                GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-                playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
-                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-
+                if (Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) > 1.5f)
+                {
+                    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                    playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                    playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                }
+                
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
 
             }
