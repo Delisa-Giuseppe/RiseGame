@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour {
         {   
            if(currentState == States.EXPLORATION)
             {
-                tileManager.MovePlayer(0);
+                tileManager.MovePlayer(TileManager.playerInstance.Count-1);
             }
 
            if(currentState == States.MOVE)
@@ -58,7 +58,14 @@ public class GameManager : MonoBehaviour {
                 if(turnManager.currentObjectTurn.tag == "Player")
                 {
                     TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-                    tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                    if(TileManager.playerInstance.Count > 1)
+                    {
+                        tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                    }
+                    else
+                    {
+                        tileManager.MovePlayer(0);
+                    }
                 }
             }
             
@@ -72,7 +79,8 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.ENGAGE_ENEMY)
         {
-            AstarPath.active.graphs[0].GetGridGraph().collision.mask = (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
+            Debug.Log(AstarPath.active.graphs[0].GetGridGraph().collision.mask.value);
+            AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask) Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
             tileManager.PositionBattle();
@@ -82,14 +90,14 @@ public class GameManager : MonoBehaviour {
         {
             tileManager.ResetGrid();
             turnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-            if (turnManager.IsAllTurnFinished())
-            {
+            //if (turnManager.IsAllTurnFinished())
+            //{
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
-            }
-            else
-            {
-                StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn, States.SELECT, false, null));
-            }
+            //}
+            //else
+            //{
+            //    StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn, States.SELECT, false, null));
+            //}
         }
     }
 

@@ -8,6 +8,7 @@ public class PlayerController : ObjectController
 
     GameObject playerTile;
     public int playerNumber;
+    public int positionArray;
 
     public GameObject PlayerTile
     {
@@ -20,6 +21,8 @@ public class PlayerController : ObjectController
         {
             if(playerTile != null && value != null)
             {
+                playerTile.GetComponent<Tile>().isBusy = false;
+                value.GetComponent<Tile>().isBusy = true;
                 playerTile.GetComponent<Tile>().isWalkable = true;
                 value.GetComponent<Tile>().isWalkable = false;
             }
@@ -58,11 +61,22 @@ public class PlayerController : ObjectController
 
     public void PhysicAttack(GameObject target)
     {
+        target.GetComponent<SpriteRenderer>().color = Color.red;
         OnHit(target.GetComponent<ObjectController>());
         if (IsDead(target.GetComponent<ObjectController>().health))
         {
             Destroy(target);
-            TileManager.enemyInstance[target.GetComponent<EnemyController>().positionArray] = null;
+            TileManager.enemyInstance.Remove(target);
+        }
+        StartCoroutine(ResetColor(target));
+    }
+
+    IEnumerator ResetColor(GameObject obj)
+    {
+        yield return new WaitForSeconds(0.5f);
+        if(obj != null)
+        {
+            obj.GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 }

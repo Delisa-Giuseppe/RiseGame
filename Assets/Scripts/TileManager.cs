@@ -12,8 +12,8 @@ public class TileManager : MonoBehaviour {
     //public static List<GameObject> tileListCollider;
     public static int moves;
 
-    public static GameObject[] playerInstance;
-    public static GameObject[] enemyInstance;
+    public static List<GameObject> playerInstance;
+    public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
     Tile[,] tiles;
 
@@ -175,7 +175,7 @@ public class TileManager : MonoBehaviour {
 
     public void HideGrid()
     {
-        AstarPath.active.graphs[0].GetGridGraph().collision.mask = (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("World"));
+        AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask - (LayerMask) Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
         foreach(GameObject player in playerInstance)
         {
             player.GetComponent<AILerp>().canMove = true;
@@ -196,7 +196,7 @@ public class TileManager : MonoBehaviour {
             {
                 Destroy(targetInstance);
                 targetInstance = Instantiate(target, hit.collider.transform);
-                for(int i=0; i<playerInstance.Length; i++)
+                for(int i=0; i<playerInstance.Count; i++)
                 {
                     if(i==0)
                     {
@@ -211,30 +211,29 @@ public class TileManager : MonoBehaviour {
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
-            playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
-
             Destroy(targetInstance);
-            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected)
+            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && !hit.collider.GetComponent<Tile>().isEnemy)
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
-            else
+            else if(hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy)
             {
+                GameObject enemyTarget = null;
                 foreach(GameObject enemy in enemyInstance)
                 {
                     if(enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
                     {
-                        GameObject tileNearEnemy = enemy.GetComponent<EnemyController>().GetTileNearEnemy();
-                        playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
-                        playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-
-                        StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemy));
-
+                        enemyTarget = enemy;
                         break;
                     }
                 }
+                GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
 
             }
         }
@@ -251,6 +250,7 @@ public class TileManager : MonoBehaviour {
         {
             moves = objectTurn.GetComponent<PlayerController>().moves;
             SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
+            
         }
         else if(objectTurn.tag == "Enemy")
         {
@@ -259,7 +259,8 @@ public class TileManager : MonoBehaviour {
         }
 
         objectTurn.GetComponent<AILerp>().canMove = true;
-        GameManager.currentState = GameManager.States.MOVE;
+        StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
+        //GameManager.currentState = GameManager.States.MOVE;
     }
 
     public void ResetGrid()
@@ -294,7 +295,14 @@ public class TileManager : MonoBehaviour {
 
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
-        StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
+        if(enemy.GetComponent<EnemyController>().canAttack)
+        {
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
+        }
+        else
+        {
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
+        }
     }
 
 
@@ -309,7 +317,7 @@ public class TileManager : MonoBehaviour {
         enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
     }
-    public IEnumerator StartBattle(GameObject[] mover)
+    public IEnumerator StartBattle(List<GameObject> mover)
     { 
         GameManager.currentState = GameManager.States.WAIT;
         yield return new WaitForSeconds(1);
@@ -331,14 +339,23 @@ public class TileManager : MonoBehaviour {
         GameManager.currentState = GameManager.States.WAIT;
         yield return new WaitForSeconds(1);
 
+        if (nextState == GameManager.States.MOVE && mover.tag == "Player")
+        {
+            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+        }
+
         while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
             yield return null;
         }
 
-        if(attack)
+        if(attack && mover.tag == "Player")
         {
             mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
+        } else if(attack && mover.tag == "Enemy")
+        {
+            Debug.Log("ENEMY ATTACK");
+            mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -349,8 +366,8 @@ public class TileManager : MonoBehaviour {
     {
         tiles = new Tile[width, height];
 
-        playerInstance = new GameObject[player.Length];
-        enemyInstance = new GameObject[enemy.Length];
+        playerInstance = new List<GameObject>();
+        enemyInstance = new List<GameObject>();
 
         //Create the parent game object
         GameObject grid = new GameObject("Grid");
@@ -370,6 +387,8 @@ public class TileManager : MonoBehaviour {
         int rndX = Mathf.FloorToInt(Random.Range(0, width));
         int rndY = Mathf.FloorToInt(Random.Range(0, height));
         /** END TO REMOVE **/
+        GameObject player1 = null;
+        GameObject player2 = null;
 
         //Populate with grid cell
         for (int x = 0; x < width; x++)
@@ -389,32 +408,37 @@ public class TileManager : MonoBehaviour {
 
                 if(x==3 && y==1)
                 {
-                    enemyInstance[0] = Instantiate(enemy[0]);
-                    enemyInstance[0].transform.position = tileInstance.transform.position;
-                    enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tileInstance;
-                    enemyInstance[0].GetComponent<EnemyController>().positionArray = 0;
+                    GameObject enemyInst;
+                    enemyInst = Instantiate(enemy[0]);
+                    enemyInst.transform.position = tileInstance.transform.position;
+                    enemyInst.GetComponent<EnemyController>().EnemyTile = tileInstance;
+                    enemyInst.GetComponent<EnemyController>().positionArray = 0;
+                    enemyInstance.Add(enemyInst);
                 }
 
-                if(x==0 && y==0)
+                
+                if (x==0 && y==0)
                 {
-                    playerInstance[1] = Instantiate(player[1]);
-                    playerInstance[1].transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
-                    playerInstance[1].GetComponent<PlayerController>().PlayerTile = tileInstance;
-                    playerInstance[1].GetComponent<PlayerController>().playerNumber = 1;
-                    
+                    player2 = Instantiate(player[1]);
+                    player2.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
+                    player2.GetComponent<PlayerController>().playerNumber = 1;
+                    player2.GetComponent<PlayerController>().positionArray = 1;
                 }
                 
                 if(x==1 && y==0)
                 {
-                    playerInstance[0] = Instantiate(player[0]);
-                    playerInstance[0].transform.position = tileInstance.transform.position;
-                    playerInstance[0].GetComponent<PlayerController>().PlayerTile = tileInstance;
-                    playerInstance[0].GetComponent<PlayerController>().playerNumber = 0;
-                    playerInstance[1].transform.parent = playerInstance[0].transform;
+                    
+                    player1 = Instantiate(player[0]);
+                    player1.transform.position = tileInstance.transform.position;
+                    player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
+                    player1.GetComponent<PlayerController>().playerNumber = 0;
+                    player1.GetComponent<PlayerController>().positionArray = 0;
                 }
-                
             }
         }
+        playerInstance.Add(player1);
+        playerInstance.Add(player2);
     }
 
     // Get the camera bounds

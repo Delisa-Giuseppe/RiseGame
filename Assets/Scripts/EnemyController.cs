@@ -7,13 +7,14 @@ public class EnemyController : ObjectController {
     private GameObject enemyTile;
     public int positionArray;
     private List<GameObject> enemyTileNeighbour;
+    public bool canAttack;
+    public GameObject playerAttacked;
 
-
-    public void EnemyIA(GameObject[] players, List<GameObject> selectableTile)
+    public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
     {
         float closerDistance = 0;
         GameObject closerPlayer = null;
-        for(int i=0; i<players.Length; i++)
+        for(int i=0; i<players.Count; i++)
         {
             if(closerDistance != 0)
             {
@@ -30,16 +31,33 @@ public class EnemyController : ObjectController {
             }
         }
 
+        canAttack = false;
+        if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
+        {
+            canAttack = true;
+            playerAttacked = closerPlayer;
+        }
+
+        bool moveEnemy = true;
         GameObject closerTile = null;
-        for (int i = 0; i < selectableTile.Count; i++)
+
+        if(Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f)
+        {
+            moveEnemy = false;
+        }
+
+        for (int i = 0; moveEnemy && i < selectableTile.Count; i++)
         {
             if(closerTile != null)
             {
-                float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
-                float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);
-                if (dist1 > dist2)
+                if(!selectableTile[i].GetComponent<Tile>().isBusy)
                 {
-                    closerTile = selectableTile[i];
+                    float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
+                    float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);
+                    if (dist1 > dist2)
+                    {
+                        closerTile = selectableTile[i];
+                    }
                 }
             }
             else
@@ -48,8 +66,14 @@ public class EnemyController : ObjectController {
             }
         }
 
-        EnemyTile = closerTile;
-        GetComponent<AILerp>().target = closerTile.transform;
+        if (moveEnemy)
+        {
+            EnemyTile = closerTile;
+            GetComponent<AILerp>().target = closerTile.transform;
+        }
+
+        //enemyTile.GetComponent<PolygonCollider2D>().enabled = false;
+
     }
 
     public GameObject GetTileNearEnemy()
@@ -109,13 +133,35 @@ public class EnemyController : ObjectController {
 
         set
         {
-            if (enemyTile != null && value != null)
+            if(enemyTile != null)
             {
-                enemyTile.GetComponent<Tile>().isWalkable = true;
-                value.GetComponent<Tile>().isWalkable = false;
+                enemyTile.GetComponent<Tile>().isEnemy = false;
+                value.GetComponent<Tile>().isEnemy = true;
             }
-
+            
             enemyTile = value;
+        }
+    }
+
+    public void PhysicAttack(GameObject target)
+    {
+        target.GetComponent<SpriteRenderer>().color = Color.red;
+        OnHit(target.GetComponent<ObjectController>());
+        if (IsDead(target.GetComponent<ObjectController>().health))
+        {
+            Destroy(target);
+            TileManager.playerInstance.Remove(target);
+        }
+
+        StartCoroutine(ResetColor(target));
+    }
+
+    IEnumerator ResetColor(GameObject obj)
+    {
+        yield return new WaitForSeconds(0.5f);
+        if(obj != null)
+        {
+            obj.GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 }

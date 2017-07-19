@@ -12,11 +12,13 @@ public class Tile : MonoBehaviour {
     public bool isWalkable;
     public bool isChecked;
     public bool isSelected;
+    public bool isBusy;
+    public bool isEnemy;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if (collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked && collision.GetComponent<Tile>().isWalkable)
+        if (collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked)
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
