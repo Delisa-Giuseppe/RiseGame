@@ -22,6 +22,7 @@ public class TileManager : MonoBehaviour {
     private Vector2[] quadInitialPoint;
     private Vector2[] polygonInitialPoint;
     private GameObject tileSelected = null;
+    private GameObject previousTile = null;
 
     public TileManager()
     {
@@ -169,7 +170,7 @@ public class TileManager : MonoBehaviour {
     {
         foreach(Tile tile in tiles)
         {
-            tile.TileObject.GetComponent<SpriteRenderer>().enabled = true;
+            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 1f);
         }
     }
 
@@ -182,7 +183,7 @@ public class TileManager : MonoBehaviour {
         }
         foreach (Tile tile in tiles)
         {
-            tile.TileObject.GetComponent<SpriteRenderer>().enabled = false;
+            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
         }
     }
 
@@ -196,6 +197,30 @@ public class TileManager : MonoBehaviour {
             {
                 Destroy(targetInstance);
                 targetInstance = Instantiate(target, hit.collider.transform);
+
+                if(previousTile != null)
+                {
+                    if (previousTile.tag == "Tile")
+                    {
+                        previousTile.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
+                    }
+                    else if (previousTile.tag == "Enemy")
+                    {
+                        hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
+                    }
+                }
+
+                if(hit.collider.tag == "Tile")
+                {
+                    previousTile = hit.collider.gameObject;
+                    hit.collider.GetComponent<SpriteRenderer>().color = Color.blue;
+                }
+                else if(hit.collider.tag == "Enemy")
+                {
+                    previousTile = hit.collider.gameObject;
+                    hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = Color.blue;
+                }
+
                 for(int i=0; i<playerInstance.Count; i++)
                 {
                     if(i==0)

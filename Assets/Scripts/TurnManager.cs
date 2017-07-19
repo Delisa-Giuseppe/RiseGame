@@ -43,8 +43,12 @@ public class TurnManager : MonoBehaviour {
             }
             
         }
-        
 
+        turns.Sort(delegate (GameObject a, GameObject b) {
+
+            return (a.GetComponent<ObjectController>().skill).CompareTo(b.GetComponent<ObjectController>().skill);
+
+        });
         //turns = turns.Sort(c => c.GetComponent<ObjectController>().skill).ToArray();
 
         foreach (GameObject turn in turns)

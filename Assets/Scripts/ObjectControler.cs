@@ -52,4 +52,14 @@ public class ObjectController : MonoBehaviour {
         }
     }
 
+    public int CompareTo(ObjectController compare)
+    {
+        // A null value means that this object is greater.
+        if (compare == null)
+            return 1;
+
+        else
+            return this.skill.CompareTo(compare.skill);
+    }
+
 }
