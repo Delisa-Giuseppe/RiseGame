@@ -233,6 +233,8 @@ public class TileManager : MonoBehaviour {
                     }
                 }
             }
+
+            Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {

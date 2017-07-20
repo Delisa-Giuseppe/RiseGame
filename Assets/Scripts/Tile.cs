@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Tile : MonoBehaviour {
 
@@ -22,8 +20,8 @@ public class Tile : MonoBehaviour {
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
-            collision.GetComponent<SpriteRenderer>().color = Color.red;
             collision.GetComponent<Tile>().isSelected = true;
+            collision.GetComponent<SpriteRenderer>().color = Color.red;
         }
     }
 

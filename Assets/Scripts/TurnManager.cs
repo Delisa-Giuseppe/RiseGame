@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class TurnManager : MonoBehaviour {
 
-    //public GameObject[] turns;
     public GameObject currentObjectTurn;
-    int currentTurn = 0;
     public List<GameObject> turns;
+
+    private GameObject UI;
+    private int currentTurn = 0;
 
     public enum TurnStates
     {
@@ -21,6 +20,11 @@ public class TurnManager : MonoBehaviour {
     }
 
     public static TurnStates currentTurnState;
+
+    private void Awake()
+    {
+        UI = GameObject.Find("UI");
+    }
 
     //Calculate turns
     public void CalculateTurns(List<GameObject> players, List<GameObject> enemies)
@@ -68,6 +72,7 @@ public class TurnManager : MonoBehaviour {
             currentTurn++;
         }
         Debug.Log("ACTUAL TURN : " + currentObjectTurn.name);
+        UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().name + " Turn");
         return currentObjectTurn;
     }
 

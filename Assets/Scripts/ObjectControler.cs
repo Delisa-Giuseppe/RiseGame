@@ -10,18 +10,23 @@ public class ObjectController : MonoBehaviour {
     public int skill; // Attributo destrezza
     public int mind; // Attributo intelligenza
 
+    public string name;
+
     //Stats of single enemy
-    public int health;
-    public int physicAttack;
-    public int magicAttack;
+    protected int health;
+    protected int physicAttack;
+    protected int magicAttack;
     public int moves;
-    public int critic;
-    public int evasion;
+    protected int critic;
+    protected int evasion;
+
+    private GameObject UI;
 
 
     private void Awake()
     {
         CalculateStatistics();
+        UI = GameObject.Find("UI");
     }
 
     private void CalculateStatistics()
@@ -35,14 +40,15 @@ public class ObjectController : MonoBehaviour {
     }
 
 
-    protected void OnHit(ObjectController target)
+    protected void OnHit(GameObject target)
     {
-        target.health = target.health - physicAttack;
+        UI.GetComponent<UIManager>().ShowPopupDamage(physicAttack, target.transform);
+        target.GetComponent<ObjectController>().health = target.GetComponent<ObjectController>().health - physicAttack;
     }
 
-    protected bool IsDead(int targetHealth)
+    protected bool IsDead(ObjectController target)
     {
-        if(targetHealth <= 0)
+        if(target.health <= 0)
         {
             return true;
         }
