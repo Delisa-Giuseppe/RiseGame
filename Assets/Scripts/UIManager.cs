@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour {
 	public void ShowPopupDamage(int damage, Transform location)
     {
         Text popup = Instantiate(popupDamage);
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(new Vector2(location.position.x + Random.Range(-5f, 5f), location.position.y + Random.Range(-5f, 5f)));
+        Vector2 screenPosition = Camera.main.WorldToScreenPoint(new Vector2(location.position.x + Random.Range(-5f, 5f), location.position.y + Random.Range(-10f, 10f)));
         popup.transform.SetParent(transform, false);
         popup.transform.position = location.position;
         popup.text = damage.ToString();

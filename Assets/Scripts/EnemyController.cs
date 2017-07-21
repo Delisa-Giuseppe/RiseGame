@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Type
+{
+    MELEE,
+    RANGED
+};
+
 public class EnemyController : ObjectController {
 
     private GameObject enemyTile;

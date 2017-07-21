@@ -67,7 +67,7 @@ public class TurnManager : MonoBehaviour {
             currentTurn++;
         }
         
-        UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().name + " Turn");
+        UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().ObjectName + " Turn");
         StartCoroutine(Wait(1.5f));
         return currentObjectTurn;
     }

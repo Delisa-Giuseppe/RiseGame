@@ -280,7 +280,8 @@ public class TileManager : MonoBehaviour {
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
-            else if(hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy)
+            else if(hit.collider != null && hit.collider.tag == "Enemy" ||
+                (hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
             {
                 GameObject enemyTarget = null;
                 foreach(GameObject enemy in enemyInstance)
@@ -437,7 +438,7 @@ public class TileManager : MonoBehaviour {
             mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
         } else if(attack && mover.tag == "Enemy")
         {
-            Debug.Log("ENEMY ATTACK");
+            yield return new WaitForSeconds(1f);
             mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
         }
 
@@ -510,33 +511,33 @@ public class TileManager : MonoBehaviour {
                 }
 
 
-                if (x==0 && y==0)
+                if (x==0 && y==4)
                 {
                     player4 = Instantiate(player[3]);
-                    player4.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player4.transform.position = tileInstance.transform.position;
                     player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player4.GetComponent<PlayerController>().playerNumber = 3;
                 }
                 
-                if(x==1 && y==0)
+                if(x==1 && y==4)
                 {
 
                     player3 = Instantiate(player[2]);
-                    player3.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player3.transform.position = tileInstance.transform.position;
                     player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player3.GetComponent<PlayerController>().playerNumber = 2;
                 }
 
-                if (x == 2 && y == 0)
+                if (x == 2 && y == 4)
                 {
 
                     player2 = Instantiate(player[1]);
-                    player2.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player2.transform.position = tileInstance.transform.position;
                     player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player2.GetComponent<PlayerController>().playerNumber = 1;
                 }
 
-                if (x == 3 && y == 0)
+                if (x == 3 && y == 4)
                 {
 
                     player1 = Instantiate(player[0]);
