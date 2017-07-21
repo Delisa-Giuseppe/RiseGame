@@ -77,8 +77,6 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.ENGAGE_ENEMY)
         {
-            Debug.Log(AstarPath.active.graphs[0].GetGridGraph().collision.mask.value);
-            AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask) Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
             tileManager.PositionBattle();

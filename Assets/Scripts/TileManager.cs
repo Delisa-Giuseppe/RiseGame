@@ -340,10 +340,12 @@ public class TileManager : MonoBehaviour {
     {
         StartCoroutine(StartBattle(playerInstance));
         playerInstance[1].transform.parent = null;
+        
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
         playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
         playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
         playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
+        //playerInstance[1].GetComponent<Seeker>().startEndModifier.exactEndPoint = Pathfinding.StartEndModifier.Exactness.Original;
         enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
     }
@@ -360,6 +362,7 @@ public class TileManager : MonoBehaviour {
             }
         }
 
+        AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
         GameManager.currentState = GameManager.States.SELECT;
     }
 
@@ -376,8 +379,8 @@ public class TileManager : MonoBehaviour {
         {
             yield return new WaitForSeconds(1);
         }
-        
 
+        mover.GetComponent<AILerp>().target = null;
         while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
             yield return null;

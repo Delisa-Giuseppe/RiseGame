@@ -7,6 +7,7 @@ public class CameraManager : MonoBehaviour {
     private Vector2 velocity;
 
     public float smootTimeX;
+    public float smootTimeY;
     public GameObject player;
     public Vector3 initialPosition;
 
@@ -25,10 +26,30 @@ public class CameraManager : MonoBehaviour {
 
     public void MoveCamera()
     {
+        Vector3 newDirection = Vector3.zero;
         float posX = Mathf.SmoothDamp(transform.position.x, player.transform.position.x, ref velocity.x, smootTimeX);
-        if(posX > initialPosition.x)
+        float posY = Mathf.SmoothDamp(transform.position.y, player.transform.position.y, ref velocity.y, smootTimeY);
+
+        newDirection.z = transform.position.z;
+        if (posX > initialPosition.x)
         {
-            transform.position = new Vector3(posX, transform.position.y, transform.position.z);
+            newDirection.x = posX;
         }
+        else
+        {
+            newDirection.x = transform.position.x;
+        }
+        
+        if (posY > initialPosition.y)
+        {
+            newDirection.y = posY;
+        }
+        else
+        {
+            newDirection.y = transform.position.y;
+
+        }
+
+        transform.position = newDirection;
     }
 }
