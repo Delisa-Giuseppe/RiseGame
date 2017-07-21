@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour {
         Text turnText = Instantiate(changeTurnText);
         turnText.transform.SetParent(transform, false);
         turnText.text = text;
-        StartCoroutine(DestroyText(turnText, 2.5f));
+        StartCoroutine(DestroyText(turnText, 1.5f));
     }
 
     IEnumerator DestroyText(Text obj, float delay)

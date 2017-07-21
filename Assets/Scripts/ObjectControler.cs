@@ -34,7 +34,7 @@ public class ObjectController : MonoBehaviour {
         health = 2 * strength + 6 * constitution + 2 * mind;
         magicAttack = 5 * mind;
         physicAttack = 3 * strength + constitution;
-        moves = skill;
+        moves = Mathf.RoundToInt(skill / 3);
         critic = skill;
         evasion = skill;
     }

@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour {
     }
 
     public static States currentState;
+    public static bool refreshPath;
 
     TileManager tileManager;
     TurnManager turnManager;
@@ -27,12 +28,13 @@ public class GameManager : MonoBehaviour {
         turnManager = GetComponent<TurnManager>();
         pathfind = GameObject.FindGameObjectWithTag("Pathfind");
         InitLevel();
-	}
+        pathfind.GetComponent<AstarPath>().Scan();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        pathfind.GetComponent<AstarPath>().Scan();
+        //pathfind.GetComponent<AstarPath>().Scan();
 
         if (currentState == States.EXPLORATION && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
         {
@@ -43,7 +45,6 @@ public class GameManager : MonoBehaviour {
         {
             tileManager.UpdateGrid(turnManager.GetNextTurn());
         }
-
         if (Input.GetMouseButtonDown(0))
         {   
            if(currentState == States.EXPLORATION)
@@ -53,26 +54,33 @@ public class GameManager : MonoBehaviour {
 
            if(currentState == States.MOVE)
             {
-                if(turnManager.currentObjectTurn.tag == "Player")
+                if(TurnManager.currentObjectTurn.tag == "Player")
                 {
                     TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
                     if(TileManager.playerInstance.Count > 1)
                     {
-                        tileManager.MovePlayer(turnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                        tileManager.MovePlayer(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
                     }
                     else
                     {
                         tileManager.MovePlayer(0);
                     }
                 }
+                
             }
             
         }
 
-        if (currentState == States.MOVE && turnManager.currentObjectTurn.tag == "Enemy" && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
+        if(refreshPath)
+        {
+            pathfind.GetComponent<AstarPath>().Scan();
+            refreshPath = false;
+        }
+
+        if (currentState == States.MOVE && TurnManager.currentObjectTurn.tag == "Enemy" && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
         {
             TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-            tileManager.MoveEnemy(turnManager.currentObjectTurn);
+            tileManager.MoveEnemy(TurnManager.currentObjectTurn);
         }
 
         if (currentState == States.ENGAGE_ENEMY)
@@ -85,15 +93,16 @@ public class GameManager : MonoBehaviour {
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
             tileManager.ResetGrid();
-            turnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
+            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             //if (turnManager.IsAllTurnFinished())
             //{
-                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
+            StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
             //}
             //else
             //{
             //    StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn, States.SELECT, false, null));
             //}
+            
         }
     }
 
@@ -103,4 +112,8 @@ public class GameManager : MonoBehaviour {
         tileManager.CreateGrid(width, height);
     }
 
+    public static void RefreshPath()
+    {
+        GameManager.refreshPath = true;
+    }
 }

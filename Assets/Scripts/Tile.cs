@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class Tile : MonoBehaviour {
 
@@ -12,17 +13,32 @@ public class Tile : MonoBehaviour {
     public bool isSelected;
     public bool isBusy;
     public bool isEnemy;
+    public bool isPlayer;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
-        if (collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked)
+        if(TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" 
+            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isBusy || collision.GetComponent<Tile>().isPlayer))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
             collision.GetComponent<Tile>().isSelected = true;
-            collision.GetComponent<SpriteRenderer>().color = Color.red;
+            StartCoroutine(WaitColor(collision));
         }
+        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" 
+            && !collision.GetComponent<Tile>().isChecked && !collision.GetComponent<Tile>().isBusy)
+        {
+            TileManager.tilesSelectable.Add(collision.gameObject);
+            collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
+            collision.GetComponent<Tile>().isSelected = true;
+            StartCoroutine(WaitColor(collision));
+        }
+    }
+
+    IEnumerator WaitColor(Collider2D collision)
+    {
+        yield return new WaitForSeconds(1.5f);
+        collision.GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     public int ArrayX

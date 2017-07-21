@@ -185,6 +185,7 @@ public class TileManager : MonoBehaviour {
         {
             tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
         }
+        GameManager.RefreshPath();
     }
 
     public void MovePlayer(int playerNumber)
@@ -221,17 +222,51 @@ public class TileManager : MonoBehaviour {
                     hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = Color.blue;
                 }
 
-                for(int i=0; i<playerInstance.Count; i++)
+                List<RaycastHit2D[]> nearTiles = null;
+                Vector3 position = targetInstance.transform.position;
+
+                for (int i=0; i<playerInstance.Count; i++)
                 {
-                    if(i==0)
+                    if(i!=0)
                     {
-                        playerInstance[i].GetComponent<AILerp>().target = targetInstance.transform;
+                        nearTiles = new List<RaycastHit2D[]>(4)
+                        {
+                            Physics2D.RaycastAll(position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                            Physics2D.RaycastAll(position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                            Physics2D.RaycastAll(position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                            Physics2D.RaycastAll(position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+                        };
+
+                        foreach (RaycastHit2D[] nearTile in nearTiles)
+                        {
+                            bool found = false;
+                            foreach (RaycastHit2D tile in nearTile)
+                            {
+                                if (tile && tile.collider.gameObject.transform.position != position && tile.collider.tag == "Tile")
+                                {
+                                    playerInstance[i].GetComponent<AILerp>().target = tile.transform;
+                                    playerInstance[i].GetComponent<PlayerController>().PlayerTile = tile.collider.gameObject;
+                                    position = tile.transform.position;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if(found)
+                            {
+                                break;
+                            }
+                        }
                     }
                     else
                     {
-                        playerInstance[i].GetComponent<AILerp>().target = playerInstance[i-1].transform;
+                        playerInstance[i].GetComponent<AILerp>().target = targetInstance.transform;
+                        if(hit.collider.gameObject.tag == "Tile")
+                        {
+                            playerInstance[i].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                        }
                     }
                 }
+
             }
 
             Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
@@ -278,6 +313,7 @@ public class TileManager : MonoBehaviour {
 
         if (objectTurn.tag == "Player")
         {
+            objectTurn.GetComponent<AILerp>().target = null;
             moves = objectTurn.GetComponent<PlayerController>().moves;
             SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
             
@@ -316,7 +352,7 @@ public class TileManager : MonoBehaviour {
 
     IEnumerator WaitListTile(GameObject enemy)
     {
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(1f);
 
         if(tilesSelectable.Count == 0)
         {
@@ -338,9 +374,8 @@ public class TileManager : MonoBehaviour {
 
     public void PositionBattle()
     {
-        StartCoroutine(StartBattle(playerInstance));
-        playerInstance[1].transform.parent = null;
-        
+        StartCoroutine(StartBattle());
+
         playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
         playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
         playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
@@ -349,18 +384,28 @@ public class TileManager : MonoBehaviour {
         enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
     }
-    public IEnumerator StartBattle(List<GameObject> mover)
+    public IEnumerator StartBattle()
     { 
         GameManager.currentState = GameManager.States.WAIT;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
 
-        foreach(GameObject player in mover)
+        foreach(GameObject player in playerInstance)
         {
             while (!player.GetComponent<AILerp>().targetReached)
             {
                 yield return null;
             }
         }
+
+        foreach (GameObject enemy in enemyInstance)
+        {
+            while (!enemy.GetComponent<AILerp>().targetReached)
+            {
+                yield return null;
+            }
+        }
+
+        yield return new WaitForSeconds(0.8f);
 
         AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
         GameManager.currentState = GameManager.States.SELECT;
@@ -380,7 +425,6 @@ public class TileManager : MonoBehaviour {
             yield return new WaitForSeconds(1);
         }
 
-        mover.GetComponent<AILerp>().target = null;
         while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
             yield return null;
@@ -396,6 +440,7 @@ public class TileManager : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(0.5f);
+        GameManager.refreshPath = true;
         GameManager.currentState = nextState;
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour {
 
-    public GameObject currentObjectTurn;
+    public static GameObject currentObjectTurn;
     public List<GameObject> turns;
 
     private GameObject UI;
@@ -55,15 +55,10 @@ public class TurnManager : MonoBehaviour {
         });
         //turns = turns.Sort(c => c.GetComponent<ObjectController>().skill).ToArray();
 
-        foreach (GameObject turn in turns)
-        {
-            Debug.Log(turn.name);
-        }
     }
 
     public GameObject GetNextTurn()
     {
-        currentTurnState = TurnStates.EXECUTE;
         currentObjectTurn = turns[currentTurn];
         currentTurn++;
         if(currentObjectTurn == null)
@@ -71,9 +66,16 @@ public class TurnManager : MonoBehaviour {
             currentObjectTurn = turns[currentTurn];
             currentTurn++;
         }
-        Debug.Log("ACTUAL TURN : " + currentObjectTurn.name);
+        
         UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().name + " Turn");
+        StartCoroutine(Wait(1.5f));
         return currentObjectTurn;
+    }
+
+    IEnumerator Wait(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        currentTurnState = TurnStates.EXECUTE;
     }
 
     public GameObject GetPreviousTurn()
@@ -101,13 +103,14 @@ public class TurnManager : MonoBehaviour {
         if(AreEnemiesAlive(enemies))
         {
             CalculateTurns(players, enemies);
+            yield return new WaitForSeconds(1f);
             GameManager.currentState = GameManager.States.SELECT;
         }
         else
         {
+            yield return new WaitForSeconds(1f);
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
-        
 
     }
 

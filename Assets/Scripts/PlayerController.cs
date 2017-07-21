@@ -21,6 +21,8 @@ public class PlayerController : ObjectController
         {
             if(playerTile != null && value != null)
             {
+                playerTile.GetComponent<Tile>().isPlayer = false;
+                value.GetComponent<Tile>().isPlayer = true;
                 playerTile.GetComponent<Tile>().isBusy = false;
                 value.GetComponent<Tile>().isBusy = true;
                 playerTile.GetComponent<Tile>().isWalkable = true;
