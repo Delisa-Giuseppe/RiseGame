@@ -383,6 +383,8 @@ public class TileManager : MonoBehaviour {
         //playerInstance[1].GetComponent<Seeker>().startEndModifier.exactEndPoint = Pathfinding.StartEndModifier.Exactness.Original;
         enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
         enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
+        enemyInstance[1].GetComponent<EnemyController>().EnemyTile = tiles[8, 3].TileObject;
+        enemyInstance[1].GetComponent<AILerp>().target = tiles[8, 3].TileObject.transform;
     }
     public IEnumerator StartBattle()
     { 
@@ -471,6 +473,10 @@ public class TileManager : MonoBehaviour {
         /** END TO REMOVE **/
         GameObject player1 = null;
         GameObject player2 = null;
+        GameObject player3 = null;
+        GameObject player4 = null;
+        GameObject enemyInst = null;
+        GameObject enemyInst1 = null;
 
         //Populate with grid cell
         for (int x = 0; x < width; x++)
@@ -488,39 +494,65 @@ public class TileManager : MonoBehaviour {
                 tiles[x, y].TileObject = tileInstance;
 
 
-                if(x==3 && y==1)
+                if(x==10 && y==1)
                 {
-                    GameObject enemyInst;
                     enemyInst = Instantiate(enemy[0]);
                     enemyInst.transform.position = tileInstance.transform.position;
                     enemyInst.GetComponent<EnemyController>().EnemyTile = tileInstance;
-                    enemyInst.GetComponent<EnemyController>().positionArray = 0;
-                    enemyInstance.Add(enemyInst);
+                    
                 }
 
-                
+                if (x == 11 && y == 1)
+                {
+                    enemyInst1 = Instantiate(enemy[1]);
+                    enemyInst1.transform.position = tileInstance.transform.position;
+                    enemyInst1.GetComponent<EnemyController>().EnemyTile = tileInstance;
+                }
+
+
                 if (x==0 && y==0)
                 {
-                    player2 = Instantiate(player[1]);
-                    player2.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
-                    player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
-                    player2.GetComponent<PlayerController>().playerNumber = 1;
-                    player2.GetComponent<PlayerController>().positionArray = 1;
+                    player4 = Instantiate(player[3]);
+                    player4.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
+                    player4.GetComponent<PlayerController>().playerNumber = 3;
                 }
                 
                 if(x==1 && y==0)
                 {
-                    
+
+                    player3 = Instantiate(player[2]);
+                    player3.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
+                    player3.GetComponent<PlayerController>().playerNumber = 2;
+                }
+
+                if (x == 2 && y == 0)
+                {
+
+                    player2 = Instantiate(player[1]);
+                    player2.transform.position = new Vector3(grid.transform.position.x, grid.transform.position.y);
+                    player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
+                    player2.GetComponent<PlayerController>().playerNumber = 1;
+                }
+
+                if (x == 3 && y == 0)
+                {
+
                     player1 = Instantiate(player[0]);
                     player1.transform.position = tileInstance.transform.position;
                     player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player1.GetComponent<PlayerController>().playerNumber = 0;
-                    player1.GetComponent<PlayerController>().positionArray = 0;
                 }
             }
         }
         playerInstance.Add(player1);
         playerInstance.Add(player2);
+        playerInstance.Add(player3);
+        playerInstance.Add(player4);
+
+        enemyInstance.Add(enemyInst);
+        enemyInstance.Add(enemyInst1);
     }
 
     // Get the camera bounds

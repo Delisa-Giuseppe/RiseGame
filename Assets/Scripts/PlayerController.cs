@@ -8,7 +8,6 @@ public class PlayerController : ObjectController
 
     GameObject playerTile;
     public int playerNumber;
-    public int positionArray;
 
     public GameObject PlayerTile
     {

@@ -5,7 +5,6 @@ using UnityEngine;
 public class EnemyController : ObjectController {
 
     private GameObject enemyTile;
-    public int positionArray;
     private List<GameObject> enemyTileNeighbour;
     public bool canAttack;
     public GameObject playerAttacked;
