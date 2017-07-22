@@ -6,8 +6,16 @@ using UnityEngine;
 public class PlayerController : ObjectController
 {
 
-    GameObject playerTile;
+    public GameObject playerTile;
     public int playerNumber;
+
+    public enum PlayerType
+    {
+        MELEE,
+        RANGED
+    };
+
+    public PlayerType playerBehaviour;
 
     public GameObject PlayerTile
     {
@@ -22,8 +30,6 @@ public class PlayerController : ObjectController
             {
                 playerTile.GetComponent<Tile>().isPlayer = false;
                 value.GetComponent<Tile>().isPlayer = true;
-                playerTile.GetComponent<Tile>().isBusy = false;
-                value.GetComponent<Tile>().isBusy = true;
                 playerTile.GetComponent<Tile>().isWalkable = true;
                 value.GetComponent<Tile>().isWalkable = false;
             }
@@ -50,8 +56,8 @@ public class PlayerController : ObjectController
                 {
                     if (ray.collider.tag == "EnemyGroup")
                     {
+                        GameManager.currentState = GameManager.States.WAIT;
                         TileManager.AddEnemy(ray.collider.gameObject);
-                        GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
                         break;
                     }
                 }

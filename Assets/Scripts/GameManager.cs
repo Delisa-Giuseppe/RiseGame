@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour {
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
             tileManager.ResetGrid();
-            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
+            //TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             //if (turnManager.IsAllTurnFinished())
             //{
             StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));

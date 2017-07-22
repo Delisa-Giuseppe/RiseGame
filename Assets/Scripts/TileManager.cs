@@ -23,6 +23,7 @@ public class TileManager : MonoBehaviour {
     private Vector2[] polygonInitialPoint;
     private GameObject tileSelected = null;
     private GameObject previousTile = null;
+    private static Vector3 playerBattlePosition = Vector3.zero;
 
     public TileManager()
     {
@@ -177,10 +178,10 @@ public class TileManager : MonoBehaviour {
     public void HideGrid()
     {
         AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask - (LayerMask) Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
-        foreach(GameObject player in playerInstance)
-        {
-            player.GetComponent<AILerp>().canMove = true;
-        }
+        //foreach(GameObject player in playerInstance)
+        //{
+        //    player.GetComponent<AILerp>().canMove = true;
+        //}
         foreach (Tile tile in tiles)
         {
             tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
@@ -207,7 +208,7 @@ public class TileManager : MonoBehaviour {
                     }
                     else if (previousTile.tag == "Enemy")
                     {
-                        hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
+                        previousTile.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
                     }
                 }
 
@@ -245,7 +246,7 @@ public class TileManager : MonoBehaviour {
                                 if (tile && tile.collider.gameObject.transform.position != position && tile.collider.tag == "Tile")
                                 {
                                     playerInstance[i].GetComponent<AILerp>().target = tile.transform;
-                                    playerInstance[i].GetComponent<PlayerController>().PlayerTile = tile.collider.gameObject;
+                                    //playerInstance[i].GetComponent<PlayerController>().PlayerTile = tile.collider.gameObject;
                                     position = tile.transform.position;
                                     found = true;
                                     break;
@@ -262,7 +263,7 @@ public class TileManager : MonoBehaviour {
                         playerInstance[i].GetComponent<AILerp>().target = targetInstance.transform;
                         if(hit.collider.gameObject.tag == "Tile")
                         {
-                            playerInstance[i].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                            //playerInstance[i].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                         }
                     }
                 }
@@ -325,7 +326,7 @@ public class TileManager : MonoBehaviour {
             SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
-        objectTurn.GetComponent<AILerp>().canMove = true;
+        //objectTurn.GetComponent<AILerp>().canMove = true;
         StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
         //GameManager.currentState = GameManager.States.MOVE;
     }
@@ -351,31 +352,54 @@ public class TileManager : MonoBehaviour {
         StartCoroutine(WaitListTile(enemy));
     }
 
-    IEnumerator WaitListTile(GameObject enemy)
-    {
-        yield return new WaitForSeconds(1f);
-
-        if(tilesSelectable.Count == 0)
-        {
-            yield return null;
-        }
-
-        enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
-        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
-        if(enemy.GetComponent<EnemyController>().canAttack)
-        {
-            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
-        }
-        else
-        {
-            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
-        }
-    }
-
-
     public void PositionBattle()
     {
         StartCoroutine(StartBattle());
+
+        Vector3 startPointMelee = new Vector3(playerBattlePosition.x, playerBattlePosition.y);
+        Vector3 startPointRanged = new Vector3(playerBattlePosition.x, playerBattlePosition.y);
+        bool positive = false;
+        Vector3[] positions = new Vector3[playerInstance.Count];
+
+        for (int i=0; i<playerInstance.Count; i++)
+        {
+            if (playerInstance[i].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.MELEE)
+            {
+                startPointMelee = new Vector3(startPointMelee.x - (1.2f * 5), startPointMelee.y);
+                positions[i] = startPointMelee;
+                //playerInstance[i].GetComponent<AILerp>().target.position = startPointMelee;
+            }
+            else if(playerInstance[i].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED)
+            {
+                if(positive)
+                {
+                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 7), playerBattlePosition.y - (1.2f * 3));
+                    positions[i] = startPointRanged;
+                }
+                else
+                {
+                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 7), playerBattlePosition.y + (1.2f * 3));
+                    positions[i] = startPointRanged;
+                    positive = true;
+                }
+                
+                //playerInstance[i].GetComponent<AILerp>().target.position = startPointRanged;
+            }
+            foreach (Vector3 position in positions)
+            {
+                foreach (Tile cell in tiles)
+                {
+                    if (cell.transform.position == position)
+                    {
+                        playerInstance[i].GetComponent<AILerp>().target = cell.TileObject.transform;
+                        playerInstance[i].GetComponent<PlayerController>().PlayerTile = cell.TileObject;
+                        break;
+                    }
+                }
+                
+            }
+
+        }
 
         //foreach(GameObject player in playerInstance)
         //{
@@ -393,67 +417,22 @@ public class TileManager : MonoBehaviour {
         //enemyInstance[1].GetComponent<EnemyController>().EnemyTile = tiles[8, 3].TileObject;
         //enemyInstance[1].GetComponent<AILerp>().target = tiles[8, 3].TileObject.transform;
     }
-    public IEnumerator StartBattle()
-    { 
-        GameManager.currentState = GameManager.States.WAIT;
-        yield return new WaitForSeconds(1.5f);
-
-        foreach(GameObject player in playerInstance)
-        {
-            while (!player.GetComponent<AILerp>().targetReached)
-            {
-                yield return null;
-            }
-        }
-
-        yield return new WaitForSeconds(0.8f);
-
-        AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
-        GameManager.currentState = GameManager.States.SELECT;
-    }
-
-
-    public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
-    {
-        GameManager.currentState = GameManager.States.WAIT;
-        if (nextState == GameManager.States.MOVE && mover.tag == "Player")
-        {
-            yield return new WaitForSeconds(0.5f);
-            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
-        }
-        else
-        {
-            yield return new WaitForSeconds(1);
-        }
-
-        while (mover.tag != "Enemy" && !mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
-        {
-            yield return null;
-        }
-
-        if(attack && mover.tag == "Player")
-        {
-            mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
-        } else if(attack && mover.tag == "Enemy")
-        {
-            yield return new WaitForSeconds(1f);
-            mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
-        }
-
-        yield return new WaitForSeconds(0.5f);
-        GameManager.refreshPath = true;
-        GameManager.currentState = nextState;
-    }
 
     public static void AddEnemy(GameObject enemyGroup)
     {
+        enemyGroup.GetComponent<BoxCollider2D>().enabled = false;
         for (int i = 0; i < enemyGroup.transform.childCount; i++)
         {
             GameObject enemy = enemyGroup.transform.GetChild(i).gameObject;
+            if(i==0)
+            {
+                playerBattlePosition = enemy.transform.position;
+            }
             enemy.GetComponent<SpriteRenderer>().enabled = true;
             enemy.GetComponent<BoxCollider2D>().enabled = true;
             enemyInstance.Add(enemy);
         }
+        GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
     }
 
     public void CreateGrid(int width, int height)
@@ -565,6 +544,7 @@ public class TileManager : MonoBehaviour {
 
             if (tile.collider.tag == "Tile")
             {
+                enemy.transform.position = tile.collider.gameObject.transform.position;
                 enemy.GetComponent<EnemyController>().EnemyTile = tile.collider.gameObject;
             }
 
@@ -585,4 +565,80 @@ public class TileManager : MonoBehaviour {
         return bounds;
     }
 
+    public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
+    {
+        GameManager.currentState = GameManager.States.WAIT;
+        if (nextState == GameManager.States.MOVE && mover.tag == "Player")
+        {
+            yield return new WaitForSeconds(0.5f);
+            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1);
+        }
+
+        if(mover.GetComponent<AILerp>().target != null)
+        {
+            while (!mover.GetComponent<AILerp>().targetReached) //&& mover.GetComponent<AILerp>().canMove)
+            {
+                yield return null;
+            }
+
+        }
+
+        if (attack && mover.tag == "Player")
+        {
+            mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
+        }
+        else if (attack && mover.tag == "Enemy")
+        {
+            yield return new WaitForSeconds(1f);
+            mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        GameManager.refreshPath = true;
+        GameManager.currentState = nextState;
+    }
+
+    private IEnumerator WaitListTile(GameObject enemy)
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (tilesSelectable.Count == 0)
+        {
+            yield return null;
+        }
+
+        enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
+        if (enemy.GetComponent<EnemyController>().canAttack)
+        {
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
+        }
+        else
+        {
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
+        }
+    }
+
+    public IEnumerator StartBattle()
+    {
+        GameManager.currentState = GameManager.States.WAIT;
+        yield return new WaitForSeconds(1.5f);
+
+        foreach (GameObject player in playerInstance)
+        {
+            while (!player.GetComponent<AILerp>().targetReached)
+            {
+                yield return null;
+            }
+        }
+
+        yield return new WaitForSeconds(0.8f);
+
+        AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
+        GameManager.currentState = GameManager.States.SELECT;
+    }
 }

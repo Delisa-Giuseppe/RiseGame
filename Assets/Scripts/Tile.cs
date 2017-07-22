@@ -11,14 +11,13 @@ public class Tile : MonoBehaviour {
     public bool isWalkable;
     public bool isChecked;
     public bool isSelected;
-    public bool isBusy;
     public bool isEnemy;
     public bool isPlayer;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" 
-            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isBusy || collision.GetComponent<Tile>().isPlayer))
+            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || collision.GetComponent<Tile>().isPlayer))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
@@ -26,7 +25,7 @@ public class Tile : MonoBehaviour {
             StartCoroutine(WaitColor(collision));
         }
         else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" 
-            && !collision.GetComponent<Tile>().isChecked && !collision.GetComponent<Tile>().isBusy)
+            && !collision.GetComponent<Tile>().isChecked && !collision.GetComponent<Tile>().isPlayer)
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");

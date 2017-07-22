@@ -12,7 +12,7 @@ public class EnemyController : ObjectController {
         RANGED
     };
 
-    private GameObject enemyTile;
+    public GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
     public bool canAttack;
     public GameObject playerAttacked;
@@ -61,7 +61,7 @@ public class EnemyController : ObjectController {
         {
             if(closerTile != null)
             {
-                if(!selectableTile[i].GetComponent<Tile>().isBusy)
+                if(!selectableTile[i].GetComponent<Tile>().isPlayer || !selectableTile[i].GetComponent<Tile>().isEnemy)
                 {
                     float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
                     float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);
@@ -80,6 +80,7 @@ public class EnemyController : ObjectController {
         if (moveEnemy)
         {
             EnemyTile = closerTile;
+            //transform.position = closerTile.transform.position;
             GetComponent<AILerp>().target = closerTile.transform;
         }
 
@@ -160,7 +161,7 @@ public class EnemyController : ObjectController {
         OnHit(target);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
-            //Destroy(target);
+            Destroy(target);
             TileManager.playerInstance.Remove(target);
         }
 
