@@ -15,7 +15,7 @@ public class TileManager : MonoBehaviour {
     public static List<GameObject> playerInstance;
     public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
-    Tile[,] tiles;
+    static Tile[,] tiles;
 
     public static List<GameObject> tilesSelectable;
 
@@ -216,7 +216,7 @@ public class TileManager : MonoBehaviour {
                     previousTile = hit.collider.gameObject;
                     hit.collider.GetComponent<SpriteRenderer>().color = Color.blue;
                 }
-                else if(hit.collider.tag == "Enemy")
+                else if (hit.collider.tag == "Enemy")
                 {
                     previousTile = hit.collider.gameObject;
                     hit.collider.GetComponent<EnemyController>().EnemyTile.GetComponent<SpriteRenderer>().color = Color.blue;
@@ -377,15 +377,21 @@ public class TileManager : MonoBehaviour {
     {
         StartCoroutine(StartBattle());
 
-        playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
-        playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
-        playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
-        playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
+        //foreach(GameObject player in playerInstance)
+        //{
+        //    player.GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
+        //    player.GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
+        //}
+
+        //playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
+        //playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
+        //playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
+        //playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
         //playerInstance[1].GetComponent<Seeker>().startEndModifier.exactEndPoint = Pathfinding.StartEndModifier.Exactness.Original;
-        enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
-        enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
-        enemyInstance[1].GetComponent<EnemyController>().EnemyTile = tiles[8, 3].TileObject;
-        enemyInstance[1].GetComponent<AILerp>().target = tiles[8, 3].TileObject.transform;
+        //enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
+        //enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
+        //enemyInstance[1].GetComponent<EnemyController>().EnemyTile = tiles[8, 3].TileObject;
+        //enemyInstance[1].GetComponent<AILerp>().target = tiles[8, 3].TileObject.transform;
     }
     public IEnumerator StartBattle()
     { 
@@ -395,14 +401,6 @@ public class TileManager : MonoBehaviour {
         foreach(GameObject player in playerInstance)
         {
             while (!player.GetComponent<AILerp>().targetReached)
-            {
-                yield return null;
-            }
-        }
-
-        foreach (GameObject enemy in enemyInstance)
-        {
-            while (!enemy.GetComponent<AILerp>().targetReached)
             {
                 yield return null;
             }
@@ -447,6 +445,17 @@ public class TileManager : MonoBehaviour {
         GameManager.currentState = nextState;
     }
 
+    public static void AddEnemy(GameObject enemyGroup)
+    {
+        for (int i = 0; i < enemyGroup.transform.childCount; i++)
+        {
+            GameObject enemy = enemyGroup.transform.GetChild(i).gameObject;
+            enemy.GetComponent<SpriteRenderer>().enabled = true;
+            enemy.GetComponent<BoxCollider2D>().enabled = true;
+            enemyInstance.Add(enemy);
+        }
+    }
+
     public void CreateGrid(int width, int height)
     {
         tiles = new Tile[width, height];
@@ -476,8 +485,6 @@ public class TileManager : MonoBehaviour {
         GameObject player2 = null;
         GameObject player3 = null;
         GameObject player4 = null;
-        GameObject enemyInst = null;
-        GameObject enemyInst1 = null;
 
         //Populate with grid cell
         for (int x = 0; x < width; x++)
@@ -495,20 +502,20 @@ public class TileManager : MonoBehaviour {
                 tiles[x, y].TileObject = tileInstance;
 
 
-                if(x==10 && y==1)
-                {
-                    enemyInst = Instantiate(enemy[0]);
-                    enemyInst.transform.position = tileInstance.transform.position;
-                    enemyInst.GetComponent<EnemyController>().EnemyTile = tileInstance;
+                //if(x==10 && y==1)
+                //{
+                //    enemyInst = Instantiate(enemy[0]);
+                //    enemyInst.transform.position = tileInstance.transform.position;
+                //    enemyInst.GetComponent<EnemyController>().EnemyTile = tileInstance;
                     
-                }
+                //}
 
-                if (x == 11 && y == 1)
-                {
-                    enemyInst1 = Instantiate(enemy[1]);
-                    enemyInst1.transform.position = tileInstance.transform.position;
-                    enemyInst1.GetComponent<EnemyController>().EnemyTile = tileInstance;
-                }
+                //if (x == 11 && y == 1)
+                //{
+                //    enemyInst1 = Instantiate(enemy[1]);
+                //    enemyInst1.transform.position = tileInstance.transform.position;
+                //    enemyInst1.GetComponent<EnemyController>().EnemyTile = tileInstance;
+                //}
 
 
                 if (x==0 && y==4)
@@ -551,9 +558,20 @@ public class TileManager : MonoBehaviour {
         playerInstance.Add(player2);
         playerInstance.Add(player3);
         playerInstance.Add(player4);
+        
+        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            RaycastHit2D tile = Physics2D.Raycast(enemy.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap"));
 
-        enemyInstance.Add(enemyInst);
-        enemyInstance.Add(enemyInst1);
+            if (tile.collider.tag == "Tile")
+            {
+                enemy.GetComponent<EnemyController>().EnemyTile = tile.collider.gameObject;
+            }
+
+        }
+        
+        //enemyInstance.Add(enemyInst);
+        //enemyInstance.Add(enemyInst1);
     }
 
     // Get the camera bounds

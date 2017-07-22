@@ -37,10 +37,10 @@ public class PlayerController : ObjectController
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
             {
-                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("World")),
-                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("World")),
-                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("World")),
-                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("World"))
+                Physics2D.RaycastAll(transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("Default")),
+                Physics2D.RaycastAll(transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("Default"))
             };
 
 
@@ -48,8 +48,9 @@ public class PlayerController : ObjectController
             {
                 foreach (RaycastHit2D ray in rayCast)
                 {
-                    if (ray.collider.tag == "Enemy")
+                    if (ray.collider.tag == "EnemyGroup")
                     {
+                        TileManager.AddEnemy(ray.collider.gameObject);
                         GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
                         break;
                     }
