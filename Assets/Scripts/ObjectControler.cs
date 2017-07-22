@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class ObjectController : MonoBehaviour {
 
+    
+
     public int strength; // Attributo forza
     public int constitution; // Attributo costituzione
     public int skill; // Attributo destrezza
     public int mind; // Attributo intelligenza
-    public Type enemyBehaviour;
     public string ObjectName;
 
     //Stats of single enemy

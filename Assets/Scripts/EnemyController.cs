@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Type
-{
-    MELEE,
-    RANGED
-};
+
 
 public class EnemyController : ObjectController {
+
+    public enum EnemyType
+    {
+        MELEE,
+        RANGED
+    };
 
     private GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
     public bool canAttack;
     public GameObject playerAttacked;
+    public EnemyType enemyBehaviour;
 
     public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
     {
@@ -36,6 +39,9 @@ public class EnemyController : ObjectController {
             }
         }
 
+        
+
+        bool moveEnemy = true;
         canAttack = false;
         if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
         {
@@ -43,10 +49,10 @@ public class EnemyController : ObjectController {
             playerAttacked = closerPlayer;
         }
 
-        bool moveEnemy = true;
         GameObject closerTile = null;
 
-        if(Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f)
+        if((enemyBehaviour == EnemyType.RANGED && canAttack) ||  
+            (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
         {
             moveEnemy = false;
         }
