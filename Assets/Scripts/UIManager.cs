@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour {
 
     public Text popupDamage;
     public Text changeTurnText;
+    public Image fightImage;
 
 	public void ShowPopupDamage(int damage, Transform location)
     {
@@ -26,7 +27,20 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(DestroyText(turnText, 1.5f));
     }
 
+    public void ShowImageFight()
+    {
+        Image img = Instantiate(fightImage);
+        img.transform.SetParent(transform, false);
+        StartCoroutine(DestroyImage(img, 2.5f));
+    }
+
     IEnumerator DestroyText(Text obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(obj.gameObject);
+    }
+
+    IEnumerator DestroyImage(Image obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(obj.gameObject);

@@ -293,15 +293,18 @@ public class TileManager : MonoBehaviour {
                         break;
                     }
                 }
-                if (Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) > 1.5f)
+                if(playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED 
+                    && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
+                {
+                    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
+                }
+                else 
                 {
                     GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
                     playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
                     playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
                 }
-                
-                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
-
             }
         }
     }
@@ -400,22 +403,6 @@ public class TileManager : MonoBehaviour {
             }
 
         }
-
-        //foreach(GameObject player in playerInstance)
-        //{
-        //    player.GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
-        //    player.GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
-        //}
-
-        //playerInstance[0].GetComponent<AILerp>().target = tiles[1, 3].TileObject.transform;
-        //playerInstance[0].GetComponent<PlayerController>().PlayerTile = tiles[1, 3].TileObject;
-        //playerInstance[1].GetComponent<AILerp>().target = tiles[3, 3].TileObject.transform;
-        //playerInstance[1].GetComponent<PlayerController>().PlayerTile = tiles[3, 3].TileObject;
-        //playerInstance[1].GetComponent<Seeker>().startEndModifier.exactEndPoint = Pathfinding.StartEndModifier.Exactness.Original;
-        //enemyInstance[0].GetComponent<EnemyController>().EnemyTile = tiles[6, 3].TileObject;
-        //enemyInstance[0].GetComponent<AILerp>().target = tiles[6, 3].TileObject.transform;
-        //enemyInstance[1].GetComponent<EnemyController>().EnemyTile = tiles[8, 3].TileObject;
-        //enemyInstance[1].GetComponent<AILerp>().target = tiles[8, 3].TileObject.transform;
     }
 
     public static void AddEnemy(GameObject enemyGroup)
@@ -432,6 +419,7 @@ public class TileManager : MonoBehaviour {
             enemy.GetComponent<BoxCollider2D>().enabled = true;
             enemyInstance.Add(enemy);
         }
+        
         GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
     }
 
@@ -549,7 +537,26 @@ public class TileManager : MonoBehaviour {
             }
 
         }
-        
+
+        foreach (GameObject obstacle in GameObject.FindGameObjectsWithTag("Obstacle"))
+        {
+            List<RaycastHit2D> hits = new List<RaycastHit2D>(4)
+            {
+                Physics2D.Raycast(obstacle.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.Raycast(obstacle.transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.Raycast(obstacle.transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                Physics2D.Raycast(obstacle.transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridMap"))
+            };
+
+            foreach(RaycastHit2D tile in hits)
+            {
+                if (tile && tile.collider.tag == "Tile")
+                {
+                    tile.collider.GetComponent<Tile>().isWalkable = false;
+                }
+            }
+        }
+
         //enemyInstance.Add(enemyInst);
         //enemyInstance.Add(enemyInst1);
     }

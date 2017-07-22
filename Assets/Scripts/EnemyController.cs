@@ -61,7 +61,7 @@ public class EnemyController : ObjectController {
         {
             if(closerTile != null)
             {
-                if(!selectableTile[i].GetComponent<Tile>().isPlayer || !selectableTile[i].GetComponent<Tile>().isEnemy)
+                if(!selectableTile[i].GetComponent<Tile>().isPlayer && !selectableTile[i].GetComponent<Tile>().isEnemy)
                 {
                     float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
                     float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);

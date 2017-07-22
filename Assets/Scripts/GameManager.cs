@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.ENGAGE_ENEMY)
         {
+            turnManager.ShowBattleImage();
             tileManager.ShowGrid();
             turnManager.CalculateTurns(TileManager.playerInstance, TileManager.enemyInstance);
             tileManager.PositionBattle();

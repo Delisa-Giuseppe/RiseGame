@@ -22,6 +22,7 @@ public class CameraManager : MonoBehaviour {
         {
             MoveCamera();
         }
+
 	}
 
     public void MoveCamera()
@@ -40,16 +41,17 @@ public class CameraManager : MonoBehaviour {
             newDirection.x = transform.position.x;
         }
         
-        if (posY > initialPosition.y)
-        {
-            newDirection.y = posY;
-        }
-        else
-        {
+        //if (posY > initialPosition.y)
+        //{
+        //    newDirection.y = posY;
+        //}
+        //else
+        //{
             newDirection.y = transform.position.y;
 
-        }
+        //}
 
         transform.position = newDirection;
     }
+    
 }

@@ -149,4 +149,9 @@ public class TurnManager : MonoBehaviour {
 
         return found;
     }
+
+    public void ShowBattleImage()
+    {
+        UI.GetComponent<UIManager>().ShowImageFight();
+    }
 }
