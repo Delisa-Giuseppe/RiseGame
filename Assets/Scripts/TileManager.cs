@@ -426,7 +426,7 @@ public class TileManager : MonoBehaviour {
             yield return new WaitForSeconds(1);
         }
 
-        while (!mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
+        while (mover.tag != "Enemy" && !mover.GetComponent<AILerp>().targetReached && mover.GetComponent<AILerp>().canMove)
         {
             yield return null;
         }
