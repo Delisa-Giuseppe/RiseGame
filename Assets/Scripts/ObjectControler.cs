@@ -14,7 +14,8 @@ public class ObjectController : MonoBehaviour {
     public string ObjectName;
 
     //Stats of single enemy
-    protected int health;
+    public int totalHealth;
+    public int currentHealth;
     protected int physicAttack;
     protected int magicAttack;
     public int moves;
@@ -22,7 +23,6 @@ public class ObjectController : MonoBehaviour {
     protected int evasion;
 
     private GameObject UI;
-
 
     private void Awake()
     {
@@ -32,24 +32,25 @@ public class ObjectController : MonoBehaviour {
 
     private void CalculateStatistics()
     {
-        health = 2 * strength + 6 * constitution + 2 * mind;
+        totalHealth = 2 * strength + 6 * constitution + 2 * mind;
         magicAttack = 5 * mind;
         physicAttack = 3 * strength + constitution;
         moves = Mathf.FloorToInt(skill / 3);
         critic = skill;
         evasion = skill;
+        currentHealth = totalHealth;
     }
 
 
     protected void OnHit(GameObject target)
     {
         UI.GetComponent<UIManager>().ShowPopupDamage(physicAttack, target.transform);
-        target.GetComponent<ObjectController>().health = target.GetComponent<ObjectController>().health - physicAttack;
+        target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - physicAttack;
     }
 
     protected bool IsDead(ObjectController target)
     {
-        if(target.health <= 0)
+        if(target.currentHealth <= 0)
         {
             return true;
         }

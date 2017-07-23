@@ -17,8 +17,8 @@ public class Tile : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" && collision.GetComponent<Tile>().isWalkable
-            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || collision.GetComponent<Tile>().isPlayer))
+        if(TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile"
+            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || (collision.GetComponent<Tile>().isWalkable && collision.GetComponent<Tile>().isPlayer)))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
