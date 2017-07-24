@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour {
     public List<Sprite> enemiesIcon;
     public GameObject enemyContainer;
     public GameObject enemyUI;
+    public List<GameObject> playersTurns;
 
     private List<GameObject> healthEnemies;
 
@@ -32,7 +33,6 @@ public class UIManager : MonoBehaviour {
     public void ShowPopupDamage(int damage, Transform location)
     {
         Text popup = Instantiate(popupDamage);
-        Vector2 screenPosition = Camera.main.WorldToScreenPoint(new Vector2(location.position.x + Random.Range(-5f, 5f), location.position.y + Random.Range(-10f, 10f)));
         popup.transform.SetParent(transform, false);
         popup.transform.position = location.position;
         popup.text = damage.ToString();
@@ -77,7 +77,10 @@ public class UIManager : MonoBehaviour {
                 if (enemyUIInstance.transform.GetChild(p).name == "HealthText")
                 {
                     enemyUIInstance.transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + enemyInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + enemyInstance[i].GetComponent<ObjectController>().totalHealth.ToString());
-                    break;
+                }
+                else if (enemyUIInstance && enemyUIInstance.transform.GetChild(p).name == "EnemyImage")
+                {
+                    enemyUIInstance.transform.GetChild(p).GetComponent<Image>().sprite = enemyInstance[i].GetComponent<SpriteRenderer>().sprite;
                 }
             }
 
@@ -92,11 +95,13 @@ public class UIManager : MonoBehaviour {
     {
         Destroy(healthEnemies[enemyPosition]);
         healthEnemies[enemyPosition] = null;
-        //healthEnemies.RemoveAt(enemyPosition);
     }
 
     public void ClearEnemyList()
     {
+        enemyContainer.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
+        enemyContainer.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
+        enemyContainer.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
         healthEnemies.Clear();
     }
 
@@ -109,6 +114,39 @@ public class UIManager : MonoBehaviour {
                 healthEnemies[enemyNumber].transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + target.GetComponent<ObjectController>().currentHealth.ToString() + "/" + target.GetComponent<ObjectController>().totalHealth.ToString());
                 break;
             }
+        }
+    }
+
+    public void SetPlayerTurnColor(GameObject player)
+    {
+        int playerNumber = player.GetComponent<PlayerController>().playerNumber;
+        Color tileColor = player.GetComponent<PlayerController>().colorTile;
+        playersTurns[playerNumber].GetComponent<Image>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 0.5f);
+    }
+
+    public void SetEnemyTurnColor(GameObject enemy)
+    {
+        int enemyNumber = enemy.GetComponent<EnemyController>().position;
+        Color tileColor = enemy.GetComponent<EnemyController>().colorTile;
+        healthEnemies[enemyNumber].GetComponent<Image>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 0.5f);
+    }
+
+    public void ResetColor()
+    {
+        foreach(GameObject ui in playersTurns)
+        {
+            if(ui)
+            {
+                ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.5f);
+            }
+        }
+
+        foreach (GameObject ui in healthEnemies)
+        {
+            if(ui)
+            {
+                ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.5f);
+            }   
         }
     }
 

@@ -64,7 +64,8 @@ public class TurnManager : MonoBehaviour {
 
     public GameObject GetNextTurn()
     {
-        if(currentTurn > turns.Count)
+        UI.GetComponent<UIManager>().ResetColor();
+        if (currentTurn > turns.Count)
         {
             currentTurn = 0;
         }
@@ -78,6 +79,15 @@ public class TurnManager : MonoBehaviour {
         }
         
         UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().ObjectName + " Turn");
+        if(currentObjectTurn.tag == "Player")
+        {
+            UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
+        }
+        else if(currentObjectTurn.tag == "Enemy")
+        {
+            UI.GetComponent<UIManager>().SetEnemyTurnColor(currentObjectTurn);
+        }
+        
         StartCoroutine(Wait(1.5f));
         return currentObjectTurn;
     }
@@ -113,12 +123,12 @@ public class TurnManager : MonoBehaviour {
         if(AreEnemiesAlive(enemies))
         {
             CalculateTurns(players, enemies);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             GameManager.currentState = GameManager.States.SELECT;
         }
         else
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
 
@@ -129,6 +139,7 @@ public class TurnManager : MonoBehaviour {
         currentTurnState = TurnStates.FINISH;
         if (currentTurn == turns.Count)
         {
+            UI.GetComponent<UIManager>().ResetColor();
             return true;
         }
         else

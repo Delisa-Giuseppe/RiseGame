@@ -14,6 +14,7 @@ public class Tile : MonoBehaviour {
     public bool isEnemy;
     public bool isPlayer;
     public bool isObstacle;
+    public static Color tileColor;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -38,7 +39,7 @@ public class Tile : MonoBehaviour {
     IEnumerator WaitColor(Collider2D collision)
     {
         yield return new WaitForSeconds(1.5f);
-        collision.GetComponent<SpriteRenderer>().color = Color.red;
+        collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 1f);
     }
 
     public int ArrayX

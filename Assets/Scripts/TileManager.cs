@@ -171,7 +171,7 @@ public class TileManager : MonoBehaviour {
     {
         foreach(Tile tile in tiles)
         {
-            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 1f);
+            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.2f);
         }
     }
 
@@ -283,7 +283,7 @@ public class TileManager : MonoBehaviour {
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
             else if(hit.collider != null && hit.collider.tag == "Enemy" ||
-                (hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
+                (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
             {
                 GameObject enemyTarget = null;
                 foreach(GameObject enemy in enemyInstance)
@@ -321,12 +321,14 @@ public class TileManager : MonoBehaviour {
         {
             objectTurn.GetComponent<AILerp>().target = null;
             moves = objectTurn.GetComponent<PlayerController>().moves;
+            Tile.tileColor = objectTurn.GetComponent<PlayerController>().colorTile;
             SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
             
         }
         else if(objectTurn.tag == "Enemy")
         {
             moves = objectTurn.GetComponent<EnemyController>().moves;
+            Tile.tileColor = objectTurn.GetComponent<EnemyController>().colorTile;
             SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
@@ -346,7 +348,7 @@ public class TileManager : MonoBehaviour {
             tileObj.GetComponent<Tile>().isChecked = false;
             tileObj.GetComponent<Tile>().isSelected = false;
             //tileObj.GetComponent<Tile>().isWalkable = false;
-            tileObj.GetComponent<SpriteRenderer>().color = Color.white;
+            tileObj.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.2f);
         }
         tilesSelectable.Clear();
     }
@@ -435,17 +437,11 @@ public class TileManager : MonoBehaviour {
         float sizeX = gridCell.GetComponent<SpriteRenderer>().bounds.size.x;
         float sizeY = gridCell.GetComponent<SpriteRenderer>().bounds.size.y;
 
-        //Get the lowest bound camera position for the start position of the tile
-        Bounds cameraBounds = OrthographicBounds(Camera.main);
         //grid.transform.position = new Vector3(cameraBounds.min.x + sizeX / 2, cameraBounds.min.y + sizeY / 2);
 
         GameObject pathfind = GameObject.FindGameObjectWithTag("Pathfind");
         grid.transform.position = new Vector3(pathfind.transform.position.x + sizeX / 2, pathfind.transform.position.y + sizeY / 2);
 
-        /** TO REMOVE **/
-        int rndX = Mathf.FloorToInt(Random.Range(0, width));
-        int rndY = Mathf.FloorToInt(Random.Range(0, height));
-        /** END TO REMOVE **/
         GameObject player1 = null;
         GameObject player2 = null;
         GameObject player3 = null;
@@ -526,7 +522,7 @@ public class TileManager : MonoBehaviour {
         
         foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
-            RaycastHit2D tile = Physics2D.Raycast(enemy.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridMap"));
+            RaycastHit2D tile = Physics2D.Raycast(enemy.transform.position, new Vector2(0, 1), 0.5f, 1 << LayerMask.NameToLayer("GridMap"));
 
             if (tile.collider.tag == "Tile")
             {
@@ -594,6 +590,7 @@ public class TileManager : MonoBehaviour {
 
         if (attack && mover.tag == "Player")
         {
+            yield return new WaitForSeconds(1f);
             mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
         }
         else if (attack && mover.tag == "Enemy")

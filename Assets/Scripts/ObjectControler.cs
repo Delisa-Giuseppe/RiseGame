@@ -12,6 +12,7 @@ public class ObjectController : MonoBehaviour {
     public int skill; // Attributo destrezza
     public int mind; // Attributo intelligenza
     public string ObjectName;
+    public Color colorTile;
 
     //Stats of single enemy
     public int totalHealth;

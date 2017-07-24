@@ -29,10 +29,15 @@ public class PlayerController : ObjectController
             if(playerTile != null && value != null)
             {
                 playerTile.GetComponent<Tile>().isPlayer = false;
-                value.GetComponent<Tile>().isPlayer = true;
                 playerTile.GetComponent<Tile>().isWalkable = true;
+            }
+
+            if(value != null)
+            {
+                value.GetComponent<Tile>().isPlayer = true;
                 value.GetComponent<Tile>().isWalkable = false;
             }
+
             playerTile = value;
         }
     }
