@@ -35,7 +35,7 @@ public class ObjectController : MonoBehaviour {
         totalHealth = 2 * strength + 6 * constitution + 2 * mind;
         magicAttack = 5 * mind;
         physicAttack = 3 * strength + constitution;
-        moves = Mathf.FloorToInt(skill / 3);
+        moves = Mathf.CeilToInt(skill / 3f);
         critic = skill;
         evasion = skill;
         currentHealth = totalHealth;
@@ -46,12 +46,20 @@ public class ObjectController : MonoBehaviour {
     {
         UI.GetComponent<UIManager>().ShowPopupDamage(physicAttack, target.transform);
         target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - physicAttack;
+        if (target.tag == "Enemy")
+        {
+            UI.GetComponent<UIManager>().SetEnemyHealth(target.GetComponent<EnemyController>().position, target);
+        }
     }
 
     protected bool IsDead(ObjectController target)
     {
         if(target.currentHealth <= 0)
         {
+            if(target.tag == "Enemy")
+            {
+                UI.GetComponent<UIManager>().DestroyEnemyUI(target.GetComponent<EnemyController>().position);
+            }
             return true;
         }
         else

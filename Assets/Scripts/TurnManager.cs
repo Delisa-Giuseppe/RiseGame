@@ -26,6 +26,11 @@ public class TurnManager : MonoBehaviour {
         UI = GameObject.Find("UI");
     }
 
+    public void CreateEnemyUI(List<GameObject> enemyInstance)
+    {
+        UI.GetComponent<UIManager>().CreateEnemyUI(enemyInstance);
+    }
+
     //Calculate turns
     public void CalculateTurns(List<GameObject> players, List<GameObject> enemies)
     {
@@ -59,6 +64,11 @@ public class TurnManager : MonoBehaviour {
 
     public GameObject GetNextTurn()
     {
+        if(currentTurn > turns.Count)
+        {
+            currentTurn = 0;
+        }
+
         currentObjectTurn = turns[currentTurn];
         currentTurn++;
         if(currentObjectTurn == null)
@@ -147,6 +157,10 @@ public class TurnManager : MonoBehaviour {
             
         }
 
+        if(!found)
+        {
+            UI.GetComponent<UIManager>().ClearEnemyList();
+        }
         return found;
     }
 

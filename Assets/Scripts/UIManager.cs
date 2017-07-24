@@ -12,6 +12,12 @@ public class UIManager : MonoBehaviour {
     public List<Image> playersImage;
     public List<TextMeshProUGUI> healthTexts;
     public List<Sprite> playersIcon;
+    public List<Sprite> enemiesIcon;
+    public GameObject enemyContainer;
+    public GameObject enemyUI;
+
+    private List<GameObject> healthEnemies;
+
 
     private void Awake()
     {
@@ -56,6 +62,55 @@ public class UIManager : MonoBehaviour {
         healthTexts[3].SetText("HP " + TileManager.playerInstance[3].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[3].GetComponent<ObjectController>().totalHealth.ToString());
     }
 
+    public void CreateEnemyUI(List<GameObject> enemyInstance)
+    {
+        healthEnemies = new List<GameObject>();
+        for (int i=0;i<enemyInstance.Count;i++)
+        {
+            GameObject enemyUIInstance = Instantiate(enemyUI);
+            enemyUIInstance.transform.SetParent(enemyContainer.transform, false);
+            Vector3 position = new Vector3(enemyUI.transform.position.x, enemyUI.transform.position.y - (100 * i));
+            enemyUIInstance.transform.localPosition = position;
+
+            for (int p = 0; p < enemyUIInstance.transform.childCount; p++)
+            {
+                if (enemyUIInstance.transform.GetChild(p).name == "HealthText")
+                {
+                    enemyUIInstance.transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + enemyInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + enemyInstance[i].GetComponent<ObjectController>().totalHealth.ToString());
+                    break;
+                }
+            }
+
+            healthEnemies.Add(enemyUIInstance);
+        }
+        enemyContainer.GetComponent<RectTransform>().anchorMin = new Vector2(1, 1);
+        enemyContainer.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
+        enemyContainer.GetComponent<RectTransform>().pivot = new Vector2(1, 1);
+    }
+
+    public void DestroyEnemyUI(int enemyPosition)
+    {
+        Destroy(healthEnemies[enemyPosition]);
+        healthEnemies[enemyPosition] = null;
+        //healthEnemies.RemoveAt(enemyPosition);
+    }
+
+    public void ClearEnemyList()
+    {
+        healthEnemies.Clear();
+    }
+
+    public void SetEnemyHealth(int enemyNumber, GameObject target)
+    {
+        for (int p = 0; p < healthEnemies[enemyNumber].transform.childCount; p++)
+        {
+            if (healthEnemies[enemyNumber] && healthEnemies[enemyNumber].transform.GetChild(p).name == "HealthText")
+            {
+                healthEnemies[enemyNumber].transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + target.GetComponent<ObjectController>().currentHealth.ToString() + "/" + target.GetComponent<ObjectController>().totalHealth.ToString());
+                break;
+            }
+        }
+    }
 
     IEnumerator SetPlayersImage()
     {

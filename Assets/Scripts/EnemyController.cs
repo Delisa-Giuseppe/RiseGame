@@ -17,6 +17,7 @@ public class EnemyController : ObjectController {
     public bool canAttack;
     public GameObject playerAttacked;
     public EnemyType enemyBehaviour;
+    public int position;
 
     public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
     {
@@ -145,8 +146,10 @@ public class EnemyController : ObjectController {
 
         set
         {
-            if(enemyTile != null)
+            if(enemyTile != null && value != null)
             {
+                enemyTile.GetComponent<Tile>().isWalkable = true;
+                value.GetComponent<Tile>().isWalkable = false;
                 enemyTile.GetComponent<Tile>().isEnemy = false;
                 value.GetComponent<Tile>().isEnemy = true;
             }

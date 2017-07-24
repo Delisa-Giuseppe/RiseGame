@@ -178,10 +178,10 @@ public class TileManager : MonoBehaviour {
     public void HideGrid()
     {
         AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask - (LayerMask) Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
-        //foreach(GameObject player in playerInstance)
-        //{
-        //    player.GetComponent<AILerp>().canMove = true;
-        //}
+        foreach (GameObject player in playerInstance)
+        {
+            player.GetComponent<AILerp>().canMove = true;
+        }
         foreach (Tile tile in tiles)
         {
             tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0f);
@@ -198,9 +198,10 @@ public class TileManager : MonoBehaviour {
             if (hit.collider != null)
             {
                 Destroy(targetInstance);
-                targetInstance = Instantiate(target, hit.collider.transform);
+                targetInstance = Instantiate(target);
+                targetInstance.transform.position = hit.collider.transform.position;
 
-                if(previousTile != null)
+                if (previousTile != null)
                 {
                     if (previousTile.tag == "Tile")
                     {
@@ -329,7 +330,7 @@ public class TileManager : MonoBehaviour {
             SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
         }
 
-        //objectTurn.GetComponent<AILerp>().canMove = true;
+        objectTurn.GetComponent<AILerp>().canMove = true;
         StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
         //GameManager.currentState = GameManager.States.MOVE;
     }
@@ -388,20 +389,16 @@ public class TileManager : MonoBehaviour {
                 
                 //playerInstance[i].GetComponent<AILerp>().target.position = startPointRanged;
             }
-            foreach (Vector3 position in positions)
-            {
-                foreach (Tile cell in tiles)
-                {
-                    if (cell.transform.position == position)
-                    {
-                        playerInstance[i].GetComponent<AILerp>().target = cell.TileObject.transform;
-                        playerInstance[i].GetComponent<PlayerController>().PlayerTile = cell.TileObject;
-                        break;
-                    }
-                }
-                
-            }
 
+            foreach (Tile cell in tiles)
+            {
+                if (cell.transform.position == positions[i])
+                {
+                    playerInstance[i].GetComponent<AILerp>().target = cell.TileObject.transform;
+                    playerInstance[i].GetComponent<PlayerController>().PlayerTile = cell.TileObject;
+                    break;
+                }
+            }
         }
     }
 
@@ -413,10 +410,11 @@ public class TileManager : MonoBehaviour {
             GameObject enemy = enemyGroup.transform.GetChild(i).gameObject;
             if(i==0)
             {
-                playerBattlePosition = enemy.transform.position;
+                playerBattlePosition = new Vector3(enemy.transform.position.x, -0.52f);
             }
             enemy.GetComponent<SpriteRenderer>().enabled = true;
             enemy.GetComponent<BoxCollider2D>().enabled = true;
+            enemy.GetComponent<EnemyController>().position = i;
             enemyInstance.Add(enemy);
         }
         
@@ -605,6 +603,7 @@ public class TileManager : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(0.5f);
+        
         GameManager.refreshPath = true;
         GameManager.currentState = nextState;
     }
@@ -613,7 +612,7 @@ public class TileManager : MonoBehaviour {
     {
         yield return new WaitForSeconds(1f);
 
-        if (tilesSelectable.Count == 0)
+        while (tilesSelectable.Count == 0)
         {
             yield return null;
         }
@@ -646,6 +645,12 @@ public class TileManager : MonoBehaviour {
         yield return new WaitForSeconds(0.8f);
 
         AstarPath.active.graphs[0].GetGridGraph().collision.mask = AstarPath.active.graphs[0].GetGridGraph().collision.mask + (LayerMask)Mathf.Pow(2, LayerMask.NameToLayer("GridMap"));
+
+        foreach (GameObject player in playerInstance)
+        {
+            player.GetComponent<AILerp>().target = null;
+        }
+        
         GameManager.currentState = GameManager.States.SELECT;
     }
 }

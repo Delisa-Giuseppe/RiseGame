@@ -25,8 +25,8 @@ public class Tile : MonoBehaviour {
             collision.GetComponent<Tile>().isSelected = true;
             StartCoroutine(WaitColor(collision));
         }
-        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" && collision.GetComponent<Tile>().isWalkable
-            && !collision.GetComponent<Tile>().isChecked && !collision.GetComponent<Tile>().isPlayer)
+        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" 
+            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy)))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
             collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
