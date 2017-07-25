@@ -18,6 +18,8 @@ public class EnemyController : ObjectController {
     public GameObject playerAttacked;
     public EnemyType enemyBehaviour;
     public int position;
+    public bool canMove;
+    public static bool hasMoved = true;
 
     public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
     {
@@ -40,9 +42,7 @@ public class EnemyController : ObjectController {
             }
         }
 
-        
-
-        bool moveEnemy = true;
+        canMove = hasMoved;
         canAttack = false;
         if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
         {
@@ -52,13 +52,13 @@ public class EnemyController : ObjectController {
 
         GameObject closerTile = null;
 
-        if((enemyBehaviour == EnemyType.RANGED && canAttack) ||  
-            (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
-        {
-            moveEnemy = false;
-        }
+        //if((enemyBehaviour == EnemyType.RANGED && canAttack) ||  
+        //    (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
+        //{
+            
+        //}
 
-        for (int i = 0; moveEnemy && i < selectableTile.Count; i++)
+        for (int i = 0; canMove && i < selectableTile.Count; i++)
         {
             if(closerTile != null)
             {
@@ -78,8 +78,9 @@ public class EnemyController : ObjectController {
             }
         }
 
-        if (moveEnemy)
+        if (!canAttack && canMove)
         {
+            hasMoved = false;
             EnemyTile = closerTile;
             //transform.position = closerTile.transform.position;
             GetComponent<AILerp>().target = closerTile.transform;
@@ -167,12 +168,14 @@ public class EnemyController : ObjectController {
         OnHit(target);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
-            target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isEnemy = false;
+            target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
             Destroy(target);
             TileManager.playerInstance.Remove(target);
         }
-
-        StartCoroutine(ResetColor(target));
+        else
+        {
+            StartCoroutine(ResetColor(target));
+        }
     }
 
     IEnumerator ResetColor(GameObject obj)

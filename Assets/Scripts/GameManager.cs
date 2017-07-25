@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 
     TileManager tileManager;
     TurnManager turnManager;
-    GameObject pathfind;
+    static GameObject pathfind;
 
     // Use this for initialization
     void Start () {
@@ -55,7 +55,11 @@ public class GameManager : MonoBehaviour {
             }
             else if(TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
             {
-                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+                if(TurnManager.currentObjectTurn.tag == "Player")
+                {
+                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+                }
+                
                 tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
             }
         }
@@ -120,14 +124,17 @@ public class GameManager : MonoBehaviour {
 
         if (refreshPath)
         {
-            pathfind.GetComponent<AstarPath>().Scan();
+            
             refreshPath = false;
         }
 
-        if (currentState == States.MOVE && TurnManager.currentObjectTurn.tag == "Enemy" && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
         {
-            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-            tileManager.MoveEnemy(TurnManager.currentObjectTurn);
+            if(currentState == States.MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
+            {
+                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+                tileManager.MoveEnemy(TurnManager.currentObjectTurn);
+            }
         }
 
         if (currentState == States.ENGAGE_ENEMY)
@@ -152,6 +159,10 @@ public class GameManager : MonoBehaviour {
                 {
                     PlayerController.canMove = true;
                 }
+                else if(TurnManager.currentObjectTurn.tag == "Enemy")
+                {
+                    EnemyController.hasMoved = true;
+                }
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
             }
             else
@@ -168,6 +179,10 @@ public class GameManager : MonoBehaviour {
                         StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.PRE_FIGHT, TurnManager.TurnStates.EXECUTE));
                     }
                 }
+                else if(TurnManager.currentObjectTurn.tag == "Enemy")
+                {
+                    StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.EXECUTE));
+                }
             }
             
         }
@@ -181,6 +196,7 @@ public class GameManager : MonoBehaviour {
 
     public static void RefreshPath()
     {
-        GameManager.refreshPath = true;
+        pathfind.GetComponent<AstarPath>().Scan();
+        //GameManager.refreshPath = true;
     }
 }

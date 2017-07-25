@@ -630,7 +630,6 @@ public class TileManager : MonoBehaviour {
         }
         else if (attack && mover.tag == "Enemy")
         {
-            yield return new WaitForSeconds(1f);
             mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
         }
 
@@ -641,19 +640,24 @@ public class TileManager : MonoBehaviour {
             Tile.movable = true;
         }
 
-        GameManager.refreshPath = true;
+        if(mover.tag == "Player")
+        {
+            GameManager.RefreshPath();
+        }
+        
         GameManager.currentState = nextState;
     }
 
     private IEnumerator WaitListTile(GameObject enemy)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
         while (tilesSelectable.Count == 0)
         {
             yield return null;
         }
 
+        GameManager.RefreshPath();
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
 

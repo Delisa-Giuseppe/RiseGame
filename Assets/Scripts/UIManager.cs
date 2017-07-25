@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour {
         Text turnText = Instantiate(changeTurnText);
         turnText.transform.SetParent(transform, false);
         turnText.text = text;
-        StartCoroutine(DestroyText(turnText, 1.5f));
+        StartCoroutine(DestroyText(turnText, 1f));
     }
 
     public void ShowImageFight()
@@ -54,10 +54,13 @@ public class UIManager : MonoBehaviour {
 
     public void SetTextHealth()
     {
-        healthTexts[0].SetText(TileManager.playerInstance[0].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[0].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-        healthTexts[1].SetText(TileManager.playerInstance[1].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[1].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-        healthTexts[2].SetText(TileManager.playerInstance[2].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[2].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-        healthTexts[3].SetText(TileManager.playerInstance[3].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[3].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+        for(int i=0; i<TileManager.playerInstance.Count;i++)
+        {
+            if (TileManager.playerInstance[i])
+            {
+                healthTexts[i].SetText(TileManager.playerInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+            }
+        }
     }
 
     public void CreateEnemyUI(List<GameObject> enemyInstance)
@@ -141,9 +144,6 @@ public class UIManager : MonoBehaviour {
                 }
             }
         }
-
-        
-        
     }
 
     IEnumerator DestroyText(Text obj, float delay)

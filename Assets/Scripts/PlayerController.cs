@@ -84,7 +84,10 @@ public class PlayerController : ObjectController
             Destroy(target);
             TileManager.enemyInstance.Remove(target);
         }
-        StartCoroutine(ResetColor(target));
+        else
+        {
+            StartCoroutine(ResetColor(target));
+        }
     }
 
     IEnumerator ResetColor(GameObject obj)
