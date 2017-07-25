@@ -24,7 +24,7 @@ public class Tile : MonoBehaviour {
     private void OnMouseOver()
     {
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
-            && isSelected && movable)
+            && !isEnemy && !isObstacle && isSelected && movable)
         {
             SetImageSprite(borderFull);
         }
@@ -33,7 +33,7 @@ public class Tile : MonoBehaviour {
     private void OnMouseExit()
     {
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
-            && isSelected && movable)
+            && !isEnemy && !isObstacle && isSelected && movable)
         {
             SetImageSprite(borderEmpty);
         }

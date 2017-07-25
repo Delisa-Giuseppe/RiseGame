@@ -6,10 +6,10 @@ using UnityEngine;
 public class PlayerController : ObjectController
 {
 
-    public GameObject playerTile;
+    private GameObject playerTile;
     public int playerNumber;
 
-    private bool canMove;
+    public static bool canMove;
 
     public enum PlayerType
     {
@@ -41,19 +41,6 @@ public class PlayerController : ObjectController
             }
 
             playerTile = value;
-        }
-    }
-
-    public bool CanMove
-    {
-        get
-        {
-            return canMove;
-        }
-
-        set
-        {
-            canMove = value;
         }
     }
 
@@ -93,6 +80,7 @@ public class PlayerController : ObjectController
         OnHit(target);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
+            target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
             Destroy(target);
             TileManager.enemyInstance.Remove(target);
         }

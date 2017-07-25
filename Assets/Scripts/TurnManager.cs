@@ -76,14 +76,14 @@ public class TurnManager : MonoBehaviour {
             currentObjectTurn = turns[currentTurn];
             currentTurn++;
         }
-        
+        PlayerController.canMove = true;
         UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().ObjectName + " Turn");
         if(currentObjectTurn.tag == "Player")
         {
             UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
         }
         
-        StartCoroutine(Wait(1.5f));
+        StartCoroutine(Wait(2f));
         return currentObjectTurn;
     }
 
@@ -106,10 +106,9 @@ public class TurnManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator RecalculateTurn(List<GameObject> players, List<GameObject> enemies)
+    public IEnumerator RecalculateTurn(List<GameObject> players, List<GameObject> enemies, GameManager.States nextState, TurnManager.TurnStates turnState)
     {
         GameManager.currentState = GameManager.States.WAIT;
-        yield return new WaitForEndOfFrame();
         if(IsAllTurnFinished())
         {
             currentTurn = 0;
@@ -129,13 +128,14 @@ public class TurnManager : MonoBehaviour {
             {
                 turns.Remove(remove);
             }
-            
-            yield return new WaitForSeconds(2f);
-            GameManager.currentState = GameManager.States.SELECT;
+
+            yield return new WaitForSeconds(1f);
+            GameManager.currentState = nextState;
+            currentTurnState = turnState;
         }
         else
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1.5f);
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
 
@@ -144,9 +144,9 @@ public class TurnManager : MonoBehaviour {
     public bool IsAllTurnFinished()
     {
         currentTurnState = TurnStates.FINISH;
-        if (currentTurn == turns.Count)
-        {
-            UI.GetComponent<UIManager>().ResetColor();
+        UI.GetComponent<UIManager>().ResetColor();
+        if (currentTurn == turns.Count){
+            
             return true;
         }
         else
@@ -165,7 +165,6 @@ public class TurnManager : MonoBehaviour {
             {
                 if(enemy != null)
                 {
-                    currentTurnState = TurnStates.INIT;
                     found = true;
                 }
                 else

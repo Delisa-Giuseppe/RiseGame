@@ -60,12 +60,14 @@ public class GameManager : MonoBehaviour {
             }
         }
 
-        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space))
+        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space) 
+            && (currentState == States.MOVE || currentState == States.FIGHT))
         {
             pointAction = maxPointAction;
             tileManager.ResetGrid();
             currentState = States.SELECT;
             TurnManager.currentTurnState = TurnManager.TurnStates.INIT;
+            PlayerController.canMove = true;
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -94,11 +96,11 @@ public class GameManager : MonoBehaviour {
             
            if(currentState == States.FIGHT)
            {
-                if(tileManager.CheckEnemy())
+                if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && tileManager.CheckEnemy())
                 {
                     tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
                 }
-                else if(pointAction > maxPointAction / 2)
+                else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && PlayerController.canMove)
                 {
                     tileManager.ResetGrid();
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
@@ -106,7 +108,7 @@ public class GameManager : MonoBehaviour {
            }
         }
 
-        if ((Input.GetMouseButtonDown(1) && currentState == States.MOVE) || currentState == States.PRE_FIGHT)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (Input.GetMouseButtonDown(1) && currentState == States.MOVE) || currentState == States.PRE_FIGHT)
         {
             currentState = States.FIGHT;
             if (TurnManager.currentObjectTurn.tag == "Player")
@@ -139,6 +141,7 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
+            Debug.Log(TurnManager.currentObjectTurn.name + "  "+ pointAction);
             pointAction--;
             if(pointAction <=0)
             {
@@ -147,23 +150,22 @@ public class GameManager : MonoBehaviour {
                 tileManager.ResetGrid();
                 if (TurnManager.currentObjectTurn.tag == "Player")
                 {
-                    TurnManager.currentObjectTurn.GetComponent<PlayerController>().CanMove = true;
+                    PlayerController.canMove = true;
                 }
-                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
+                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
             }
             else
             {
                 tileManager.ResetGrid();
                 if (TurnManager.currentObjectTurn.tag == "Player")
                 {
-                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
-                    if (TurnManager.currentObjectTurn.GetComponent<PlayerController>().CanMove)
+                    if (PlayerController.canMove)
                     {
-                        currentState = States.SELECT;
+                        StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.EXECUTE));
                     }
                     else
                     {
-                        currentState = States.PRE_FIGHT;
+                        StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.PRE_FIGHT, TurnManager.TurnStates.EXECUTE));
                     }
                 }
             }

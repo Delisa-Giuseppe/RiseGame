@@ -275,7 +275,7 @@ public class TileManager : MonoBehaviour {
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
-                playerInstance[playerNumber].GetComponent<PlayerController>().CanMove = false;
+                PlayerController.canMove = false;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
         }
@@ -615,9 +615,6 @@ public class TileManager : MonoBehaviour {
             yield return new WaitForSeconds(1);
         }
 
-        
-        
-
         if(mover.GetComponent<AILerp>().target != null)
         {
             while (!mover.GetComponent<AILerp>().targetReached) //&& mover.GetComponent<AILerp>().canMove)
@@ -629,7 +626,6 @@ public class TileManager : MonoBehaviour {
 
         if (attack && mover.tag == "Player")
         {
-            yield return new WaitForSeconds(1f);
             mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
         }
         else if (attack && mover.tag == "Enemy")

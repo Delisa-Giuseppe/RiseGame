@@ -12,7 +12,7 @@ public class EnemyController : ObjectController {
         RANGED
     };
 
-    public GameObject enemyTile;
+    private GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
     public bool canAttack;
     public GameObject playerAttacked;
@@ -167,6 +167,7 @@ public class EnemyController : ObjectController {
         OnHit(target);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
+            target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isEnemy = false;
             Destroy(target);
             TileManager.playerInstance.Remove(target);
         }
