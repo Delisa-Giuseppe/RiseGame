@@ -82,10 +82,6 @@ public class TurnManager : MonoBehaviour {
         {
             UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
         }
-        else if(currentObjectTurn.tag == "Enemy")
-        {
-            UI.GetComponent<UIManager>().SetEnemyTurnColor(currentObjectTurn);
-        }
         
         StartCoroutine(Wait(1.5f));
         return currentObjectTurn;
@@ -121,13 +117,19 @@ public class TurnManager : MonoBehaviour {
         
         if(AreEnemiesAlive(enemies))
         {
+            List<GameObject> removeTurn = new List<GameObject>();
             foreach (GameObject turn in turns)
             {
                 if (turn == null)
                 {
-                    turns.Remove(turn);
+                    removeTurn.Add(turn);
                 }
             }
+            foreach(GameObject remove in removeTurn)
+            {
+                turns.Remove(remove);
+            }
+            
             yield return new WaitForSeconds(2f);
             GameManager.currentState = GameManager.States.SELECT;
         }

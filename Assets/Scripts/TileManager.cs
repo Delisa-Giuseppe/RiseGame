@@ -165,6 +165,7 @@ public class TileManager : MonoBehaviour {
     {
         foreach(Tile tile in tiles)
         {
+            tile.GetComponent<Tile>().ResetSpriteImage();
             tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.2f);
         }
     }
@@ -288,10 +289,6 @@ public class TileManager : MonoBehaviour {
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
         }
         return false;
     }
@@ -383,6 +380,7 @@ public class TileManager : MonoBehaviour {
             tileObj.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
             tileObj.GetComponent<Tile>().isChecked = false;
             tileObj.GetComponent<Tile>().isSelected = false;
+            tileObj.GetComponent<Tile>().ResetSpriteImage();
             //tileObj.GetComponent<Tile>().isWalkable = false;
             tileObj.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.2f);
         }
@@ -605,8 +603,10 @@ public class TileManager : MonoBehaviour {
     public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
+
         if ((nextState == GameManager.States.MOVE || nextState == GameManager.States.FIGHT) && mover.tag == "Player")
         {
+            Tile.movable = false;
             yield return new WaitForSeconds(0.5f);
             mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         }
@@ -614,6 +614,9 @@ public class TileManager : MonoBehaviour {
         {
             yield return new WaitForSeconds(1);
         }
+
+        
+        
 
         if(mover.GetComponent<AILerp>().target != null)
         {
@@ -636,7 +639,12 @@ public class TileManager : MonoBehaviour {
         }
 
         yield return new WaitForSeconds(0.5f);
-        
+
+        if (nextState == GameManager.States.MOVE && mover.tag == "Player")
+        {
+            Tile.movable = true;
+        }
+
         GameManager.refreshPath = true;
         GameManager.currentState = nextState;
     }

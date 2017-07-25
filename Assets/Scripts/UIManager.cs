@@ -12,10 +12,8 @@ public class UIManager : MonoBehaviour {
     public List<Image> playersImage;
     public List<TextMeshProUGUI> healthTexts;
     public List<Sprite> playersIcon;
-    public List<Sprite> enemiesIcon;
-    public GameObject enemyContainer;
-    public GameObject enemyUI;
     public List<GameObject> playersTurns;
+    public GameObject enemyHealth;
 
     private List<GameObject> healthEnemies;
 
@@ -56,10 +54,10 @@ public class UIManager : MonoBehaviour {
 
     public void SetTextHealth()
     {
-        healthTexts[0].SetText("HP " + TileManager.playerInstance[0].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[0].GetComponent<ObjectController>().totalHealth.ToString());
-        healthTexts[1].SetText("HP " + TileManager.playerInstance[1].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[1].GetComponent<ObjectController>().totalHealth.ToString());
-        healthTexts[2].SetText("HP " + TileManager.playerInstance[2].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[2].GetComponent<ObjectController>().totalHealth.ToString());
-        healthTexts[3].SetText("HP " + TileManager.playerInstance[3].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[3].GetComponent<ObjectController>().totalHealth.ToString());
+        healthTexts[0].SetText(TileManager.playerInstance[0].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[0].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+        healthTexts[1].SetText(TileManager.playerInstance[1].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[1].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+        healthTexts[2].SetText(TileManager.playerInstance[2].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[2].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+        healthTexts[3].SetText(TileManager.playerInstance[3].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[3].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
     }
 
     public void CreateEnemyUI(List<GameObject> enemyInstance)
@@ -67,28 +65,21 @@ public class UIManager : MonoBehaviour {
         healthEnemies = new List<GameObject>();
         for (int i=0;i<enemyInstance.Count;i++)
         {
-            GameObject enemyUIInstance = Instantiate(enemyUI);
-            enemyUIInstance.transform.SetParent(enemyContainer.transform, false);
-            Vector3 position = new Vector3(enemyUI.transform.position.x, enemyUI.transform.position.y - (100 * i));
-            enemyUIInstance.transform.localPosition = position;
+            GameObject enemyUIInstance = Instantiate(enemyHealth);
+            enemyUIInstance.transform.SetParent(transform, false);
+
+            enemyUIInstance.GetComponent<EnemyHealth>().target = enemyInstance[i].transform;
 
             for (int p = 0; p < enemyUIInstance.transform.childCount; p++)
             {
                 if (enemyUIInstance.transform.GetChild(p).name == "HealthText")
                 {
-                    enemyUIInstance.transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + enemyInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + enemyInstance[i].GetComponent<ObjectController>().totalHealth.ToString());
-                }
-                else if (enemyUIInstance && enemyUIInstance.transform.GetChild(p).name == "EnemyImage")
-                {
-                    enemyUIInstance.transform.GetChild(p).GetComponent<Image>().sprite = enemyInstance[i].GetComponent<SpriteRenderer>().sprite;
+                    enemyUIInstance.transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText(enemyInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + enemyInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
                 }
             }
 
             healthEnemies.Add(enemyUIInstance);
         }
-        enemyContainer.GetComponent<RectTransform>().anchorMin = new Vector2(1, 1);
-        enemyContainer.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
-        enemyContainer.GetComponent<RectTransform>().pivot = new Vector2(1, 1);
     }
 
     public void DestroyEnemyUI(int enemyPosition)
@@ -99,9 +90,6 @@ public class UIManager : MonoBehaviour {
 
     public void ClearEnemyList()
     {
-        enemyContainer.GetComponent<RectTransform>().anchorMin = new Vector2(0.5f, 0.5f);
-        enemyContainer.GetComponent<RectTransform>().anchorMax = new Vector2(0.5f, 0.5f);
-        enemyContainer.GetComponent<RectTransform>().pivot = new Vector2(0.5f, 0.5f);
         healthEnemies.Clear();
     }
 
@@ -111,7 +99,7 @@ public class UIManager : MonoBehaviour {
         {
             if (healthEnemies[enemyNumber] && healthEnemies[enemyNumber].transform.GetChild(p).name == "HealthText")
             {
-                healthEnemies[enemyNumber].transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText("HP " + target.GetComponent<ObjectController>().currentHealth.ToString() + "/" + target.GetComponent<ObjectController>().totalHealth.ToString());
+                healthEnemies[enemyNumber].transform.GetChild(p).GetComponent<TextMeshProUGUI>().SetText(target.GetComponent<ObjectController>().currentHealth.ToString() + "/" + target.GetComponent<ObjectController>().totalHealth.ToString() + " HP");
                 break;
             }
         }
@@ -124,13 +112,6 @@ public class UIManager : MonoBehaviour {
         playersTurns[playerNumber].GetComponent<Image>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 0.5f);
     }
 
-    public void SetEnemyTurnColor(GameObject enemy)
-    {
-        int enemyNumber = enemy.GetComponent<EnemyController>().position;
-        Color tileColor = enemy.GetComponent<EnemyController>().colorTile;
-        healthEnemies[enemyNumber].GetComponent<Image>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 0.5f);
-    }
-
     public void ResetColor()
     {
         foreach(GameObject ui in playersTurns)
@@ -139,14 +120,6 @@ public class UIManager : MonoBehaviour {
             {
                 ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.5f);
             }
-        }
-
-        foreach (GameObject ui in healthEnemies)
-        {
-            if(ui)
-            {
-                ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.5f);
-            }   
         }
     }
 

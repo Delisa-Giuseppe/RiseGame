@@ -15,10 +15,34 @@ public class Tile : MonoBehaviour {
     public bool isPlayer;
     public bool isObstacle;
     public static Color tileColor;
+    public static bool movable;
+    public Sprite borderFull;
+    public Sprite borderEmpty;
+
+
+
+    private void OnMouseOver()
+    {
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
+            && isSelected && movable)
+        {
+            SetImageSprite(borderFull);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
+            && isSelected && movable)
+        {
+            SetImageSprite(borderEmpty);
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile"
+        GetComponent<SpriteRenderer>().sprite = borderEmpty;
+        if (TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile"
             && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || (collision.GetComponent<Tile>().isWalkable && collision.GetComponent<Tile>().isPlayer)))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
@@ -34,6 +58,16 @@ public class Tile : MonoBehaviour {
             collision.GetComponent<Tile>().isSelected = true;
             StartCoroutine(WaitColor(collision));
         }
+    }
+
+    public void ResetSpriteImage()
+    {
+        GetComponent<SpriteRenderer>().sprite = borderEmpty;
+    }
+
+    public void SetImageSprite(Sprite image)
+    {
+        GetComponent<SpriteRenderer>().sprite = image;
     }
 
     IEnumerator WaitColor(Collider2D collision)
