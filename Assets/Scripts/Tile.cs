@@ -38,7 +38,7 @@ public class Tile : MonoBehaviour {
 
     IEnumerator WaitColor(Collider2D collision)
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(1f);
         collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 1f);
     }
 

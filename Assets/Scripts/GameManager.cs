@@ -4,6 +4,8 @@ public class GameManager : MonoBehaviour {
 
     public int height;
     public int width;
+    public int maxPointAction;
+    private int pointAction;
 
     public enum States
     {
@@ -11,6 +13,9 @@ public class GameManager : MonoBehaviour {
         ENGAGE_ENEMY,
         SELECT,
         MOVE,
+        PRE_FIGHT,
+        FIGHT,
+        ATTACK,
         END_MOVE,
         WAIT
     }
@@ -24,6 +29,7 @@ public class GameManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        pointAction = maxPointAction;
         tileManager = GetComponent<TileManager>();
         turnManager = GetComponent<TurnManager>();
         pathfind = GameObject.FindGameObjectWithTag("Pathfind");
@@ -34,17 +40,34 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //pathfind.GetComponent<AstarPath>().Scan();
-
         if (currentState == States.EXPLORATION && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
         {
             TurnManager.currentTurnState = TurnManager.TurnStates.WAIT;
             tileManager.HideGrid();
         }
-        if (currentState == States.SELECT && (TurnManager.currentTurnState == TurnManager.TurnStates.INIT || TurnManager.currentTurnState == TurnManager.TurnStates.FINISH))
+
+        if (currentState == States.SELECT)
         {
-            tileManager.UpdateGrid(turnManager.GetNextTurn());
+            if(TurnManager.currentTurnState == TurnManager.TurnStates.INIT)
+            {
+                turnManager.GetNextTurn();
+                tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
+            }
+            else if(TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
+            {
+                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+                tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
+            }
         }
+
+        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space))
+        {
+            pointAction = maxPointAction;
+            tileManager.ResetGrid();
+            currentState = States.SELECT;
+            TurnManager.currentTurnState = TurnManager.TurnStates.INIT;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {   
            if(currentState == States.EXPLORATION)
@@ -69,9 +92,31 @@ public class GameManager : MonoBehaviour {
                 
             }
             
+           if(currentState == States.FIGHT)
+           {
+                if(tileManager.CheckEnemy())
+                {
+                    tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                }
+                else if(pointAction > maxPointAction / 2)
+                {
+                    tileManager.ResetGrid();
+                    tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
+                }
+           }
         }
 
-        if(refreshPath)
+        if ((Input.GetMouseButtonDown(1) && currentState == States.MOVE) || currentState == States.PRE_FIGHT)
+        {
+            currentState = States.FIGHT;
+            if (TurnManager.currentObjectTurn.tag == "Player")
+            {
+                tileManager.ResetGrid();
+                tileManager.UpdateGrid(TurnManager.currentObjectTurn, false);
+            }
+        }
+
+        if (refreshPath)
         {
             pathfind.GetComponent<AstarPath>().Scan();
             refreshPath = false;
@@ -94,16 +139,34 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
-            tileManager.ResetGrid();
-            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-            //if (turnManager.IsAllTurnFinished())
-            //{
-            StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
-            //}
-            //else
-            //{
-            //    StartCoroutine(tileManager.WaitMoves(turnManager.currentObjectTurn, States.SELECT, false, null));
-            //}
+            pointAction--;
+            if(pointAction <=0)
+            {
+                pointAction = maxPointAction;
+                TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
+                tileManager.ResetGrid();
+                if (TurnManager.currentObjectTurn.tag == "Player")
+                {
+                    TurnManager.currentObjectTurn.GetComponent<PlayerController>().CanMove = true;
+                }
+                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance));
+            }
+            else
+            {
+                tileManager.ResetGrid();
+                if (TurnManager.currentObjectTurn.tag == "Player")
+                {
+                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+                    if (TurnManager.currentObjectTurn.GetComponent<PlayerController>().CanMove)
+                    {
+                        currentState = States.SELECT;
+                    }
+                    else
+                    {
+                        currentState = States.PRE_FIGHT;
+                    }
+                }
+            }
             
         }
     }

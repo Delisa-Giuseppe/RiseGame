@@ -47,12 +47,6 @@ public class TileManager : MonoBehaviour {
     public void SetTrigger(GameObject tile)
     {
 
-        //if (TileManager.tilesSelectable.Count > 0 && tileSelected != "" && tile.name != tileSelected)
-        //{
-        //    GameObject oldTile = GameObject.Find(tileSelected);
-        //    ResetTiles(oldTile);
-        //}
-
         if (!tile.GetComponent<Tile>().isChecked)
         {
             tileSelected = tile;
@@ -280,61 +274,103 @@ public class TileManager : MonoBehaviour {
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                playerInstance[playerNumber].GetComponent<PlayerController>().CanMove = false;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
-            }
-            else if(hit.collider != null && hit.collider.tag == "Enemy" ||
-                (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
-            {
-                GameObject enemyTarget = null;
-                foreach(GameObject enemy in enemyInstance)
-                {
-                    if(enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
-                    {
-                        enemyTarget = enemy;
-                        break;
-                    }
-                }
-                if(playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED 
-                    && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
-                {
-                    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
-                }
-                else 
-                {
-                    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-                    playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
-                    playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-                    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
-                }
             }
         }
     }
 
-    public void UpdateGrid(GameObject objectTurn)
+    public bool CheckEnemy()
+    {
+        foreach(GameObject enemy in enemyInstance)
+        {
+            if (tilesSelectable.Contains(enemy.GetComponent<EnemyController>().EnemyTile))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    public void AttackEnemy(int playerNumber)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        if (hit.collider != null && hit.collider.tag == "Enemy" ||
+                (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
+        {
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+            GameObject enemyTarget = null;
+            foreach (GameObject enemy in enemyInstance)
+            {
+                if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
+                {
+                    enemyTarget = enemy;
+                    break;
+                }
+            }
+            if (playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED
+                && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
+            {
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
+            }
+            else
+            {
+                GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
+            }
+        }
+    }
+
+    public void UpdateGrid(GameObject objectTurn, bool move)
     {
         Destroy(targetInstance);
         tilesSelectable.Clear();
 
-        //objectTurn.GetComponent<Seeker>().startEndModifier.mask = LayerMask.NameToLayer("GridBattle");
-
-        if (objectTurn.tag == "Player")
+        if (move)
         {
-            objectTurn.GetComponent<AILerp>().target = null;
-            moves = objectTurn.GetComponent<PlayerController>().moves;
-            Tile.tileColor = objectTurn.GetComponent<PlayerController>().colorTile;
-            SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
-            
-        }
-        else if(objectTurn.tag == "Enemy")
-        {
-            moves = objectTurn.GetComponent<EnemyController>().moves;
-            Tile.tileColor = objectTurn.GetComponent<EnemyController>().colorTile;
-            SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
-        }
+            moves = objectTurn.GetComponent<ObjectController>().moves;
+            if (objectTurn.tag == "Player")
+            {
+                objectTurn.GetComponent<AILerp>().target = null;
+                Tile.tileColor = objectTurn.GetComponent<PlayerController>().colorTile;
+                SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
 
-        objectTurn.GetComponent<AILerp>().canMove = true;
-        StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
-        //GameManager.currentState = GameManager.States.MOVE;
+            }
+            else if (objectTurn.tag == "Enemy")
+            {
+                Tile.tileColor = objectTurn.GetComponent<EnemyController>().colorTile;
+                SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
+            }
+
+            objectTurn.GetComponent<AILerp>().canMove = true;
+            StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
+        }
+        else
+        {
+            moves = objectTurn.GetComponent<ObjectController>().combatMoves;
+            if (objectTurn.tag == "Player")
+            {
+                objectTurn.GetComponent<AILerp>().target = null;
+                Tile.tileColor = Color.red;
+                SetTrigger(objectTurn.GetComponent<PlayerController>().PlayerTile);
+
+            }
+            else if (objectTurn.tag == "Enemy")
+            {
+                Tile.tileColor = objectTurn.GetComponent<EnemyController>().colorTile;
+                SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
+            }
+
+            objectTurn.GetComponent<AILerp>().canMove = true;
+            StartCoroutine(WaitMoves(objectTurn, GameManager.States.FIGHT, false, null));
+        }
+        
     }
 
     public void ResetGrid()
@@ -569,7 +605,7 @@ public class TileManager : MonoBehaviour {
     public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
-        if (nextState == GameManager.States.MOVE && mover.tag == "Player")
+        if ((nextState == GameManager.States.MOVE || nextState == GameManager.States.FIGHT) && mover.tag == "Player")
         {
             yield return new WaitForSeconds(0.5f);
             mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
@@ -616,6 +652,7 @@ public class TileManager : MonoBehaviour {
 
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
+
         if (enemy.GetComponent<EnemyController>().canAttack)
         {
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));

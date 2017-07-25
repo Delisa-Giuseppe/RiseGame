@@ -55,10 +55,9 @@ public class TurnManager : MonoBehaviour {
 
         turns.Sort(delegate (GameObject a, GameObject b) {
 
-            return (a.GetComponent<ObjectController>().skill).CompareTo(b.GetComponent<ObjectController>().skill);
+            return (b.GetComponent<ObjectController>().skill).CompareTo(a.GetComponent<ObjectController>().skill);
 
         });
-        //turns = turns.Sort(c => c.GetComponent<ObjectController>().skill).ToArray();
 
     }
 
@@ -122,7 +121,13 @@ public class TurnManager : MonoBehaviour {
         
         if(AreEnemiesAlive(enemies))
         {
-            CalculateTurns(players, enemies);
+            foreach (GameObject turn in turns)
+            {
+                if (turn == null)
+                {
+                    turns.Remove(turn);
+                }
+            }
             yield return new WaitForSeconds(2f);
             GameManager.currentState = GameManager.States.SELECT;
         }
@@ -158,6 +163,7 @@ public class TurnManager : MonoBehaviour {
             {
                 if(enemy != null)
                 {
+                    currentTurnState = TurnStates.INIT;
                     found = true;
                 }
                 else

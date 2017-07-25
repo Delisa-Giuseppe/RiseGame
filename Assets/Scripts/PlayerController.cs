@@ -9,6 +9,8 @@ public class PlayerController : ObjectController
     public GameObject playerTile;
     public int playerNumber;
 
+    private bool canMove;
+
     public enum PlayerType
     {
         MELEE,
@@ -39,6 +41,19 @@ public class PlayerController : ObjectController
             }
 
             playerTile = value;
+        }
+    }
+
+    public bool CanMove
+    {
+        get
+        {
+            return canMove;
+        }
+
+        set
+        {
+            canMove = value;
         }
     }
 
