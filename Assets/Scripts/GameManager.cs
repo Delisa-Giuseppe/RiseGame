@@ -55,11 +55,6 @@ public class GameManager : MonoBehaviour {
             }
             else if(TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
             {
-                if(TurnManager.currentObjectTurn.tag == "Player")
-                {
-                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-                }
-                
                 tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
             }
         }
@@ -78,22 +73,14 @@ public class GameManager : MonoBehaviour {
         {   
            if(currentState == States.EXPLORATION)
             {
-                tileManager.MovePlayer(TileManager.playerInstance.Count-1);
+                tileManager.MovePlayer();
             }
 
            if(currentState == States.MOVE)
             {
                 if(TurnManager.currentObjectTurn.tag == "Player")
                 {
-                    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-                    if(TileManager.playerInstance.Count > 1)
-                    {
-                        tileManager.MovePlayer(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
-                    }
-                    else
-                    {
-                        tileManager.MovePlayer(0);
-                    }
+                    tileManager.MovePlayer();
                 }
                 
             }

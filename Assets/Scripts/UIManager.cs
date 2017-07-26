@@ -108,6 +108,20 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void DisablePlayerHUD(int playerNumber)
+    {
+        for(int i=0; i<TileManager.playerInstance.Count; i++)
+        {
+            if(TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber == playerNumber)
+            {
+                healthTexts[i].SetText("0/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+                playersImage[i].GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
+                healthTexts.RemoveAt(i);
+                playersImage.RemoveAt(i);
+            }
+        }
+    }
+
     public void SetPlayerTurnColor(GameObject player)
     {
         int playerNumber = player.GetComponent<PlayerController>().playerNumber;
@@ -121,7 +135,7 @@ public class UIManager : MonoBehaviour {
         {
             if(ui)
             {
-                ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.5f);
+                ui.GetComponent<Image>().color = new Color(255, 255, 255, 0.8f);
             }
         }
     }

@@ -184,7 +184,7 @@ public class TileManager : MonoBehaviour {
         GameManager.RefreshPath();
     }
 
-    public void MovePlayer(int playerNumber)
+    public void MovePlayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
@@ -266,17 +266,17 @@ public class TileManager : MonoBehaviour {
 
             }
 
-            Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
+            Camera.main.GetComponent<CameraManager>().player = TurnManager.currentObjectTurn;
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
             Destroy(targetInstance);
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && !hit.collider.GetComponent<Tile>().isEnemy)
             {
-                playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
-                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                TurnManager.currentObjectTurn.GetComponent<AILerp>().target = hit.collider.transform;
+                TurnManager.currentObjectTurn.GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 PlayerController.canMove = false;
-                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
+                StartCoroutine(WaitMoves(TurnManager.currentObjectTurn, GameManager.States.END_MOVE, false , null));
             }
         }
     }
@@ -299,7 +299,6 @@ public class TileManager : MonoBehaviour {
         if (hit.collider != null && hit.collider.tag == "Enemy" ||
                 (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
         {
-            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             GameObject enemyTarget = null;
             foreach (GameObject enemy in enemyInstance)
             {
@@ -642,9 +641,10 @@ public class TileManager : MonoBehaviour {
 
         if(mover.tag == "Player")
         {
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             GameManager.RefreshPath();
         }
-        
+
         GameManager.currentState = nextState;
     }
 

@@ -62,6 +62,10 @@ public class ObjectController : MonoBehaviour {
             {
                 UI.GetComponent<UIManager>().DestroyEnemyUI(target.GetComponent<EnemyController>().position);
             }
+            else if(target.tag == "Player")
+            {
+                UI.GetComponent<UIManager>().DisablePlayerHUD(target.GetComponent<PlayerController>().playerNumber);
+            }
             return true;
         }
         else

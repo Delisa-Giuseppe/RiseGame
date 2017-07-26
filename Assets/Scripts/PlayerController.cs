@@ -76,17 +76,20 @@ public class PlayerController : ObjectController
 
     public void PhysicAttack(GameObject target)
     {
-        target.GetComponent<SpriteRenderer>().color = Color.red;
-        OnHit(target);
-        if (IsDead(target.GetComponent<ObjectController>()))
+        if(target)
         {
-            target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
-            Destroy(target);
-            TileManager.enemyInstance.Remove(target);
-        }
-        else
-        {
-            StartCoroutine(ResetColor(target));
+            target.GetComponent<SpriteRenderer>().color = Color.red;
+            OnHit(target);
+            if (IsDead(target.GetComponent<ObjectController>()))
+            {
+                target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
+                TileManager.enemyInstance.Remove(target);
+                Destroy(target);
+            }
+            else
+            {
+                StartCoroutine(ResetColor(target));
+            }
         }
     }
 
