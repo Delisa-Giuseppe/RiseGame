@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Anima2D;
 
 
 
@@ -166,7 +167,18 @@ public class EnemyController : ObjectController {
     {
         if(target)
         {
-            target.GetComponent<SpriteRenderer>().color = Color.red;
+            if(target.GetComponent<SpriteRenderer>())
+            {
+                target.GetComponent<SpriteRenderer>().color = Color.red;
+            }
+            else
+            {
+                foreach(SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+                {
+                    mesh.color = Color.red;
+                }
+            }
+            
             OnHit(target);
             if (IsDead(target.GetComponent<ObjectController>()))
             {
@@ -186,7 +198,17 @@ public class EnemyController : ObjectController {
         yield return new WaitForSeconds(0.5f);
         if(obj != null)
         {
-            obj.GetComponent<SpriteRenderer>().color = Color.white;
+            if (obj.GetComponent<SpriteRenderer>())
+            {
+                obj.GetComponent<SpriteRenderer>().color = Color.white;
+            }
+            else
+            {
+                foreach (SpriteMeshInstance mesh in obj.GetComponentsInChildren<SpriteMeshInstance>())
+                {
+                    mesh.color = Color.white;
+                }
+            }
         }
     }
 }

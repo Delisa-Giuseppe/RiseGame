@@ -135,7 +135,6 @@ public class GameManager : MonoBehaviour {
 
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
-            Debug.Log(TurnManager.currentObjectTurn.name + "  "+ pointAction);
             pointAction--;
             if(pointAction <=0)
             {

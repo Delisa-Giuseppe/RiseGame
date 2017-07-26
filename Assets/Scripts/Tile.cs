@@ -18,6 +18,7 @@ public class Tile : MonoBehaviour {
     public static bool movable;
     public Sprite borderFull;
     public Sprite borderEmpty;
+    public Sprite borderFullBattle;
 
 
 
@@ -28,12 +29,21 @@ public class Tile : MonoBehaviour {
         {
             SetImageSprite(borderFull);
         }
+        else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy)
+        {
+            SetImageSprite(borderFullBattle);
+        }
     }
 
     private void OnMouseExit()
     {
+        
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
             && !isEnemy && !isObstacle && isSelected && movable)
+        {
+            SetImageSprite(borderEmpty);
+        }
+        else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy)
         {
             SetImageSprite(borderEmpty);
         }
@@ -42,7 +52,7 @@ public class Tile : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GetComponent<SpriteRenderer>().sprite = borderEmpty;
-        if (TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile"
+        if (TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
             && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || (collision.GetComponent<Tile>().isWalkable && collision.GetComponent<Tile>().isPlayer)))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);
@@ -50,7 +60,7 @@ public class Tile : MonoBehaviour {
             collision.GetComponent<Tile>().isSelected = true;
             StartCoroutine(WaitColor(collision));
         }
-        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" 
+        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
             && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy)))
         {
             TileManager.tilesSelectable.Add(collision.gameObject);

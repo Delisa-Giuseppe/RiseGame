@@ -6,8 +6,8 @@ using TMPro;
 
 public class UIManager : MonoBehaviour {
 
-    public Text popupDamage;
-    public Text changeTurnText;
+    public TextMeshProUGUI popupDamage;
+    public TextMeshProUGUI changeTurnText;
     public Image fightImage;
     public List<Image> playersImage;
     public List<TextMeshProUGUI> healthTexts;
@@ -30,16 +30,16 @@ public class UIManager : MonoBehaviour {
 
     public void ShowPopupDamage(int damage, Transform location)
     {
-        Text popup = Instantiate(popupDamage);
+        TextMeshProUGUI popup = Instantiate(popupDamage);
         popup.transform.SetParent(transform, false);
-        popup.transform.position = location.position;
+        popup.transform.position = location.position + Vector3.up;
         popup.text = damage.ToString();
         StartCoroutine(DestroyText(popup, 1));
     }
 
     public void SetChangeTurnText(string text)
     {
-        Text turnText = Instantiate(changeTurnText);
+        TextMeshProUGUI turnText = Instantiate(changeTurnText);
         turnText.transform.SetParent(transform, false);
         turnText.text = text;
         StartCoroutine(DestroyText(turnText, 1f));
@@ -160,7 +160,7 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    IEnumerator DestroyText(Text obj, float delay)
+    IEnumerator DestroyText(TextMeshProUGUI obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(obj.gameObject);

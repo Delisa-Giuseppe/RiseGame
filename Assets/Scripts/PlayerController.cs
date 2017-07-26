@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Anima2D;
 
 public class PlayerController : ObjectController
 {
 
     private GameObject playerTile;
     public int playerNumber;
+    public SpriteMeshInstance mesh;
 
     public static bool canMove;
 
