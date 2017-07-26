@@ -75,6 +75,16 @@ public class PlayerController : ObjectController
         
     }
 
+    private void OnDestroy()
+    {
+        for(int i=0; i<TileManager.playerInstance.Count; i++)
+        {
+            if(TileManager.playerInstance[i])
+            {
+                TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber = i;
+            }
+        }
+    }
 
     public void PhysicAttack(GameObject target)
     {

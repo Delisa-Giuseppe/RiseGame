@@ -118,6 +118,7 @@ public class UIManager : MonoBehaviour {
                 playersImage[i].GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
                 healthTexts.RemoveAt(i);
                 playersImage.RemoveAt(i);
+                playersTurns.RemoveAt(i);
             }
         }
     }

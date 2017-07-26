@@ -73,14 +73,14 @@ public class GameManager : MonoBehaviour {
         {   
            if(currentState == States.EXPLORATION)
             {
-                tileManager.MovePlayer();
+                tileManager.MovePlayer(TileManager.playerInstance.Count - 1);
             }
 
            if(currentState == States.MOVE)
             {
                 if(TurnManager.currentObjectTurn.tag == "Player")
                 {
-                    tileManager.MovePlayer();
+                    tileManager.MovePlayer(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
                 }
                 
             }

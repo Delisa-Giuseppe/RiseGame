@@ -97,7 +97,7 @@ public class TileManager : MonoBehaviour {
         GameManager.RefreshPath();
     }
 
-    public void MovePlayer()
+    public void MovePlayer(int playerNumber)
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
@@ -175,17 +175,17 @@ public class TileManager : MonoBehaviour {
 
             }
 
-            Camera.main.GetComponent<CameraManager>().player = playerInstance[0];
+            Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
             Destroy(targetInstance);
             if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && !hit.collider.GetComponent<Tile>().isEnemy)
             {
-                TurnManager.currentObjectTurn.GetComponent<AILerp>().target = hit.collider.transform;
-                TurnManager.currentObjectTurn.GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
+                playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 PlayerController.canMove = false;
-                StartCoroutine(WaitMoves(TurnManager.currentObjectTurn, GameManager.States.END_MOVE, false , null));
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
             }
         }
     }
@@ -550,6 +550,8 @@ public class TileManager : MonoBehaviour {
 
     private IEnumerator WaitListTile(GameObject enemy)
     {
+        GameManager.currentState = GameManager.States.WAIT;
+
         yield return new WaitForSeconds(0.5f);
 
         while (tilesSelectable.Count == 0)

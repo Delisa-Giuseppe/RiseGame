@@ -93,27 +93,15 @@ public class TurnManager : MonoBehaviour {
         currentTurnState = TurnStates.EXECUTE;
     }
 
-    public GameObject GetPreviousTurn()
-    {
-        int tmp = currentTurn - 2;
-        if(tmp >=0)
-        {
-            return turns[tmp];
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     public IEnumerator RecalculateTurn(List<GameObject> players, List<GameObject> enemies, GameManager.States nextState, TurnManager.TurnStates turnState)
     {
         GameManager.currentState = GameManager.States.WAIT;
-        if(IsAllTurnFinished())
-        {
-            currentTurn = 0;
-        }
-        
+
+        yield return new WaitForEndOfFrame();
+
+        int previousTurn = currentTurn;
+
         if(AreEnemiesAlive(enemies))
         {
             List<GameObject> removeTurn = new List<GameObject>();
@@ -122,6 +110,7 @@ public class TurnManager : MonoBehaviour {
                 if (turn == null)
                 {
                     removeTurn.Add(turn);
+                    currentTurn--;
                 }
             }
             foreach(GameObject remove in removeTurn)
@@ -129,12 +118,27 @@ public class TurnManager : MonoBehaviour {
                 turns.Remove(remove);
             }
 
+            if(removeTurn.Count>0 && previousTurn-1 == currentTurn)
+            {
+                currentTurn++;
+            }
+
+            if (IsAllTurnFinished())
+            {
+                currentTurn = 0;
+            }
+
             yield return new WaitForSeconds(1f);
             GameManager.currentState = nextState;
             currentTurnState = turnState;
+
+            
         }
         else
         {
+            currentTurn = 0;
+            currentTurnState = TurnStates.FINISH;
+            turns.Clear();
             yield return new WaitForSeconds(1.5f);
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
@@ -143,7 +147,6 @@ public class TurnManager : MonoBehaviour {
 
     public bool IsAllTurnFinished()
     {
-        currentTurnState = TurnStates.FINISH;
         UI.GetComponent<UIManager>().ResetColor();
         if (currentTurn == turns.Count){
             
