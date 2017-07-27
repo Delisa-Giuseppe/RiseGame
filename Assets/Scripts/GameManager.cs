@@ -140,7 +140,8 @@ public class GameManager : MonoBehaviour {
         if (currentState == States.END_MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTED)
         {
             pointAction--;
-            if(pointAction <=0)
+            TurnManager.currentObjectTurn.GetComponent<AILerp>().target = null;
+            if (pointAction <=0)
             {
                 pointAction = maxPointAction;
                 TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;

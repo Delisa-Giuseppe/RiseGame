@@ -88,6 +88,7 @@ public class TileManager : MonoBehaviour {
         foreach (GameObject player in playerInstance)
         {
             player.GetComponent<AILerp>().canMove = true;
+            player.GetComponent<PlayerController>().StopFightAnimation();
         }
         foreach (Tile tile in tiles)
         {
@@ -107,19 +108,6 @@ public class TileManager : MonoBehaviour {
                 Destroy(targetInstance);
                 targetInstance = Instantiate(target);
                 targetInstance.transform.position = hit.collider.transform.position;
-
-                bool rotate = false;
-                if(targetInstance.transform.position.x < playerInstance[playerNumber].transform.position.x && 
-                    playerInstance[playerNumber].transform.eulerAngles.y == 0)
-                {
-                    rotate = true;
-                }
-
-                if (targetInstance.transform.position.x > playerInstance[playerNumber].transform.position.x &&
-                    playerInstance[playerNumber].transform.eulerAngles.y == 180)
-                {
-                    rotate = true;
-                }
 
                 if (previousTile != null)
                 {
@@ -149,14 +137,6 @@ public class TileManager : MonoBehaviour {
 
                 for (int i=0; i<playerInstance.Count; i++)
                 {
-                    if(rotate)
-                    {
-                        playerInstance[i].transform.Rotate(new Vector3(0, 180));
-                    }
-                    else
-                    {
-                        playerInstance[i].transform.Rotate(new Vector3(0, 0));
-                    }
 
                     if(i!=0)
                     {
@@ -194,6 +174,8 @@ public class TileManager : MonoBehaviour {
                     }
                 }
 
+                StartCoroutine(RotatePlayer());
+
             }
 
             Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
@@ -207,6 +189,25 @@ public class TileManager : MonoBehaviour {
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 PlayerController.canMove = false;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
+            }
+        }
+    }
+
+    IEnumerator RotatePlayer()
+    {
+        yield return new WaitForSeconds(0.35f);
+        foreach (GameObject player in playerInstance)
+        {
+            if (targetInstance.transform.position.x < player.transform.position.x &&
+                player.transform.eulerAngles.y == 0f)
+            {
+                player.transform.eulerAngles = new Vector3(0f, 180f);
+            }
+
+            if (targetInstance.transform.position.x > player.transform.position.x &&
+                player.transform.eulerAngles.y == 180f)
+            {
+                player.transform.eulerAngles = new Vector3(0f, 0f);
             }
         }
     }
@@ -241,6 +242,7 @@ public class TileManager : MonoBehaviour {
             if (playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED
                 && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
             {
+                playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
             }
             else
@@ -248,6 +250,7 @@ public class TileManager : MonoBehaviour {
                 GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
                 playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
             }
 
@@ -558,11 +561,7 @@ public class TileManager : MonoBehaviour {
 
         }
 
-        if (attack && mover.tag == "Player")
-        {
-            mover.GetComponent<PlayerController>().PhysicAttack(enemy.gameObject);
-        }
-        else if (attack && mover.tag == "Enemy")
+        if (attack && mover.tag == "Enemy")
         {
             mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
         }
@@ -574,7 +573,7 @@ public class TileManager : MonoBehaviour {
             Tile.movable = true;
         }
 
-        if(mover.tag == "Player")
+        if (mover.tag == "Player")
         {
             TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             GameManager.RefreshPath();

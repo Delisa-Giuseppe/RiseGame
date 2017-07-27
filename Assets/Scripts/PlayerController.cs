@@ -65,6 +65,11 @@ public class PlayerController : ObjectController
         anim.SetBool("isFighting", true);
     }
 
+    public void StopFightAnimation()
+    {
+        anim.SetBool("isFighting", false);
+    }
+
     private void OnDestroy()
     {
         for(int i=0; i<TileManager.playerInstance.Count; i++)
@@ -101,19 +106,27 @@ public class PlayerController : ObjectController
             }
 
             anim.SetTrigger("attack");
-            target.GetComponent<SpriteRenderer>().color = Color.red;
 
-            OnHit(target);
-            if (IsDead(target.GetComponent<ObjectController>()))
-            {
-                target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
-                TileManager.enemyInstance.Remove(target);
-                Destroy(target);
-            }
-            else
-            {
-                StartCoroutine(ResetColor(target));
-            }
+            StartCoroutine(WaitAnimation(target));
+
+        }
+    }
+
+    IEnumerator WaitAnimation(GameObject target)
+    {
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        target.GetComponent<SpriteRenderer>().color = Color.red;
+
+        OnHit(target);
+        if (IsDead(target.GetComponent<ObjectController>()))
+        {
+            target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
+            TileManager.enemyInstance.Remove(target);
+            Destroy(target);
+        }
+        else
+        {
+            StartCoroutine(ResetColor(target));
         }
     }
 
