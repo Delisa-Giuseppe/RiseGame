@@ -24,12 +24,14 @@ public class Tile : MonoBehaviour {
 
     private void OnMouseOver()
     {
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
-            && !isEnemy && !isObstacle && isSelected && movable)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GameManager.currentState == GameManager.States.MOVE
+            && !isEnemy && !isObstacle && isSelected)
         {
             SetImageSprite(borderFull);
         }
-        else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy)
+
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy && isSelected
+            && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderFullBattle);
         }
@@ -38,15 +40,17 @@ public class Tile : MonoBehaviour {
     private void OnMouseExit()
     {
         
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GetComponent<SpriteRenderer>().color != Color.white 
-            && !isEnemy && !isObstacle && isSelected && movable)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GameManager.currentState == GameManager.States.MOVE
+            && !isEnemy && !isObstacle && isSelected)
         {
             SetImageSprite(borderEmpty);
         }
-        else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy && isSelected
+            && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderEmpty);
         }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

@@ -18,7 +18,7 @@ public class CameraManager : MonoBehaviour {
 
     // Update is called once per frame
     void LateUpdate () {
-		if(player != null && GameManager.currentState == GameManager.States.EXPLORATION)
+		if(player != null)
         {
             MoveCamera();
         }

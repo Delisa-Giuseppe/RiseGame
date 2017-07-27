@@ -70,7 +70,6 @@ public class TileManager : MonoBehaviour {
 
             tile.GetComponent<PolygonCollider2D>().SetPath(0, newPoints);
             tile.GetComponent<PolygonCollider2D>().isTrigger = true;
-
         }
     }
     
@@ -503,6 +502,13 @@ public class TileManager : MonoBehaviour {
     {
         GameManager.currentState = GameManager.States.WAIT;
 
+        while (tilesSelectable.Count == 0)
+        {
+            yield return null;
+        }
+
+        tileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
+
         if ((nextState == GameManager.States.MOVE || nextState == GameManager.States.FIGHT) && mover.tag == "Player")
         {
             Tile.movable = false;
@@ -559,6 +565,7 @@ public class TileManager : MonoBehaviour {
             yield return null;
         }
 
+        tileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
         GameManager.RefreshPath();
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);

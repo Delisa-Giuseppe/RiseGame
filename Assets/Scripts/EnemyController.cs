@@ -163,6 +163,26 @@ public class EnemyController : ObjectController {
         }
     }
 
+    private void OnMouseOver()
+    {
+        Tile tile = enemyTile.GetComponent<Tile>();
+        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && tile.isEnemy && tile.isSelected 
+            && GameManager.currentState == GameManager.States.FIGHT)
+        {
+            tile.SetImageSprite(enemyTile.GetComponent<Tile>().borderFullBattle);
+        }
+    }
+
+    private void OnMouseExit()
+    {
+        Tile tile = enemyTile.GetComponent<Tile>();
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && tile.isEnemy && tile.isSelected 
+            && GameManager.currentState == GameManager.States.FIGHT)
+        {
+            tile.SetImageSprite(enemyTile.GetComponent<Tile>().borderEmpty);
+        }
+    }
+
     public void PhysicAttack(GameObject target)
     {
         if(target)
