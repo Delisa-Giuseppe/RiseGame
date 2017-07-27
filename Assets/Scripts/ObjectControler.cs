@@ -23,6 +23,7 @@ public class ObjectController : MonoBehaviour {
     public int moves;
     protected int critic;
     protected int evasion;
+    protected Animator anim;
 
     private GameObject UI;
 
@@ -30,6 +31,7 @@ public class ObjectController : MonoBehaviour {
     {
         CalculateStatistics();
         UI = GameObject.Find("UI");
+        anim = GetComponentInChildren<Animator>();
     }
 
     private void CalculateStatistics()

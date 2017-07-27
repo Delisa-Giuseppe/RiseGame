@@ -10,7 +10,6 @@ public class PlayerController : ObjectController
     private GameObject playerTile;
     public int playerNumber;
     public SpriteMeshInstance mesh;
-
     public static bool canMove;
 
     public enum PlayerType
@@ -21,34 +20,20 @@ public class PlayerController : ObjectController
 
     public PlayerType playerBehaviour;
 
-    public GameObject PlayerTile
-    {
-        get
-        {
-            return playerTile;
-        }
-
-        set
-        {
-            if(playerTile != null && value != null)
-            {
-                playerTile.GetComponent<Tile>().isPlayer = false;
-                playerTile.GetComponent<Tile>().isWalkable = true;
-            }
-
-            if(value != null)
-            {
-                value.GetComponent<Tile>().isPlayer = true;
-                value.GetComponent<Tile>().isWalkable = false;
-            }
-
-            playerTile = value;
-        }
-    }
 
     // Update is called once per frame
     void Update () {
-        if(GameManager.currentState == GameManager.States.EXPLORATION)
+
+        if(GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
+        {
+            anim.SetBool("isWalking", false);
+        }
+        else
+        {
+            anim.SetBool("isWalking", true);
+        }
+
+        if (GameManager.currentState == GameManager.States.EXPLORATION)
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
             {
@@ -75,6 +60,11 @@ public class PlayerController : ObjectController
         
     }
 
+    public void StartFightAnimation()
+    {
+        anim.SetBool("isFighting", true);
+    }
+
     private void OnDestroy()
     {
         for(int i=0; i<TileManager.playerInstance.Count; i++)
@@ -90,7 +80,29 @@ public class PlayerController : ObjectController
     {
         if(target)
         {
+            bool rotate = false;
+            if(Vector3.Distance(transform.position, target.transform.position) < 0 && transform.eulerAngles.y == 0)
+            {
+                rotate = true;
+            }
+
+            if (Vector3.Distance(transform.position, target.transform.position) > 0 && transform.eulerAngles.y == 180)
+            {
+                rotate = true;
+            }
+
+            if (rotate)
+            {
+                transform.Rotate(new Vector3(0, 180));
+            }
+            else
+            {
+                transform.Rotate(new Vector3(0, 0));
+            }
+
+            anim.SetTrigger("attack");
             target.GetComponent<SpriteRenderer>().color = Color.red;
+
             OnHit(target);
             if (IsDead(target.GetComponent<ObjectController>()))
             {
@@ -102,6 +114,31 @@ public class PlayerController : ObjectController
             {
                 StartCoroutine(ResetColor(target));
             }
+        }
+    }
+
+    public GameObject PlayerTile
+    {
+        get
+        {
+            return playerTile;
+        }
+
+        set
+        {
+            if (playerTile != null && value != null)
+            {
+                playerTile.GetComponent<Tile>().isPlayer = false;
+                playerTile.GetComponent<Tile>().isWalkable = true;
+            }
+
+            if (value != null)
+            {
+                value.GetComponent<Tile>().isPlayer = true;
+                value.GetComponent<Tile>().isWalkable = false;
+            }
+
+            playerTile = value;
         }
     }
 

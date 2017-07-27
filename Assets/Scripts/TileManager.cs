@@ -108,6 +108,19 @@ public class TileManager : MonoBehaviour {
                 targetInstance = Instantiate(target);
                 targetInstance.transform.position = hit.collider.transform.position;
 
+                bool rotate = false;
+                if(targetInstance.transform.position.x < playerInstance[playerNumber].transform.position.x && 
+                    playerInstance[playerNumber].transform.eulerAngles.y == 0)
+                {
+                    rotate = true;
+                }
+
+                if (targetInstance.transform.position.x > playerInstance[playerNumber].transform.position.x &&
+                    playerInstance[playerNumber].transform.eulerAngles.y == 180)
+                {
+                    rotate = true;
+                }
+
                 if (previousTile != null)
                 {
                     if (previousTile.tag == "Tile")
@@ -136,6 +149,15 @@ public class TileManager : MonoBehaviour {
 
                 for (int i=0; i<playerInstance.Count; i++)
                 {
+                    if(rotate)
+                    {
+                        playerInstance[i].transform.Rotate(new Vector3(0, 180));
+                    }
+                    else
+                    {
+                        playerInstance[i].transform.Rotate(new Vector3(0, 0));
+                    }
+
                     if(i!=0)
                     {
                         nearTiles = new List<RaycastHit2D[]>(4)
@@ -315,6 +337,7 @@ public class TileManager : MonoBehaviour {
 
         for (int i=0; i<playerInstance.Count; i++)
         {
+            playerInstance[i].GetComponent<PlayerController>().StartFightAnimation();
             if (playerInstance[i].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.MELEE)
             {
                 startPointMelee = new Vector3(startPointMelee.x - (1.2f * 2), startPointMelee.y);
