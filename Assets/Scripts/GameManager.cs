@@ -63,10 +63,20 @@ public class GameManager : MonoBehaviour {
             && (currentState == States.MOVE || currentState == States.FIGHT))
         {
             pointAction = maxPointAction;
+            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             tileManager.ResetGrid();
-            currentState = States.SELECT;
-            TurnManager.currentTurnState = TurnManager.TurnStates.INIT;
-            PlayerController.canMove = true;
+            if (TurnManager.currentObjectTurn.tag == "Player")
+            {
+                PlayerController.canMove = true;
+            }
+            else if (TurnManager.currentObjectTurn.tag == "Enemy")
+            {
+                EnemyController.hasMoved = true;
+            }
+            Debug.Log("ACTUAL TURN : " + turnManager.currentTurn);
+            turnManager.currentTurn = turnManager.currentTurn + 1;
+            StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
+            turnManager.ResetTurnColor();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -119,14 +129,13 @@ public class GameManager : MonoBehaviour {
             refreshPath = false;
         }
 
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy" && 
+                currentState == States.MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
         {
-            if(currentState == States.MOVE && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
-            {
-                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
-                tileManager.MoveEnemy(TurnManager.currentObjectTurn);
-            }
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+            tileManager.MoveEnemy(TurnManager.currentObjectTurn);
         }
+        
 
         if (currentState == States.ENGAGE_ENEMY)
         {
@@ -154,6 +163,8 @@ public class GameManager : MonoBehaviour {
                 {
                     EnemyController.hasMoved = true;
                 }
+                Debug.Log("ACTUAL TURN : " + turnManager.currentTurn);
+                turnManager.currentTurn = turnManager.currentTurn + 1;
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
                 turnManager.ResetTurnColor();
             }

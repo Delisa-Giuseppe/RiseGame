@@ -85,30 +85,19 @@ public class PlayerController : ObjectController
     {
         if(target)
         {
-            bool rotate = false;
-            if(Vector3.Distance(transform.position, target.transform.position) < 0 && transform.eulerAngles.y == 0)
+            if(transform.position.x > target.transform.position.x)
             {
-                rotate = true;
+                transform.eulerAngles = new Vector3(0f, 180f);
             }
 
-            if (Vector3.Distance(transform.position, target.transform.position) > 0 && transform.eulerAngles.y == 180)
+            if (transform.position.x < target.transform.position.x)
             {
-                rotate = true;
-            }
-
-            if (rotate)
-            {
-                transform.Rotate(new Vector3(0, 180));
-            }
-            else
-            {
-                transform.Rotate(new Vector3(0, 0));
+                transform.eulerAngles = new Vector3(0f, 0f);
             }
 
             anim.SetTrigger("attack");
 
             StartCoroutine(WaitAnimation(target));
-
         }
     }
 

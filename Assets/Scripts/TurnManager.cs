@@ -8,7 +8,7 @@ public class TurnManager : MonoBehaviour {
     public List<GameObject> turns;
 
     private GameObject UI;
-    private int currentTurn = 0;
+    public int currentTurn = 0;
 
     public enum TurnStates
     {
@@ -64,34 +64,25 @@ public class TurnManager : MonoBehaviour {
     public GameObject GetNextTurn()
     {
         UI.GetComponent<UIManager>().ResetColor();
-        if (currentTurn > turns.Count)
-        {
-            currentTurn = 0;
-        }
-
         currentObjectTurn = turns[currentTurn];
-        currentTurn++;
-        if(currentObjectTurn == null)
-        {
-            currentObjectTurn = turns[currentTurn];
-            currentTurn++;
-        }
+        //currentTurn++;
         PlayerController.canMove = true;
         UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().ObjectName + " Turn");
         if(currentObjectTurn.tag == "Player")
         {
             UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
         }
-        
-        StartCoroutine(Wait(2f));
+
+        currentTurnState = TurnStates.EXECUTE;
+        //StartCoroutine(Wait(2f));
         return currentObjectTurn;
     }
 
-    IEnumerator Wait(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        currentTurnState = TurnStates.EXECUTE;
-    }
+    //IEnumerator Wait(float delay)
+    //{
+    //    yield return new WaitForSeconds(delay);
+    //    currentTurnState = TurnStates.EXECUTE;
+    //}
 
 
     public IEnumerator RecalculateTurn(List<GameObject> players, List<GameObject> enemies, GameManager.States nextState, TurnManager.TurnStates turnState)
@@ -102,7 +93,12 @@ public class TurnManager : MonoBehaviour {
 
         int previousTurn = currentTurn;
 
-        if(AreEnemiesAlive(enemies))
+        if (IsAllTurnFinished())
+        {
+            currentTurn = 0;
+        }
+
+        if (AreEnemiesAlive(enemies))
         {
             List<GameObject> removeTurn = new List<GameObject>();
             foreach (GameObject turn in turns)
@@ -118,21 +114,19 @@ public class TurnManager : MonoBehaviour {
                 turns.Remove(remove);
             }
 
-            if(removeTurn.Count>0 && previousTurn-1 == currentTurn)
-            {
-                currentTurn++;
-            }
-
-            if (IsAllTurnFinished())
+            if (currentTurn < 0)
             {
                 currentTurn = 0;
+            }
+
+            if (removeTurn.Count > 0 && previousTurn == currentTurn)
+            {
+                currentTurn++;
             }
 
             yield return new WaitForSeconds(1f);
             GameManager.currentState = nextState;
             currentTurnState = turnState;
-
-            
         }
         else
         {
@@ -153,7 +147,7 @@ public class TurnManager : MonoBehaviour {
 
     public bool IsAllTurnFinished()
     {
-        if (currentTurn == turns.Count){
+        if (currentTurn >= turns.Count){
             
             return true;
         }
