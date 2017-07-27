@@ -145,9 +145,14 @@ public class TurnManager : MonoBehaviour {
 
     }
 
-    public bool IsAllTurnFinished()
+    public void ResetTurnColor()
     {
         UI.GetComponent<UIManager>().ResetColor();
+    }
+
+
+    public bool IsAllTurnFinished()
+    {
         if (currentTurn == turns.Count){
             
             return true;

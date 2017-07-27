@@ -89,7 +89,11 @@ public class GameManager : MonoBehaviour {
            {
                 if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && tileManager.CheckEnemy())
                 {
-                    tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber);
+                    if(!tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber) && PlayerController.canMove)
+                    {
+                        tileManager.ResetGrid();
+                        tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
+                    }
                 }
                 else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && PlayerController.canMove)
                 {
@@ -150,6 +154,7 @@ public class GameManager : MonoBehaviour {
                     EnemyController.hasMoved = true;
                 }
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
+                turnManager.ResetTurnColor();
             }
             else
             {

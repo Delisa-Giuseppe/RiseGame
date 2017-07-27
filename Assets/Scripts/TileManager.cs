@@ -201,7 +201,7 @@ public class TileManager : MonoBehaviour {
         return false;
     }
 
-    public void AttackEnemy(int playerNumber)
+    public bool AttackEnemy(int playerNumber)
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         if (hit.collider != null && hit.collider.tag == "Enemy" ||
@@ -228,6 +228,12 @@ public class TileManager : MonoBehaviour {
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
             }
+
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
