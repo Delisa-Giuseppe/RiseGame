@@ -73,7 +73,6 @@ public class GameManager : MonoBehaviour {
             {
                 EnemyController.hasMoved = true;
             }
-            Debug.Log("ACTUAL TURN : " + turnManager.currentTurn);
             turnManager.currentTurn = turnManager.currentTurn + 1;
             StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
             turnManager.ResetTurnColor();
@@ -125,7 +124,6 @@ public class GameManager : MonoBehaviour {
 
         if (refreshPath)
         {
-            
             refreshPath = false;
         }
 
@@ -163,7 +161,6 @@ public class GameManager : MonoBehaviour {
                 {
                     EnemyController.hasMoved = true;
                 }
-                Debug.Log("ACTUAL TURN : " + turnManager.currentTurn);
                 turnManager.currentTurn = turnManager.currentTurn + 1;
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
                 turnManager.ResetTurnColor();

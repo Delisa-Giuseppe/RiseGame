@@ -9,8 +9,6 @@ public class UIManager : MonoBehaviour {
     public TextMeshProUGUI popupDamage;
     public TextMeshProUGUI changeTurnText;
     public Image fightImage;
-    public List<Image> playersImage;
-    public List<TextMeshProUGUI> healthTexts;
     public List<Sprite> playersIcon;
     public List<GameObject> playersTurns;
     public GameObject enemyHealth;
@@ -25,7 +23,7 @@ public class UIManager : MonoBehaviour {
 
     private void Update()
     {
-        SetTextHealth();
+        //SetTextHealth();
     }
 
     public void ShowPopupDamage(int damage, Transform location)
@@ -52,16 +50,27 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(DestroyImage(img, 2.5f));
     }
 
-    public void SetTextHealth()
+    public void SetPlayerHealthBar(GameObject player)
     {
-        for(int i=0; i<TileManager.playerInstance.Count;i++)
-        {
-            if (TileManager.playerInstance[i])
-            {
-                healthTexts[i].SetText(TileManager.playerInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-            }
-        }
+        int totalHealth = player.GetComponent<ObjectController>().totalHealth;
+        int currentHealth = player.GetComponent<ObjectController>().currentHealth;
+        float barHealth = (float) currentHealth / totalHealth;
+        int playerNumber = player.GetComponent<PlayerController>().playerNumber;
+
+        GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).transform.GetChild(1).gameObject;
+        healthBar.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
     }
+
+    //public void SetTextHealth()
+    //{
+    //    for(int i=0; i<TileManager.playerInstance.Count;i++)
+    //    {
+    //        if (TileManager.playerInstance[i])
+    //        {
+    //            healthTexts[i].SetText(TileManager.playerInstance[i].GetComponent<ObjectController>().currentHealth.ToString() + "/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+    //        }
+    //    }
+    //}
 
     public void CreateEnemyUI(List<GameObject> enemyInstance)
     {
@@ -110,17 +119,18 @@ public class UIManager : MonoBehaviour {
 
     public void DisablePlayerHUD(int playerNumber)
     {
-        for(int i=0; i<TileManager.playerInstance.Count; i++)
-        {
-            if(TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber == playerNumber)
-            {
-                healthTexts[i].SetText("0/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-                playersImage[i].GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
-                healthTexts.RemoveAt(i);
-                playersImage.RemoveAt(i);
-                playersTurns.RemoveAt(i);
-            }
-        }
+        //for(int i=0; i<TileManager.playerInstance.Count; i++)
+        //{
+        //    if(TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber == playerNumber)
+        //    {
+                //healthTexts[i].SetText("0/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
+                //playersImage[i].GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
+                //healthTexts.RemoveAt(i);
+                //playersImage.RemoveAt(i);
+                playersTurns[playerNumber].transform.GetChild(0).GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
+                playersTurns.RemoveAt(playerNumber);
+        //    }
+        //}
     }
 
     public void SetPlayerTurnColor(GameObject player)
@@ -155,7 +165,7 @@ public class UIManager : MonoBehaviour {
             {
                 if(image.name == "Icon_"+playerName[0])
                 {
-                    playersImage[i].sprite = image;
+                    playersTurns[i].transform.GetChild(0).GetComponent<Image>().sprite = image;
                 }
             }
         }

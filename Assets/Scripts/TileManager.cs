@@ -560,11 +560,6 @@ public class TileManager : MonoBehaviour {
 
         }
 
-        if (attack && mover.tag == "Enemy")
-        {
-            mover.GetComponent<EnemyController>().PhysicAttack(enemy.gameObject);
-        }
-
         yield return new WaitForSeconds(0.5f);
 
         if (nextState == GameManager.States.MOVE && mover.tag == "Player")
@@ -600,6 +595,7 @@ public class TileManager : MonoBehaviour {
         if (enemy.GetComponent<EnemyController>().canAttack)
         {
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
+            enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked);
         }
         else
         {

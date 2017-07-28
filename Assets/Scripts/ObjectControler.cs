@@ -54,6 +54,10 @@ public class ObjectController : MonoBehaviour {
         {
             UI.GetComponent<UIManager>().SetEnemyHealth(target.GetComponent<EnemyController>().position, target);
         }
+        else if(target.tag == "Player")
+        {
+            UI.GetComponent<UIManager>().SetPlayerHealthBar(target);
+        }
     }
 
     protected bool IsDead(ObjectController target)
