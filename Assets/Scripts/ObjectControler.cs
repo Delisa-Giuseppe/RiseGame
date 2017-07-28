@@ -14,6 +14,7 @@ public class ObjectController : MonoBehaviour {
     public string ObjectName;
     public int combatMoves;
     public Color colorTile;
+    public Sprite iconObject;
 
     //Stats of single enemy
     public int totalHealth;

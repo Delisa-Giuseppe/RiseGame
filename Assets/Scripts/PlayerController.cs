@@ -9,7 +9,6 @@ public class PlayerController : ObjectController
 
     private GameObject playerTile;
     public int playerNumber;
-    public SpriteMeshInstance mesh;
     public static bool canMove;
     public GameObject playerUI;
 

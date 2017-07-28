@@ -7,18 +7,23 @@ using TMPro;
 public class UIManager : MonoBehaviour {
 
     public TextMeshProUGUI popupDamage;
-    public TextMeshProUGUI changeTurnText;
+    public GameObject changeTurnText;
     public Image fightImage;
-    public List<Sprite> playersIcon;
     public List<GameObject> playersTurns;
     public GameObject enemyHealth;
+    public GameObject turnUIBar;
+    public GameObject turnUI;
 
+    private int minWidthTurnUIBar = 585;
+    private int spaceTurnUIBar = 55;
     private List<GameObject> healthEnemies;
+    private List<GameObject> turnsBarUI;
 
 
     private void Awake()
     {
         StartCoroutine(SetPlayersImage());
+        StartCoroutine(SetTurnList());
     }
 
     private void Update()
@@ -57,10 +62,10 @@ public class UIManager : MonoBehaviour {
 
     public void SetChangeTurnText(string text)
     {
-        TextMeshProUGUI turnText = Instantiate(changeTurnText);
+        GameObject turnText = Instantiate(changeTurnText);
         turnText.transform.SetParent(transform, false);
-        turnText.text = text;
-        StartCoroutine(DestroyText(turnText, 1f));
+        turnText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(text);
+        StartCoroutine(DestroyObject(turnText, 1f));
     }
 
     public void ShowImageFight()
@@ -171,6 +176,48 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void SetTurnBarUI(List<GameObject> turns, int currentTurn)
+    {
+        turnsBarUI[0].GetComponent<Image>().color = Color.red;
+        turnsBarUI[0].GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f);
+        turnsBarUI[0].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
+
+        int barPosition = 1;
+        for(int i=0; i<turns.Count; i++)
+        {
+            if(i != currentTurn)
+            {
+                turnsBarUI[barPosition].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[i].GetComponent<ObjectController>().iconObject;
+                turnsBarUI[barPosition].GetComponent<Image>().color = Color.white;
+                barPosition++;
+            }
+        }
+    }
+
+    public void DisableTurnUI(int turnPosition)
+    {
+        turnsBarUI[turnPosition].GetComponent<Image>().color = Color.white;
+        turnsBarUI[turnPosition].GetComponent<RectTransform>().localScale = Vector3.one;
+    }
+
+    IEnumerator SetTurnList()
+    {
+        while (TurnManager.turns == null || TurnManager.turns.Count == 0)
+        {
+            yield return null;
+        }
+
+        turnsBarUI = new List<GameObject>();
+        turnUIBar.SetActive(true);
+        turnUIBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150 * TurnManager.turns.Count, turnUIBar.GetComponent<RectTransform>().sizeDelta.y);
+        foreach (GameObject turn in TurnManager.turns)
+        {
+            GameObject turnUIInstance = Instantiate(turnUI);
+            turnUIInstance.transform.SetParent(turnUIBar.transform.GetChild(0).transform, false);
+            turnsBarUI.Add(turnUIInstance);
+        }
+    }
+
     IEnumerator SetPlayersImage()
     {
         while(TileManager.playerInstance == null || TileManager.playerInstance.Count == 0)
@@ -180,18 +227,17 @@ public class UIManager : MonoBehaviour {
 
         for(int i=0; i<TileManager.playerInstance.Count;i++)
         {
-            string[] playerName = TileManager.playerInstance[i].name.Split('(');
-            foreach(Sprite image in playersIcon)
-            {
-                if(image.name == "Icon_"+playerName[0])
-                {
-                    playersTurns[i].transform.GetChild(0).GetComponent<Image>().sprite = image;
-                }
-            }
+            playersTurns[i].transform.GetChild(0).GetComponent<Image>().sprite = TileManager.playerInstance[i].GetComponent<ObjectController>().iconObject;
         }
     }
 
     IEnumerator DestroyText(TextMeshProUGUI obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Destroy(obj.gameObject);
+    }
+
+    IEnumerator DestroyObject(GameObject obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(obj.gameObject);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour {
 
     public static GameObject currentObjectTurn;
-    public List<GameObject> turns;
+    public static List<GameObject> turns;
 
     private GameObject UI;
     public int currentTurn = 0;
@@ -54,9 +54,7 @@ public class TurnManager : MonoBehaviour {
         }
 
         turns.Sort(delegate (GameObject a, GameObject b) {
-
             return (b.GetComponent<ObjectController>().skill).CompareTo(a.GetComponent<ObjectController>().skill);
-
         });
 
     }
@@ -68,6 +66,8 @@ public class TurnManager : MonoBehaviour {
         {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
+        UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
+
         currentObjectTurn = turns[currentTurn];
         //currentTurn++;
         PlayerController.canMove = true;
@@ -146,6 +146,7 @@ public class TurnManager : MonoBehaviour {
 
     public void ResetTurnColor()
     {
+        UI.GetComponent<UIManager>().DisableTurnUI(currentTurn);
         UI.GetComponent<UIManager>().ResetColor();
     }
 
