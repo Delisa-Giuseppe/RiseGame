@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class Personaggi : MonoBehaviour {
 
-    public Button A;
-    public Button B;
+    public Button Conferma;
+
     public int party;
 
 	// Use this for initialization
@@ -21,15 +21,15 @@ public class Personaggi : MonoBehaviour {
             sblocco();
         }
         else {
-            A.interactable = false;
-            B.interactable = false;
+            Conferma.interactable = false;
+         
         }
     }
 
     public void sblocco() {
        
-            A.interactable = true;
-            B.interactable = true;
+            Conferma.interactable = true;
+
             Debug.Log("Partiamo"); 
     }
 
