@@ -3,33 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AbilitySorceress : MonoBehaviour {
-
-    public string abilityName;
-    public float damage;
-    public float cure;
-    public int tileRange;
-    private int turnDuration;
-    public int cooldown;
+public class AbilitySorceress : Ability {
 
     private void Start()
     {
-        abilityName = "";
-        damage = 0;
-        cure = 0;
-        tileRange = 0;
-        turnDuration = 0;
-        cooldown = 0;
 
         GameObject sorceressUI = GetComponent<PlayerController>().playerUI;
-        sorceressUI.GetComponentsInChildren<Button>()[0].onClick.AddListener(PallaDiFuoco);
-        sorceressUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(PioggiaDiScintille);
-        sorceressUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(CenereAlVento);
-        sorceressUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(Elementale);
+        sorceressUI.GetComponentsInChildren<Button>()[0].onClick.AddListener(AttivaPallaDiFuoco);
+        sorceressUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(AttivaPioggiaDiScintille);
+        sorceressUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(AttivaCenereAlVento);
+        sorceressUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(AttivaElementale);
 
     }
 
-    public void PallaDiFuoco()
+    public void AttivaPallaDiFuoco()
     {
 
         this.abilityName = "Palla Di Fuoco";
@@ -37,10 +24,13 @@ public class AbilitySorceress : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 3;
         this.cooldown = 2;
+        Vector2[] newPoints = CalcolaSelezioneACroce();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void PioggiaDiScintille()
+    public void AttivaPioggiaDiScintille()
     {
 
         this.abilityName = "Pioggia Di Scintille";
@@ -48,10 +38,13 @@ public class AbilitySorceress : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 2;
         this.cooldown = 5;
+        Vector2[] newPoints = CalcolaSelezioneRomboidale();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void CenereAlVento()
+    public void AttivaCenereAlVento()
     {
 
         this.abilityName = "Cenere Al Vento";
@@ -59,10 +52,13 @@ public class AbilitySorceress : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 3;
         this.cooldown = 6;
+        Vector2[] newPoints = CalcolaSelezioneQuadrata();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void Elementale()
+    public void AttivaElementale()
     {
 
         this.abilityName = "Elementale";
@@ -70,6 +66,9 @@ public class AbilitySorceress : MonoBehaviour {
         this.cure = 0;
         this.tileRange = GetComponent<PlayerController>().moves;
         this.cooldown = 7;
+        Vector2[] newPoints = CalcolaSelezioneQuadrata();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 }

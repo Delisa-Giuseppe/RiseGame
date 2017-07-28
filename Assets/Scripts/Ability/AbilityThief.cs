@@ -3,32 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AbilityThief : MonoBehaviour {
-
-    public string abilityName;
-    public float damage;
-    public float cure;
-    public int tileRange;
-    private int turnDuration;
-    public int cooldown;
+public class AbilityThief : Ability {
 
     private void Start()
     {
-        abilityName = "";
-        damage = 0;
-        cure = 0;
-        tileRange = 0;
-        turnDuration = 0;
-        cooldown = 0;
 
         GameObject thiefUI = GetComponent<PlayerController>().playerUI;
-        thiefUI.GetComponentsInChildren<Button>()[0].onClick.AddListener(PassoDiOmbra);
-        thiefUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(RitornoPlanare);
-        thiefUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(FurtoDiIdentita);
+        thiefUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(AttivaPassoDiOmbra);
+        thiefUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(AttivaSabotaggio);
+        thiefUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(AttivaRitornoPlanare);
 
     }
 
-    public void PassoDiOmbra()
+    public void AttivaPassoDiOmbra()
     {
 
         this.abilityName = "Passo d'ombra";
@@ -36,10 +23,13 @@ public class AbilityThief : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 3;
         this.cooldown = 4;
+        Vector2[] newPoints = CalcolaSelezioneRomboidale();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void RitornoPlanare()
+    public void AttivaRitornoPlanare()
     {
 
         this.abilityName = "Ritorno Planare";
@@ -50,7 +40,7 @@ public class AbilityThief : MonoBehaviour {
 
     }
 
-    public void FurtoDiIdentita()
+    public void AttivaSabotaggio()
     {
 
         this.abilityName = "Furto d'identità";
@@ -58,6 +48,9 @@ public class AbilityThief : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 4;
         this.cooldown = 5;
+        Vector2[] newPoints = CalcolaSelezioneRomboidale();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 }

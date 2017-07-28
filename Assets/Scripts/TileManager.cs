@@ -18,13 +18,13 @@ public class TileManager : MonoBehaviour {
 
     public static List<GameObject> tilesSelectable;
 
-    private Vector2[] quadInitialPoint;
-    private Vector2[] polygonInitialPoint;
-    private GameObject tileSelected = null;
+    public static Vector2[] quadInitialPoint;
+    public static Vector2[] polygonInitialPoint;
+    public GameObject tileSelected = null;
     private GameObject previousTile = null;
     private static Vector3 playerBattlePosition = Vector3.zero;
 
-    public TileManager()
+    private void Awake()
     {
         tilesSelectable = new List<GameObject>();
 
@@ -70,6 +70,37 @@ public class TileManager : MonoBehaviour {
             tile.GetComponent<PolygonCollider2D>().SetPath(0, newPoints);
             tile.GetComponent<PolygonCollider2D>().isTrigger = true;
         }
+    }
+
+    public static void SetTrigger(GameObject tile, Vector2[] newPoints)
+    {
+
+        //tileSelected = tile;
+        tile.layer = LayerMask.NameToLayer("GridBattle");
+        tile.GetComponent<Tile>().isChecked = true;
+        if (newPoints.Length == 4)
+        {
+            tile.GetComponent<PolygonCollider2D>().SetPath(0, newPoints);
+            tile.GetComponent<PolygonCollider2D>().isTrigger = true;
+        } else if(newPoints.Length == 8)
+        {
+            Vector2[] horizontalPoints = new Vector2[4];
+            for(int i = 0; i<4; i++)
+            {
+                horizontalPoints[i] = newPoints[i];
+            }
+            Vector2[] verticalPoints = new Vector2[4];
+            for (int i = 0; i < 4; i++)
+            {
+                verticalPoints[i] = newPoints[i+4];
+            }
+            tile.GetComponent<PolygonCollider2D>().pathCount = 2;
+            tile.GetComponent<PolygonCollider2D>().SetPath(0, horizontalPoints);
+            tile.GetComponent<PolygonCollider2D>().SetPath(1, verticalPoints);
+            tile.GetComponent<PolygonCollider2D>().isTrigger = true;
+        }
+        
+
     }
     
     public void ShowGrid()

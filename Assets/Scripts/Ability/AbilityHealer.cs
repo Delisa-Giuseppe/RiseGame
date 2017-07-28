@@ -3,33 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AbilityHealer : MonoBehaviour {
-
-    public string abilityName;
-    public float damage;
-    public float cure;
-    public int tileRange;
-    private int turnDuration;
-    public int cooldown;
+public class AbilityHealer : Ability {
 
     private void Start()
     {
-        abilityName = "";
-        damage = 0;
-        cure = 0;
-        tileRange = 0;
-        turnDuration = 0;
-        cooldown = 0;
 
         GameObject healerUI = GetComponent<PlayerController>().playerUI;
-        healerUI.GetComponentsInChildren<Button>()[0].onClick.AddListener(CostrizioneCurativa);
-        healerUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(Eucarestia);
-        healerUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(CatenaDiFolgore);
-        healerUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(Devozione);
+        healerUI.GetComponentsInChildren<Button>()[0].onClick.AddListener(AttivaCostrizioneCurativa);
+        healerUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(AttivaEucarestia);
+        healerUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(AttivaCatenaDiFolgore);
+        healerUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(AttivaDevozione);
 
     }
 
-    public void CostrizioneCurativa()
+    public void AttivaCostrizioneCurativa()
     {
 
         this.abilityName = "Costrizione Curativa";
@@ -37,10 +24,13 @@ public class AbilityHealer : MonoBehaviour {
         this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
         this.tileRange = 2;
         this.cooldown = 3;
+        Vector2[] newPoints = CalcolaSelezioneRomboidale();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void Eucarestia()
+    public void AttivaEucarestia()
     {
 
         this.abilityName = "Eucarestia";
@@ -51,7 +41,7 @@ public class AbilityHealer : MonoBehaviour {
 
     }
 
-    public void CatenaDiFolgore()
+    public void AttivaCatenaDiFolgore()
     {
 
         this.abilityName = "Catena di folgore";
@@ -59,10 +49,13 @@ public class AbilityHealer : MonoBehaviour {
         this.cure = 0;
         this.tileRange = 2;
         this.cooldown = 4;
+        Vector2[] newPoints = CalcolaSelezioneRomboidale();
+        //TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
 
     }
 
-    public void Devozione()
+    public void AttivaDevozione()
     {
 
         this.abilityName = "Devozione";
