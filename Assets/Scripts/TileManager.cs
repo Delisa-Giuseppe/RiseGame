@@ -8,8 +8,7 @@ public class TileManager : MonoBehaviour {
     public GameObject gridCell;
     public GameObject[] player;
     public GameObject target;
-    public GameObject[] enemy;
-    public GameObject[] trees;
+    public GameObject[] borders;
     public static int moves;
 
     public static List<GameObject> playerInstance;
@@ -434,16 +433,16 @@ public class TileManager : MonoBehaviour {
                 {
                     tiles[x, y].isWalkable = false;
                     tiles[x, y].isObstacle = true;
-                    int rnd = Random.Range(0, trees.Length);
-                    Instantiate(trees[rnd], tileInstance.transform);
+                    int rnd = Random.Range(0, borders.Length);
+                    Instantiate(borders[rnd], tileInstance.transform);
                 }
 
                 if (y!=0 && y != height-1 && x ==0 || x == width-1)
                 {
                     tiles[x, y].isWalkable = false;
                     tiles[x, y].isObstacle = true;
-                    int rnd = Random.Range(0, trees.Length);
-                    Instantiate(trees[rnd], tileInstance.transform);
+                    int rnd = Random.Range(0, borders.Length);
+                    Instantiate(borders[rnd], tileInstance.transform);
                 }
 
                 if (x==1 && y==4)
