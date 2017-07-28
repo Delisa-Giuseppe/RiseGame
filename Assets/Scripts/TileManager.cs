@@ -434,7 +434,15 @@ public class TileManager : MonoBehaviour {
                     tiles[x, y].isWalkable = false;
                     tiles[x, y].isObstacle = true;
                     int rnd = Random.Range(0, borders.Length);
-                    Instantiate(borders[rnd], tileInstance.transform);
+                    if(y==0)
+                    {
+                        Instantiate(borders[rnd], tileInstance.transform).GetComponent<SpriteRenderer>().sortingOrder = 99;
+                    }
+                    else
+                    {
+                        Instantiate(borders[rnd], tileInstance.transform);
+                    }
+                    
                 }
 
                 if (y!=0 && y != height-1 && x ==0 || x == width-1)
