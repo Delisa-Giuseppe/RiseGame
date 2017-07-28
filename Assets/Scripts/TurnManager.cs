@@ -64,6 +64,10 @@ public class TurnManager : MonoBehaviour {
     public GameObject GetNextTurn()
     {
         UI.GetComponent<UIManager>().ResetColor();
+        if (currentObjectTurn && currentObjectTurn.tag == "Player")
+        {
+            UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
+        }
         currentObjectTurn = turns[currentTurn];
         //currentTurn++;
         PlayerController.canMove = true;
@@ -71,6 +75,7 @@ public class TurnManager : MonoBehaviour {
         if(currentObjectTurn.tag == "Player")
         {
             UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
+            UI.GetComponent<UIManager>().ShowPlayerUI(currentObjectTurn);
         }
 
         currentTurnState = TurnStates.EXECUTE;

@@ -35,6 +35,26 @@ public class UIManager : MonoBehaviour {
         StartCoroutine(DestroyText(popup, 1));
     }
 
+    /**
+     * 
+     * Metodo che fa apparire la UI del personaggio selezionato
+     * 
+     **/
+    public void ShowPlayerUI(GameObject player)
+    {
+        player.GetComponent<PlayerController>().playerUI.SetActive(true);
+    }
+
+    /**
+     * 
+     * Metodo che nasconde la UI del personaggio selezionato
+     * 
+     **/
+    public void HidePlayerUI(GameObject player)
+    {
+        player.GetComponent<PlayerController>().playerUI.SetActive(false);
+    }
+
     public void SetChangeTurnText(string text)
     {
         TextMeshProUGUI turnText = Instantiate(changeTurnText);

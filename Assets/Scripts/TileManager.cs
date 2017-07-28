@@ -459,6 +459,7 @@ public class TileManager : MonoBehaviour {
                     player4.transform.position = tileInstance.transform.position;
                     player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player4.GetComponent<PlayerController>().playerNumber = 3;
+                    player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
                 }
                 
                 if(x==2 && y==4)
@@ -468,6 +469,7 @@ public class TileManager : MonoBehaviour {
                     player3.transform.position = tileInstance.transform.position;
                     player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player3.GetComponent<PlayerController>().playerNumber = 2;
+                    player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
                 }
 
                 if (x==3 && y==4)
@@ -477,6 +479,7 @@ public class TileManager : MonoBehaviour {
                     player2.transform.position = tileInstance.transform.position;
                     player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player2.GetComponent<PlayerController>().playerNumber = 1;
+                    player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
                 }
 
                 if (x==4 && y==4)
@@ -486,6 +489,7 @@ public class TileManager : MonoBehaviour {
                     player1.transform.position = tileInstance.transform.position;
                     player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player1.GetComponent<PlayerController>().playerNumber = 0;
+                    player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
                 }
             }
         }

@@ -11,6 +11,7 @@ public class PlayerController : ObjectController
     public int playerNumber;
     public SpriteMeshInstance mesh;
     public static bool canMove;
+    public GameObject playerUI;
 
     public enum PlayerType
     {

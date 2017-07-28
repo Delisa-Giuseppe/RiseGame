@@ -18,8 +18,8 @@ public class ObjectController : MonoBehaviour {
     //Stats of single enemy
     public int totalHealth;
     public int currentHealth;
-    protected int physicAttack;
-    protected int magicAttack;
+    public int physicAttack;
+    public int magicAttack;
     public int moves;
     protected int critic;
     protected int evasion;
