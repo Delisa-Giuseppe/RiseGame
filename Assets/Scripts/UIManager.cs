@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class UIManager : MonoBehaviour {
 
@@ -23,7 +24,6 @@ public class UIManager : MonoBehaviour {
     private void Awake()
     {
         StartCoroutine(SetPlayersImage());
-        StartCoroutine(SetTurnList());
     }
 
     private void Update()
@@ -82,7 +82,7 @@ public class UIManager : MonoBehaviour {
         float barHealth = (float) currentHealth / totalHealth;
         int playerNumber = player.GetComponent<PlayerController>().playerNumber;
 
-        GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).transform.GetChild(1).gameObject;
+        GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).GetChild(1).gameObject;
         healthBar.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
     }
 
@@ -178,39 +178,47 @@ public class UIManager : MonoBehaviour {
 
     public void SetTurnBarUI(List<GameObject> turns, int currentTurn)
     {
+        turnUIBar.SetActive(true);
         turnsBarUI[0].GetComponent<Image>().color = Color.red;
         turnsBarUI[0].GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f);
         turnsBarUI[0].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
 
         int barPosition = 1;
-        for(int i=0; i<turns.Count; i++)
+
+        do
         {
-            if(i != currentTurn)
+            currentTurn++;
+            if(currentTurn>=turns.Count)
             {
-                turnsBarUI[barPosition].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[i].GetComponent<ObjectController>().iconObject;
-                turnsBarUI[barPosition].GetComponent<Image>().color = Color.white;
-                barPosition++;
+                currentTurn = 0;
             }
-        }
-    }
+            turnsBarUI[barPosition].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
+            barPosition++;
+        } while (barPosition < turns.Count);
 
-    public void DisableTurnUI(int turnPosition)
-    {
-        turnsBarUI[turnPosition].GetComponent<Image>().color = Color.white;
-        turnsBarUI[turnPosition].GetComponent<RectTransform>().localScale = Vector3.one;
-    }
-
-    IEnumerator SetTurnList()
-    {
-        while (TurnManager.turns == null || TurnManager.turns.Count == 0)
+        if(turnsBarUI.Count > turns.Count)
         {
-            yield return null;
+            Destroy(turnsBarUI.Last());
+            turnsBarUI.Remove(turnsBarUI.Last());
+            turnUIBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150 * turns.Count, turnUIBar.GetComponent<RectTransform>().sizeDelta.y);
         }
+    }
 
+    public void DisableTurnUI()
+    {
+        turnUIBar.SetActive(false);
+        foreach(GameObject turnUI in turnsBarUI)
+        {
+            Destroy(turnUI);
+        }
+        turnsBarUI.Clear();
+    }
+
+    public void SetTurnList(List<GameObject> turns)
+    {
         turnsBarUI = new List<GameObject>();
-        turnUIBar.SetActive(true);
-        turnUIBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150 * TurnManager.turns.Count, turnUIBar.GetComponent<RectTransform>().sizeDelta.y);
-        foreach (GameObject turn in TurnManager.turns)
+        turnUIBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150 * turns.Count, turnUIBar.GetComponent<RectTransform>().sizeDelta.y);
+        foreach (GameObject turn in turns)
         {
             GameObject turnUIInstance = Instantiate(turnUI);
             turnUIInstance.transform.SetParent(turnUIBar.transform.GetChild(0).transform, false);

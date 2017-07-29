@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour {
     {
         if (currentState == States.EXPLORATION && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
         {
+            pointAction = maxPointAction;
             TurnManager.currentTurnState = TurnManager.TurnStates.WAIT;
             tileManager.HideGrid();
         }

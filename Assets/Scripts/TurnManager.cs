@@ -5,9 +5,11 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour {
 
     public static GameObject currentObjectTurn;
-    public static List<GameObject> turns;
+    public List<GameObject> turns;
 
     private GameObject UI;
+    private int previousTurn = 0;
+    private bool refreshTurnUI;
     public int currentTurn = 0;
 
     public enum TurnStates
@@ -24,6 +26,16 @@ public class TurnManager : MonoBehaviour {
     private void Awake()
     {
         UI = GameObject.Find("UI");
+    }
+
+    private void Update()
+    {
+        if(refreshTurnUI)
+        {
+            UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
+            refreshTurnUI = false;
+        }
+        
     }
 
     public void CreateEnemyUI(List<GameObject> enemyInstance)
@@ -57,16 +69,18 @@ public class TurnManager : MonoBehaviour {
             return (b.GetComponent<ObjectController>().skill).CompareTo(a.GetComponent<ObjectController>().skill);
         });
 
+       UI.GetComponent<UIManager>().SetTurnList(turns);
     }
 
     public GameObject GetNextTurn()
     {
-        UI.GetComponent<UIManager>().ResetColor();
+        refreshTurnUI = true;
+        previousTurn = currentTurn;
+        //UI.GetComponent<UIManager>().ResetColor();
         if (currentObjectTurn && currentObjectTurn.tag == "Player")
         {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
-        UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
 
         currentObjectTurn = turns[currentTurn];
         //currentTurn++;
@@ -74,7 +88,7 @@ public class TurnManager : MonoBehaviour {
         UI.GetComponent<UIManager>().SetChangeTurnText(currentObjectTurn.GetComponent<ObjectController>().ObjectName + " Turn");
         if(currentObjectTurn.tag == "Player")
         {
-            UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
+           // UI.GetComponent<UIManager>().SetPlayerTurnColor(currentObjectTurn);
             UI.GetComponent<UIManager>().ShowPlayerUI(currentObjectTurn);
         }
 
@@ -95,8 +109,6 @@ public class TurnManager : MonoBehaviour {
         GameManager.currentState = GameManager.States.WAIT;
 
         yield return new WaitForEndOfFrame();
-
-        int previousTurn = currentTurn;
 
         if (IsAllTurnFinished())
         {
@@ -130,6 +142,7 @@ public class TurnManager : MonoBehaviour {
             }
 
             yield return new WaitForSeconds(1f);
+            UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
             GameManager.currentState = nextState;
             currentTurnState = turnState;
         }
@@ -137,6 +150,7 @@ public class TurnManager : MonoBehaviour {
         {
             currentTurn = 0;
             currentTurnState = TurnStates.FINISH;
+            currentObjectTurn = null;
             turns.Clear();
             yield return new WaitForSeconds(1.5f);
             GameManager.currentState = GameManager.States.EXPLORATION;
@@ -146,8 +160,7 @@ public class TurnManager : MonoBehaviour {
 
     public void ResetTurnColor()
     {
-        UI.GetComponent<UIManager>().DisableTurnUI(currentTurn);
-        UI.GetComponent<UIManager>().ResetColor();
+        //UI.GetComponent<UIManager>().ResetColor();
     }
 
 
@@ -185,6 +198,7 @@ public class TurnManager : MonoBehaviour {
 
         if(!found)
         {
+            UI.GetComponent<UIManager>().DisableTurnUI();
             UI.GetComponent<UIManager>().ClearEnemyList();
         }
         return found;
