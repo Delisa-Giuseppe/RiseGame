@@ -118,12 +118,11 @@ public class TurnManager : MonoBehaviour {
         if (AreEnemiesAlive(enemies))
         {
             List<GameObject> removeTurn = new List<GameObject>();
-            foreach (GameObject turn in turns)
+            for(int i=0; i<turns.Count; i++)
             {
-                if (turn == null)
+                if (turns[i] == null)
                 {
-                    removeTurn.Add(turn);
-                    currentTurn--;
+                    removeTurn.Add(turns[i]);
                 }
             }
             foreach(GameObject remove in removeTurn)
@@ -131,18 +130,17 @@ public class TurnManager : MonoBehaviour {
                 turns.Remove(remove);
             }
 
-            if (currentTurn < 0)
+            if (GameManager.pointAction <= 1 && removeTurn.Count>0)
             {
-                currentTurn = 0;
-            }
-
-            if (removeTurn.Count > 0 && previousTurn == currentTurn)
-            {
-                currentTurn++;
+                currentTurn--;
+                UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
+                if (currentTurn < 0)
+                {
+                    currentTurn = 0;
+                }
             }
 
             yield return new WaitForSeconds(1f);
-            UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
             GameManager.currentState = nextState;
             currentTurnState = turnState;
         }

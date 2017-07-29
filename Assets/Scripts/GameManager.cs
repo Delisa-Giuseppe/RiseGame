@@ -5,7 +5,7 @@ public class GameManager : MonoBehaviour {
     public int height;
     public int width;
     public int maxPointAction;
-    private int pointAction;
+    public static int pointAction;
 
     public enum States
     {
