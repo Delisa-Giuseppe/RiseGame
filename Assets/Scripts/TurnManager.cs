@@ -133,7 +133,6 @@ public class TurnManager : MonoBehaviour {
             if (GameManager.pointAction <= 1 && removeTurn.Count>0)
             {
                 currentTurn--;
-                UI.GetComponent<UIManager>().SetTurnBarUI(turns, currentTurn);
                 if (currentTurn < 0)
                 {
                     currentTurn = 0;

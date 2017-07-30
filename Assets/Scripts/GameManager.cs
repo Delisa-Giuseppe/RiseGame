@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
@@ -193,6 +194,15 @@ public class GameManager : MonoBehaviour {
     {
         currentState = States.EXPLORATION;
         tileManager.CreateGrid(width, height);
+    }
+
+    public static void FinishLevel()
+    {
+        foreach(GameObject player in TileManager.playerInstance)
+        {
+            player.GetComponent<AILerp>().target = null;
+        }
+        SceneManager.LoadScene("PowerUpScene");
     }
 
     public static void RefreshPath()

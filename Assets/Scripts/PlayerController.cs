@@ -8,6 +8,7 @@ public class PlayerController : ObjectController
 {
 
     private GameObject playerTile;
+    public static string nextScene;
     public int playerNumber;
     public static bool canMove;
     public GameObject playerUI;
@@ -53,6 +54,17 @@ public class PlayerController : ObjectController
                         GameManager.currentState = GameManager.States.WAIT;
                         TileManager.AddEnemy(ray.collider.gameObject);
                         break;
+                    }
+
+                    if(ray.collider.tag == "EndLevel")
+                    {
+                        foreach(GameObject player in TileManager.playerInstance)
+                        {
+                            DontDestroyOnLoad(player);
+                        }
+                        string[] sceneName = ray.collider.name.Split('_');
+                        nextScene = sceneName[1];
+                        GameManager.FinishLevel();
                     }
                 }
             }

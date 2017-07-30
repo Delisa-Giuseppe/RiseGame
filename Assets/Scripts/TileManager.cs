@@ -23,9 +23,11 @@ public class TileManager : MonoBehaviour {
     public GameObject tileSelected = null;
     private GameObject previousTile = null;
     private static Vector3 playerBattlePosition = Vector3.zero;
+    private GameObject UI;
 
     private void Awake()
     {
+        UI = GameObject.Find("UI");
         tilesSelectable = new List<GameObject>();
 
         quadInitialPoint = new Vector2[] {
@@ -427,7 +429,11 @@ public class TileManager : MonoBehaviour {
     {
         tiles = new Tile[width, height];
 
-        playerInstance = new List<GameObject>();
+        if(playerInstance == null || playerInstance.Count <=0)
+        {
+            playerInstance = new List<GameObject>();
+        }
+        
         enemyInstance = new List<GameObject>();
 
         //Create the parent game object
@@ -490,7 +496,7 @@ public class TileManager : MonoBehaviour {
                     player4.transform.position = tileInstance.transform.position;
                     player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player4.GetComponent<PlayerController>().playerNumber = 3;
-                    player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
+                    player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
                 
                 if(x==2 && y==4)
@@ -500,7 +506,7 @@ public class TileManager : MonoBehaviour {
                     player3.transform.position = tileInstance.transform.position;
                     player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player3.GetComponent<PlayerController>().playerNumber = 2;
-                    player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
+                    player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
 
                 if (x==3 && y==4)
@@ -510,7 +516,7 @@ public class TileManager : MonoBehaviour {
                     player2.transform.position = tileInstance.transform.position;
                     player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player2.GetComponent<PlayerController>().playerNumber = 1;
-                    player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
+                    player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
 
                 if (x==4 && y==4)
@@ -520,16 +526,101 @@ public class TileManager : MonoBehaviour {
                     player1.transform.position = tileInstance.transform.position;
                     player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player1.GetComponent<PlayerController>().playerNumber = 0;
-                    player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, GameObject.Find("UI").transform);
+                    player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
             }
         }
-        playerInstance.Add(player1);
-        playerInstance.Add(player2);
-        playerInstance.Add(player3);
-        playerInstance.Add(player4);
-        
-        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+
+        if(playerInstance.Count > 0)
+        {
+            bool p2 = false;
+            bool p3 = false;
+            bool p4 = false;
+
+            foreach (GameObject player in playerInstance)
+            {
+                if(player.name == player1.name)
+                {
+                    player1.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
+                    player1.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
+                    player1.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
+                    player1.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
+                    player1.GetComponent<ObjectController>().CalculateStatistics();
+                    Destroy(player);
+                }
+                else if (player.name == player2.name)
+                {
+                    player2.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
+                    player2.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
+                    player2.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
+                    player2.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
+                    player2.GetComponent<ObjectController>().CalculateStatistics();
+                    Destroy(player);
+                    p2 = true;
+                }
+                else if (player.name == player3.name)
+                {
+                    player3.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
+                    player3.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
+                    player3.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
+                    player3.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
+                    player3.GetComponent<ObjectController>().CalculateStatistics();
+                    Destroy(player);
+                    p3 = true;
+                }
+                else if (player.name == player4.name)
+                {
+                    player4.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
+                    player4.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
+                    player4.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
+                    player4.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
+                    player4.GetComponent<ObjectController>().CalculateStatistics();
+                    Destroy(player);
+                    p4 = true;
+                }
+            }
+            playerInstance.Clear();
+            playerInstance.Add(player1);
+            if(p2)
+            {
+                playerInstance.Add(player2);
+            }
+            else
+            {
+                Destroy(player2.GetComponent<PlayerController>().playerUI);
+                UI.GetComponent<UIManager>().DisablePlayerHUD(player2.GetComponent<PlayerController>().playerNumber);
+                Destroy(player2);
+            }
+            if(p3)
+            {
+                playerInstance.Add(player3);
+            }
+            else
+            {
+                Destroy(player3.GetComponent<PlayerController>().playerUI);
+                UI.GetComponent<UIManager>().DisablePlayerHUD(player3.GetComponent<PlayerController>().playerNumber);
+                Destroy(player3);
+            }
+            if(p4)
+            {
+                playerInstance.Add(player4);
+            }
+            else
+            {
+                Destroy(player4.GetComponent<PlayerController>().playerUI);
+                UI.GetComponent<UIManager>().DisablePlayerHUD(player4.GetComponent<PlayerController>().playerNumber);
+                Destroy(player4);
+            }
+        }
+        else
+        {
+            playerInstance.Add(player1);
+            playerInstance.Add(player2);
+            playerInstance.Add(player3);
+            playerInstance.Add(player4);
+        }
+
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             RaycastHit2D tile = Physics2D.Raycast(enemy.transform.position, new Vector2(0, 1), 0.5f, 1 << LayerMask.NameToLayer("GridMap"));
 

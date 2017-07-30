@@ -35,7 +35,7 @@ public class ObjectController : MonoBehaviour {
         anim = GetComponentInChildren<Animator>();
     }
 
-    private void CalculateStatistics()
+    public void CalculateStatistics()
     {
         totalHealth = 2 * strength + 6 * constitution + 2 * mind;
         magicAttack = 5 * mind;

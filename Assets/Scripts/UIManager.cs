@@ -15,8 +15,6 @@ public class UIManager : MonoBehaviour {
     public GameObject turnUIBar;
     public GameObject turnUI;
 
-    private int minWidthTurnUIBar = 585;
-    private int spaceTurnUIBar = 55;
     private List<GameObject> healthEnemies;
     private List<GameObject> turnsBarUI;
 
@@ -144,18 +142,9 @@ public class UIManager : MonoBehaviour {
 
     public void DisablePlayerHUD(int playerNumber)
     {
-        //for(int i=0; i<TileManager.playerInstance.Count; i++)
-        //{
-        //    if(TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber == playerNumber)
-        //    {
-                //healthTexts[i].SetText("0/" + TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth.ToString() + " HP");
-                //playersImage[i].GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
-                //healthTexts.RemoveAt(i);
-                //playersImage.RemoveAt(i);
-                playersTurns[playerNumber].transform.GetChild(0).GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
-                playersTurns.RemoveAt(playerNumber);
-        //    }
-        //}
+        playersTurns[playerNumber].transform.GetChild(0).GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
+        playersTurns[playerNumber].transform.GetChild(1).gameObject.SetActive(false);
+        playersTurns.RemoveAt(playerNumber);
     }
 
     public void SetPlayerTurnColor(GameObject player)
