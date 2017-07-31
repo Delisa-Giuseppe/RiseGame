@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
         PRE_FIGHT,
         FIGHT,
         ATTACK,
+        ABILITY,
         END_MOVE,
         WAIT
     }
@@ -66,7 +67,7 @@ public class GameManager : MonoBehaviour {
         {
             pointAction = maxPointAction;
             TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-            tileManager.ResetGrid();
+            TileManager.ResetGrid();
             if (TurnManager.currentObjectTurn.tag == "Player")
             {
                 PlayerController.canMove = true;
@@ -102,13 +103,13 @@ public class GameManager : MonoBehaviour {
                 {
                     if(!tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber) && PlayerController.canMove)
                     {
-                        tileManager.ResetGrid();
+                        TileManager.ResetGrid();
                         tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                     }
                 }
                 else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && PlayerController.canMove)
                 {
-                    tileManager.ResetGrid();
+                    TileManager.ResetGrid();
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                 }
            }
@@ -119,7 +120,7 @@ public class GameManager : MonoBehaviour {
             currentState = States.FIGHT;
             if (TurnManager.currentObjectTurn.tag == "Player")
             {
-                tileManager.ResetGrid();
+                TileManager.ResetGrid();
                 tileManager.UpdateGrid(TurnManager.currentObjectTurn, false);
             }
         }
@@ -154,7 +155,7 @@ public class GameManager : MonoBehaviour {
             {
                 pointAction = maxPointAction;
                 TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-                tileManager.ResetGrid();
+                TileManager.ResetGrid();
                 if (TurnManager.currentObjectTurn.tag == "Player")
                 {
                     PlayerController.canMove = true;
@@ -169,7 +170,7 @@ public class GameManager : MonoBehaviour {
             }
             else
             {
-                tileManager.ResetGrid();
+                TileManager.ResetGrid();
                 if (TurnManager.currentObjectTurn.tag == "Player")
                 {
                     if (PlayerController.canMove)

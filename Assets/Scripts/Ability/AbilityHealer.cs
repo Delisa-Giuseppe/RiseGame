@@ -18,21 +18,21 @@ public class AbilityHealer : Ability {
 
     public void AttivaCostrizioneCurativa()
     {
-
         this.abilityName = "Costrizione Curativa";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
         this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
         this.tileRange = 2;
         this.cooldown = 3;
         Vector2[] newPoints = CalcolaSelezioneRomboidale();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 
     public void AttivaEucarestia()
     {
-
+        GameManager.currentState = GameManager.States.ABILITY;
         this.abilityName = "Eucarestia";
         this.damage = 0;
         this.cure = GetComponent<PlayerController>().currentHealth / 100f * 30f;
@@ -43,21 +43,21 @@ public class AbilityHealer : Ability {
 
     public void AttivaCatenaDiFolgore()
     {
-
         this.abilityName = "Catena di folgore";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 15f;
         this.cure = 0;
         this.tileRange = 2;
         this.cooldown = 4;
         Vector2[] newPoints = CalcolaSelezioneRomboidale();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 
     public void AttivaDevozione()
     {
-
+        GameManager.currentState = GameManager.States.ABILITY;
         this.abilityName = "Devozione";
         this.damage = GetComponent<PlayerController>().magicAttack;
         this.cure = 0;
