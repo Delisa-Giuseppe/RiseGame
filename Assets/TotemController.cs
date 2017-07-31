@@ -6,7 +6,7 @@ using UnityEngine;
 public class TotemController : MonoBehaviour {
 
     public GameObject cutscene;
-    public static bool showCutscene;
+    public bool showCutscene;
 
     private Animator anim;
     private string cutsceneName;
@@ -37,8 +37,12 @@ public class TotemController : MonoBehaviour {
                 waitTime = clip.length;
             }
         }
-        anim.SetTrigger(cutsceneName);
+        anim.SetBool(cutsceneName, true);
+        anim.SetBool("showCutscene", true);
+        anim.SetBool("showCutscene", false);
+        anim.SetBool(cutsceneName, false);
         yield return new WaitForSeconds(waitTime);
+        showCutscene = false;
         GameManager.currentState = GameManager.States.EXPLORATION;
     }
 }
