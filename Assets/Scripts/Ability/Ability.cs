@@ -14,7 +14,7 @@ public class Ability : MonoBehaviour
     private GameObject UI;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         UI = GameObject.Find("UI");
         abilityName = "";
