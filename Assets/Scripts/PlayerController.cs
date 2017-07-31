@@ -66,6 +66,13 @@ public class PlayerController : ObjectController
                         nextScene = sceneName[1];
                         GameManager.FinishLevel();
                     }
+
+                    if(ray.collider.tag == "Totem" && !ray.collider.GetComponent<TotemController>().showCutscene)
+                    {
+                        ray.collider.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                        ray.collider.GetComponent<TotemController>().showCutscene = true;
+                        GameManager.currentState = GameManager.States.WAIT;
+                    }
                 }
             }
         }

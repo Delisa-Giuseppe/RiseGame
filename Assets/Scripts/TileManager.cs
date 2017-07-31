@@ -134,7 +134,7 @@ public class TileManager : MonoBehaviour {
 
         if (GameManager.currentState == GameManager.States.EXPLORATION)
         {
-            if (hit.collider != null && hit.collider.tag == "Tile" && !hit.collider.GetComponent<Tile>().isObstacle)
+            if (hit.collider != null && (hit.collider.tag == "Tile" || hit.collider.tag == "Totem") && !hit.collider.GetComponent<Tile>().isObstacle)
             {
                 Destroy(targetInstance);
                 targetInstance = Instantiate(target);
