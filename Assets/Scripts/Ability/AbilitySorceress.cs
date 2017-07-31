@@ -18,57 +18,57 @@ public class AbilitySorceress : Ability {
 
     public void AttivaPallaDiFuoco()
     {
-
         this.abilityName = "Palla Di Fuoco";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
         this.cure = 0;
-        this.tileRange = 3;
+        this.tileRange = 7;
         this.cooldown = 2;
         Vector2[] newPoints = CalcolaSelezioneACroce();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 
     public void AttivaPioggiaDiScintille()
     {
-
         this.abilityName = "Pioggia Di Scintille";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 30f;
         this.cure = 0;
         this.tileRange = 2;
         this.cooldown = 5;
         Vector2[] newPoints = CalcolaSelezioneRomboidale();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 
     public void AttivaCenereAlVento()
     {
-
         this.abilityName = "Cenere Al Vento";
         this.damage = 0;
         this.cure = 0;
         this.tileRange = 3;
         this.cooldown = 6;
         Vector2[] newPoints = CalcolaSelezioneQuadrata();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 
     public void AttivaElementale()
     {
-
         this.abilityName = "Elementale";
         this.damage = 0;
         this.cure = 0;
         this.tileRange = GetComponent<PlayerController>().moves;
         this.cooldown = 7;
         Vector2[] newPoints = CalcolaSelezioneQuadrata();
-        //TileManager.ResetGrid();
+        TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
 
     }
 }

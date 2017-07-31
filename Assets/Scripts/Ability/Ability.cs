@@ -27,7 +27,12 @@ public class Ability : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-		
+		if(GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
+        {
+            TileManager.ResetGrid();
+            GameManager.currentState = GameManager.States.SELECT;
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+        }
 	}
 
     protected Vector2[] CalcolaSelezioneQuadrata()

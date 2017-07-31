@@ -20,7 +20,7 @@ public class TileManager : MonoBehaviour {
 
     public static Vector2[] quadInitialPoint;
     public static Vector2[] polygonInitialPoint;
-    public GameObject tileSelected = null;
+    public static GameObject tileSelected = null;
     private GameObject previousTile = null;
     private static Vector3 playerBattlePosition = Vector3.zero;
     private GameObject UI;
@@ -77,7 +77,7 @@ public class TileManager : MonoBehaviour {
     public static void SetTrigger(GameObject tile, Vector2[] newPoints)
     {
 
-        //tileSelected = tile;
+        tileSelected = tile;
         tile.layer = LayerMask.NameToLayer("GridBattle");
         tile.GetComponent<Tile>().isChecked = true;
         if (newPoints.Length == 4)
@@ -101,7 +101,6 @@ public class TileManager : MonoBehaviour {
             tile.GetComponent<PolygonCollider2D>().SetPath(1, verticalPoints);
             tile.GetComponent<PolygonCollider2D>().isTrigger = true;
         }
-        
 
     }
     
@@ -344,7 +343,7 @@ public class TileManager : MonoBehaviour {
         
     }
 
-    public void ResetGrid()
+    public static void ResetGrid()
     {
         tileSelected.GetComponent<Tile>().isChecked = false;
         tileSelected.layer = LayerMask.NameToLayer("GridMap");
@@ -667,6 +666,27 @@ public class TileManager : MonoBehaviour {
         return bounds;
     }
 
+    public static IEnumerator WaitMovesAbility(GameObject mover)
+    {
+        GameManager.currentState = GameManager.States.ABILITY;
+
+        while (tilesSelectable.Count == 0)
+        {
+            yield return null;
+        }
+
+        tileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
+
+        if (mover.tag == "Player")
+        {
+            Tile.movable = false;
+            yield return new WaitForSeconds(0.5f);
+            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().pathCount = 1;
+            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
+        }
+    }
+
+
     public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
@@ -682,6 +702,7 @@ public class TileManager : MonoBehaviour {
         {
             Tile.movable = false;
             yield return new WaitForSeconds(0.5f);
+            mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().pathCount = 1;
             mover.GetComponent<PlayerController>().PlayerTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
         }
         else
