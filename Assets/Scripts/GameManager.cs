@@ -58,12 +58,12 @@ public class GameManager : MonoBehaviour {
             }
             else if(TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
             {
-                tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
+                tileManager.UpdateGrid(TurnManager.currentObjectTurn, PlayerController.canMove);
             }
-        }
+        } 
 
         if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space) 
-            && (currentState == States.MOVE || currentState == States.FIGHT))
+            && (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY))
         {
             pointAction = maxPointAction;
             TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour {
             
            if(currentState == States.FIGHT)
            {
-                if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && tileManager.CheckEnemy())
+                if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && TileManager.CheckEnemy())
                 {
                     if(!tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber) && PlayerController.canMove)
                     {

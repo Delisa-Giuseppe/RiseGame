@@ -243,7 +243,7 @@ public class TileManager : MonoBehaviour {
         }
     }
 
-    public bool CheckEnemy()
+    public static bool CheckEnemy()
     {
         foreach(GameObject enemy in enemyInstance)
         {

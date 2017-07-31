@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ability : MonoBehaviour {
+public class Ability : MonoBehaviour
+{
 
     public string abilityName;
     public float damage;
@@ -10,11 +11,12 @@ public class Ability : MonoBehaviour {
     public int tileRange;
     public int turnDuration;
     public int cooldown;
+    private GameObject UI;
 
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-
+        UI = GameObject.Find("UI");
         abilityName = "";
         damage = 0;
         cure = 0;
@@ -23,21 +25,21 @@ public class Ability : MonoBehaviour {
         cooldown = 0;
 
     }
-	
-	// Update is called once per frame
-	void Update ()
+
+    // Update is called once per frame
+    void Update()
     {
-		if(GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
+        if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
         {
             TileManager.ResetGrid();
             GameManager.currentState = GameManager.States.SELECT;
             TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
         }
-	}
+
+    }
 
     protected Vector2[] CalcolaSelezioneQuadrata()
     {
-
         Vector2[] points = new Vector2[] {
             new Vector2(
                     TileManager.quadInitialPoint[0].x*tileRange,
@@ -59,7 +61,6 @@ public class Ability : MonoBehaviour {
 
     protected Vector2[] CalcolaSelezioneRomboidale()
     {
-
         Vector2[] points = new Vector2[] {
             new Vector2(
                     TileManager.polygonInitialPoint[0].x*tileRange,
@@ -110,5 +111,16 @@ public class Ability : MonoBehaviour {
 
         return points;
 
+    }
+
+    protected void PhysicAbilityAttack(GameObject[] targets)
+    {
+        foreach(GameObject target in targets)
+        {
+            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
+            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
+            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
+            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
+        }
     }
 }

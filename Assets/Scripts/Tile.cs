@@ -87,7 +87,14 @@ public class Tile : MonoBehaviour {
     IEnumerator WaitColor(Collider2D collision)
     {
         yield return new WaitForSeconds(1f);
-        collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 1f);
+        if(GameManager.currentState == GameManager.States.ABILITY)
+        {
+            collision.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 140f / 255f, 0f / 255f, 1f);
+        } else
+        {
+            collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 1f);
+        }
+        
     }
 
     public int ArrayX
