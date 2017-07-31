@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class TotemController : MonoBehaviour {
@@ -26,16 +24,7 @@ public class TotemController : MonoBehaviour {
     IEnumerator ShowCutscene()
     {
         yield return new WaitForSeconds(1f);
-        float waitTime = 0;
-        AnimationClip[] animations = AnimationUtility.GetAnimationClips(anim.gameObject);
-        foreach(AnimationClip clip in animations)
-        {
-            if(clip.name.Contains(cutsceneName))
-            {
-                waitTime = clip.length;
-            }
-        }
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSeconds(11);
         anim.SetBool("showCutscene", false);
         anim.SetBool(cutsceneName, false);
         GameManager.currentState = GameManager.States.EXPLORATION;
