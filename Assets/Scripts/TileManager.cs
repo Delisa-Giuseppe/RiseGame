@@ -210,6 +210,10 @@ public class TileManager : MonoBehaviour {
 
             }
 
+            if(hit.collider != null && hit.collider.tag == "Totem")
+            {
+                Debug.Log("YEAH");
+            }
             Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
