@@ -47,17 +47,15 @@ public class EnemyController : ObjectController {
         canAttack = false;
         if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
         {
-            canAttack = true;
-            playerAttacked = closerPlayer;
+            if ((enemyBehaviour == EnemyType.RANGED && canAttack) ||
+                (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
+            {
+                canAttack = true;
+                playerAttacked = closerPlayer;
+            }
         }
 
         GameObject closerTile = null;
-
-        //if((enemyBehaviour == EnemyType.RANGED && canAttack) ||  
-        //    (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
-        //{
-            
-        //}
 
         for (int i = 0; canMove && i < selectableTile.Count; i++)
         {

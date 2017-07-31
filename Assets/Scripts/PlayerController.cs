@@ -66,6 +66,12 @@ public class PlayerController : ObjectController
                         nextScene = sceneName[1];
                         GameManager.FinishLevel();
                     }
+
+                    if(ray.collider.tag == "Totem" && !TotemController.showCutscene)
+                    {
+                        TotemController.showCutscene = true;
+                        GameManager.currentState = GameManager.States.WAIT;
+                    }
                 }
             }
         }
