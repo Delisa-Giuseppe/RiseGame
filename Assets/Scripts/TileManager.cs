@@ -274,7 +274,6 @@ public class TileManager : MonoBehaviour {
             if (playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED
                 && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
             {
-                Debug.Log("Ciao");
                 playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
             }
@@ -285,7 +284,7 @@ public class TileManager : MonoBehaviour {
             //    playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
             //    playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
             //    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
-            //}
+            //} 
 
             return true;
         }

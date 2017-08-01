@@ -11,7 +11,15 @@ public class Ability : MonoBehaviour
     public int tileRange;
     public int turnDuration;
     public int cooldown;
+
     private GameObject UI;
+
+    public enum SelectType
+    {
+        QUADRATO,
+        ROMBO,
+        CROCE
+    }
 
     // Use this for initialization
     void Awake()
@@ -111,6 +119,26 @@ public class Ability : MonoBehaviour
 
         return points;
 
+    }
+
+    public void AttivaAbilita(SelectType currentType)
+    {
+        Vector2[] newPoints = null;
+        switch (currentType)
+        {
+            case SelectType.QUADRATO:
+                newPoints = CalcolaSelezioneQuadrata();
+            break;
+            case SelectType.ROMBO:
+                newPoints = CalcolaSelezioneRomboidale();
+                break;
+            case SelectType.CROCE:
+                newPoints = CalcolaSelezioneACroce();
+                break;
+        }
+        TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
     }
 
     protected void PhysicAbilityAttack(GameObject[] targets)

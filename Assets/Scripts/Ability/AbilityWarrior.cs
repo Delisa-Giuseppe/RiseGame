@@ -23,7 +23,7 @@ public class AbilityWarrior : Ability {
         warriorUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(AttivaAttiraNemici);
         warriorUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(AttivaAttaccoPotenziato);
         warriorUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(AttivaAttaccoRotante);
-        
+
 
     }
 
@@ -41,7 +41,7 @@ public class AbilityWarrior : Ability {
 
     public void UseAbility(WarriorAbilityType abilityType)
     {
-        switch(abilityType)
+        switch (abilityType)
         {
             case WarriorAbilityType.CARICA:
                 Debug.Log("Carica");
@@ -107,13 +107,13 @@ public class AbilityWarrior : Ability {
     public void UsaAttaccoPotenziato()
     {
 
-        
+
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         if (hit.collider != null && hit.collider.tag == "Enemy" ||
         (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
         {
             GameObject[] enemyTarget = new GameObject[1];
-            
+
             foreach (GameObject enemy in TileManager.enemyInstance)
             {
                 if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
@@ -139,5 +139,5 @@ public class AbilityWarrior : Ability {
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
         StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
     }
-    
+
 }
