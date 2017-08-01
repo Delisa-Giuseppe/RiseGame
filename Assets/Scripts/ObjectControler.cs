@@ -47,10 +47,10 @@ public class ObjectController : MonoBehaviour {
     }
 
 
-    protected void OnHit(GameObject target)
+	protected void OnHit(GameObject target, int damage)
     {
-        UI.GetComponent<UIManager>().ShowPopupDamage(physicAttack, target.transform);
-        target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - physicAttack;
+        UI.GetComponent<UIManager>().ShowPopupDamage(damage, target.transform);
+        target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - damage;
         if (target.tag == "Enemy")
         {
             UI.GetComponent<UIManager>().SetEnemyHealth(target.GetComponent<EnemyController>().position, target);

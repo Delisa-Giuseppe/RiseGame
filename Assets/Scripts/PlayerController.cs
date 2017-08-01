@@ -101,7 +101,7 @@ public class PlayerController : ObjectController
         }
     }
 
-    public void PhysicAttack(GameObject target)
+	public void PhysicAttack(GameObject target, string animationName, int damage)
     {
         if(target)
         {
@@ -115,13 +115,13 @@ public class PlayerController : ObjectController
                 transform.eulerAngles = new Vector3(0f, 0f);
             }
 
-            anim.SetTrigger("attack");
+			anim.SetTrigger(animationName);
 
-            StartCoroutine(WaitAnimation(target));
+			StartCoroutine(WaitAnimation(target, damage));
         }
     }
 
-    IEnumerator WaitAnimation(GameObject target)
+	IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
 
@@ -130,7 +130,7 @@ public class PlayerController : ObjectController
             mesh.color = Color.red;
         }
 
-        OnHit(target);
+        OnHit(target, damage);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
             target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;

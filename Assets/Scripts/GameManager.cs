@@ -126,6 +126,11 @@ public class GameManager : MonoBehaviour {
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                 }
            }
+
+			if(currentState == States.ABILITY)
+			{
+				TurnManager.currentObjectTurn.GetComponent <Ability>().UsaAbilita();
+			}
         }
 
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (Input.GetMouseButtonDown(1) && currentState == States.MOVE) || currentState == States.PRE_FIGHT)

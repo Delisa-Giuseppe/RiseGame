@@ -11,7 +11,16 @@ public class Ability : MonoBehaviour
     public int tileRange;
     public int turnDuration;
     public int cooldown;
+
     private GameObject UI;
+	protected GameObject playerUI;
+
+    public enum SelectType
+    {
+        QUADRATO,
+        ROMBO,
+        CROCE
+    }
 
     // Use this for initialization
     void Awake()
@@ -22,21 +31,19 @@ public class Ability : MonoBehaviour
         cure = 0;
         tileRange = 0;
         turnDuration = 0;
-        cooldown = 0;
+		cooldown = 0;
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
-        {
-            TileManager.ResetGrid();
-            GameManager.currentState = GameManager.States.SELECT;
-            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
-        }
-
-    }
+	void Update()
+	{
+		if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
+		{
+			TileManager.ResetGrid();
+			GameManager.currentState = GameManager.States.SELECT;
+			TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+		}
+	}
 
     protected Vector2[] CalcolaSelezioneQuadrata()
     {
@@ -113,14 +120,39 @@ public class Ability : MonoBehaviour
 
     }
 
-    protected void PhysicAbilityAttack(GameObject[] targets)
+    public void AttivaAbilita(SelectType currentType)
     {
-        foreach(GameObject target in targets)
+        Vector2[] newPoints = null;
+        switch (currentType)
         {
-            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
-            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
-            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
-            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
+            case SelectType.QUADRATO:
+                newPoints = CalcolaSelezioneQuadrata();
+            break;
+            case SelectType.ROMBO:
+                newPoints = CalcolaSelezioneRomboidale();
+                break;
+            case SelectType.CROCE:
+                newPoints = CalcolaSelezioneACroce();
+                break;
         }
+        TileManager.ResetGrid();
+        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
     }
+
+//    protected void PhysicAbilityAttack(GameObject[] targets)
+//    {
+//        foreach(GameObject target in targets)
+//        {
+//            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
+//            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
+//            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
+//            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
+//        }
+//    }
+
+	public virtual void UsaAbilita()
+	{
+		print ("Abilita");
+	}
 }
