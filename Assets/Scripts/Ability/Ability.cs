@@ -13,6 +13,7 @@ public class Ability : MonoBehaviour
     public int cooldown;
 
     private GameObject UI;
+	protected GameObject playerUI;
 
     public enum SelectType
     {
@@ -43,7 +44,6 @@ public class Ability : MonoBehaviour
             GameManager.currentState = GameManager.States.SELECT;
             TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
         }
-
     }
 
     protected Vector2[] CalcolaSelezioneQuadrata()
@@ -138,17 +138,18 @@ public class Ability : MonoBehaviour
         }
         TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+
         StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
     }
 
-    protected void PhysicAbilityAttack(GameObject[] targets)
-    {
-        foreach(GameObject target in targets)
-        {
-            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
-            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
-            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
-            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
-        }
-    }
+//    protected void PhysicAbilityAttack(GameObject[] targets)
+//    {
+//        foreach(GameObject target in targets)
+//        {
+//            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
+//            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
+//            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
+//            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
+//        }
+//    }
 }

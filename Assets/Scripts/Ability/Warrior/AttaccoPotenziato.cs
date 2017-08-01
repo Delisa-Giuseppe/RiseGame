@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class AttaccoPotenziato : Ability {
 
-    private GameObject warriorUI;
+    
 
 	// Use this for initialization
 	void Start ()
@@ -16,15 +16,10 @@ public class AttaccoPotenziato : Ability {
         this.cure = 0;
         this.tileRange = 1;
         this.cooldown = 4;
-        warriorUI = GetComponent<PlayerController>().playerUI;
-        warriorUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(delegate { AttivaAbilita(SelectType.ROMBO); });
+		playerUI = GetComponent<PlayerController>().playerUI;
+		playerUI.GetComponentsInChildren<Button>()[2].onClick.AddListener(delegate { AttivaAbilita(SelectType.ROMBO); });
 
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     void UsaAbilita()
     {
