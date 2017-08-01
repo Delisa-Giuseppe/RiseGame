@@ -123,14 +123,21 @@ public class PlayerController : ObjectController
     IEnumerator WaitAnimation(GameObject target)
     {
         yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
-        target.GetComponent<SpriteRenderer>().color = Color.red;
+
+        foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = Color.red;
+        }
 
         OnHit(target);
         if (IsDead(target.GetComponent<ObjectController>()))
         {
             target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
             TileManager.enemyInstance.Remove(target);
-            Destroy(target);
+            TurnManager.turns.Remove(target);
+            StartCoroutine(ResetColor(target));
+            target.GetComponentInChildren<Animator>().SetTrigger("isDead");
+            //Destroy(target);
         }
         else
         {
@@ -168,7 +175,10 @@ public class PlayerController : ObjectController
         yield return new WaitForSeconds(0.5f);
         if(obj != null)
         {
-            obj.GetComponent<SpriteRenderer>().color = Color.white;
+            foreach (SpriteMeshInstance mesh in obj.GetComponentsInChildren<SpriteMeshInstance>())
+            {
+                mesh.color = Color.white;
+            }
         }
     }
 }
