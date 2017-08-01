@@ -18,5 +18,4 @@ public class PassoDiOmbra : Ability {
 			AttivaAbilita (SelectType.ROMBO);
 		});
 	}
-
 }

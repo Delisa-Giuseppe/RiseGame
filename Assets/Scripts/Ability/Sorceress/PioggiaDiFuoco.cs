@@ -19,4 +19,9 @@ public class PioggiaDiFuoco : Ability {
 		});
 	}
 
+	public void UsaAbilita()
+	{
+		print ("Pioggia");
+	}
+
 }

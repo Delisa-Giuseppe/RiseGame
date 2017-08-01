@@ -18,5 +18,6 @@ public class PallaDiFuoco : Ability {
 			AttivaAbilita (SelectType.CROCE);
 		});
 	}
+		
 
 }

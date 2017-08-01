@@ -31,20 +31,19 @@ public class Ability : MonoBehaviour
         cure = 0;
         tileRange = 0;
         turnDuration = 0;
-        cooldown = 0;
+		cooldown = 0;
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
-        {
-            TileManager.ResetGrid();
-            GameManager.currentState = GameManager.States.SELECT;
-            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
-        }
-    }
+	void Update()
+	{
+		if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
+		{
+			TileManager.ResetGrid();
+			GameManager.currentState = GameManager.States.SELECT;
+			TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+		}
+	}
 
     protected Vector2[] CalcolaSelezioneQuadrata()
     {
@@ -138,7 +137,6 @@ public class Ability : MonoBehaviour
         }
         TileManager.ResetGrid();
         TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
-
         StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
     }
 
@@ -152,4 +150,9 @@ public class Ability : MonoBehaviour
 //            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
 //        }
 //    }
+
+	public virtual void UsaAbilita()
+	{
+		print ("Abilita");
+	}
 }
