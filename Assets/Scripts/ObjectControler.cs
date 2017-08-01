@@ -26,7 +26,7 @@ public class ObjectController : MonoBehaviour {
     protected int evasion;
     protected Animator anim;
 
-    private GameObject UI;
+    protected GameObject UI;
 
     private void Awake()
     {
@@ -68,10 +68,6 @@ public class ObjectController : MonoBehaviour {
             if (target.tag == "Enemy")
             {
                 UI.GetComponent<UIManager>().DestroyEnemyUI(target.GetComponent<EnemyController>().position);
-            }
-            else if(target.tag == "Player")
-            {
-                UI.GetComponent<UIManager>().DisablePlayerHUD(target.GetComponent<PlayerController>().playerNumber);
             }
             return true;
         }

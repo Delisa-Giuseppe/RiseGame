@@ -12,6 +12,7 @@ public class PlayerController : ObjectController
     public int playerNumber;
     public static bool canMove;
     public GameObject playerUI;
+    public int originalPlayerNumber;
 
     public enum PlayerType
     {
@@ -49,7 +50,7 @@ public class PlayerController : ObjectController
             {
                 foreach (RaycastHit2D ray in rayCast)
                 {
-                    if (ray.collider.tag == "EnemyGroup")
+                    if (ray.collider.tag == "EnemyGroup" || ray.collider.tag == "Nemesy")
                     {
                         GameManager.currentState = GameManager.States.WAIT;
                         TileManager.AddEnemy(ray.collider.gameObject);
@@ -134,7 +135,7 @@ public class PlayerController : ObjectController
         {
             target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
             TileManager.enemyInstance.Remove(target);
-            TurnManager.turns.Remove(target);
+            TurnManager.turns[TurnManager.currentTurn] = null;
             StartCoroutine(ResetColor(target));
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             //Destroy(target);
@@ -143,6 +144,21 @@ public class PlayerController : ObjectController
         {
             StartCoroutine(ResetColor(target));
         }
+    }
+
+    public void ResurrectPlayer()
+    {
+        if (currentHealth <= 0)
+        {
+            anim.SetTrigger("isResurrect");
+            currentHealth = totalHealth / 2;
+            UI.GetComponent<UIManager>().SetPlayerHealthBar(this.gameObject);
+            TileManager.playerInstance.Add(this.gameObject);
+            TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {
+                return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
+            });
+        }
+
     }
 
     public GameObject PlayerTile

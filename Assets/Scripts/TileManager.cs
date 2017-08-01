@@ -12,6 +12,7 @@ public class TileManager : MonoBehaviour {
     public static int moves;
 
     public static List<GameObject> playerInstance;
+    public static List<GameObject> playerDead;
     public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
     static Tile[,] tiles;
@@ -421,8 +422,29 @@ public class TileManager : MonoBehaviour {
             enemy.GetComponent<BoxCollider2D>().enabled = true;
             enemy.GetComponent<EnemyController>().position = i;
             enemy.GetComponent<EnemyController>().StartFightAnimation();
+            
+            if (enemyGroup.tag == "Nemesy")
+            {
+                playerBattlePosition = new Vector3(enemy.transform.position.x, -0.52f);
+                string nemesyName = enemy.name.Split('_')[1];
+                foreach (GameObject player in playerInstance)
+                {
+                    if (player.name.Contains(nemesyName))
+                    {
+                        enemy.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
+                        enemy.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
+                        enemy.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
+                        enemy.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
+                        enemy.GetComponent<ObjectController>().combatMoves = player.GetComponent<ObjectController>().combatMoves;
+                        enemy.GetComponent<ObjectController>().CalculateStatistics();
+                    }
+                }
+            }
+
             enemyInstance.Add(enemy);
         }
+
+        
         
         GameManager.currentState = GameManager.States.ENGAGE_ENEMY;
     }
@@ -435,7 +457,8 @@ public class TileManager : MonoBehaviour {
         {
             playerInstance = new List<GameObject>();
         }
-        
+
+        playerDead = new List<GameObject>();
         enemyInstance = new List<GameObject>();
 
         //Create the parent game object
@@ -498,6 +521,7 @@ public class TileManager : MonoBehaviour {
                     player4.transform.position = tileInstance.transform.position;
                     player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player4.GetComponent<PlayerController>().playerNumber = 3;
+                    player4.GetComponent<PlayerController>().originalPlayerNumber = 3;
                     player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
                 
@@ -508,6 +532,7 @@ public class TileManager : MonoBehaviour {
                     player3.transform.position = tileInstance.transform.position;
                     player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player3.GetComponent<PlayerController>().playerNumber = 2;
+                    player3.GetComponent<PlayerController>().originalPlayerNumber = 2;
                     player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
 
@@ -518,6 +543,7 @@ public class TileManager : MonoBehaviour {
                     player2.transform.position = tileInstance.transform.position;
                     player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player2.GetComponent<PlayerController>().playerNumber = 1;
+                    player2.GetComponent<PlayerController>().originalPlayerNumber = 1;
                     player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
 
@@ -528,6 +554,7 @@ public class TileManager : MonoBehaviour {
                     player1.transform.position = tileInstance.transform.position;
                     player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player1.GetComponent<PlayerController>().playerNumber = 0;
+                    player1.GetComponent<PlayerController>().originalPlayerNumber = 0;
                     player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, UI.transform);
                 }
             }
@@ -631,7 +658,6 @@ public class TileManager : MonoBehaviour {
                 enemy.transform.position = tile.collider.gameObject.transform.position;
                 enemy.GetComponent<EnemyController>().EnemyTile = tile.collider.gameObject;
             }
-
         }
 
         foreach (GameObject obstacle in GameObject.FindGameObjectsWithTag("Obstacle"))

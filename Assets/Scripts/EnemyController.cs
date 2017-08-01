@@ -240,9 +240,11 @@ public class EnemyController : ObjectController {
         {
             target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
             TileManager.playerInstance.Remove(target);
-            TurnManager.turns.Remove(target);
+            TileManager.playerDead.Add(target);
+            TurnManager.turns[TurnManager.currentTurn] = null;
             StartCoroutine(ResetColor(target));
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
+            target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
             for (int i = 0; i < TileManager.playerInstance.Count; i++)
             {
                 if (TileManager.playerInstance[i])

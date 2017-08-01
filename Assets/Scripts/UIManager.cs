@@ -78,7 +78,7 @@ public class UIManager : MonoBehaviour {
         int totalHealth = player.GetComponent<ObjectController>().totalHealth;
         int currentHealth = player.GetComponent<ObjectController>().currentHealth;
         float barHealth = (float) currentHealth / totalHealth;
-        int playerNumber = player.GetComponent<PlayerController>().playerNumber;
+        int playerNumber = player.GetComponent<PlayerController>().originalPlayerNumber;
 
         GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).GetChild(1).gameObject;
         healthBar.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
@@ -144,7 +144,7 @@ public class UIManager : MonoBehaviour {
     {
         playersTurns[playerNumber].transform.GetChild(0).GetComponent<Image>().color = new Color(255, 255, 255, 0.1f);
         playersTurns[playerNumber].transform.GetChild(1).gameObject.SetActive(false);
-        playersTurns.RemoveAt(playerNumber);
+        //playersTurns.RemoveAt(playerNumber);
     }
 
     public void SetPlayerTurnColor(GameObject player)

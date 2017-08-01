@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour {
         ATTACK,
         ABILITY,
         END_MOVE,
-        WAIT
+        WAIT,
+        PAUSED
     }
 
     public static States currentState;
@@ -47,6 +48,18 @@ public class GameManager : MonoBehaviour {
             pointAction = maxPointAction;
             TurnManager.currentTurnState = TurnManager.TurnStates.WAIT;
             tileManager.HideGrid();
+
+            GameManager.currentState = GameManager.States.WAIT;
+            foreach (GameObject player in TileManager.playerDead)
+            {
+                player.GetComponent<PlayerController>().ResurrectPlayer();
+            }
+            TileManager.playerDead.Clear();
+            foreach (GameObject player in TileManager.playerInstance)
+            {
+                player.GetComponent<PlayerController>().playerNumber = player.GetComponent<PlayerController>().originalPlayerNumber;
+            }
+            GameManager.currentState = GameManager.States.EXPLORATION;
         }
 
         if (currentState == States.SELECT)
@@ -77,7 +90,7 @@ public class GameManager : MonoBehaviour {
                 EnemyController.hasMoved = true;
             }
             turnManager.ResetTurnColor();
-            turnManager.currentTurn = turnManager.currentTurn + 1;
+            TurnManager.currentTurn = TurnManager.currentTurn + 1;
             StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
         }
 
@@ -165,7 +178,7 @@ public class GameManager : MonoBehaviour {
                     EnemyController.hasMoved = true;
                 }
                 turnManager.ResetTurnColor();
-                turnManager.currentTurn = turnManager.currentTurn + 1;
+                TurnManager.currentTurn = TurnManager.currentTurn + 1;
                 StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
             }
             else

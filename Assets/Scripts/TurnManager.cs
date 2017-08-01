@@ -10,7 +10,7 @@ public class TurnManager : MonoBehaviour {
     private GameObject UI;
     private int previousTurn = 0;
     private bool refreshTurnUI;
-    public int currentTurn = 0;
+    public static int currentTurn = 0;
 
     public enum TurnStates
     {
