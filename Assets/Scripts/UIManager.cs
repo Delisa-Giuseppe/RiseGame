@@ -103,6 +103,7 @@ public class UIManager : MonoBehaviour {
             GameObject enemyUIInstance = Instantiate(enemyHealth);
             enemyUIInstance.transform.SetParent(transform, false);
 
+            enemyUIInstance.GetComponent<EnemyHealth>().transform.position = enemyInstance[i].transform.position;
             enemyUIInstance.GetComponent<EnemyHealth>().target = enemyInstance[i].transform;
 
             for (int p = 0; p < enemyUIInstance.transform.childCount; p++)

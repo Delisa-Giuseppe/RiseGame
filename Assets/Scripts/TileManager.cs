@@ -300,6 +300,7 @@ public class TileManager : MonoBehaviour {
     {
         Destroy(targetInstance);
         tilesSelectable.Clear();
+        TurnManager.refreshTurn = true;
 
         if (move)
         {

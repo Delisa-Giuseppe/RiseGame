@@ -241,10 +241,12 @@ public class EnemyController : ObjectController {
             target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
             TileManager.playerInstance.Remove(target);
             TileManager.playerDead.Add(target);
-            TurnManager.turns[TurnManager.currentTurn] = null;
+            TurnManager.turns[TurnManager.turns.IndexOf(target)] = null;
+            TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
+            target.GetComponentInChildren<Animator>().SetBool("isWalking", false);
             for (int i = 0; i < TileManager.playerInstance.Count; i++)
             {
                 if (TileManager.playerInstance[i])
@@ -256,6 +258,7 @@ public class EnemyController : ObjectController {
         }
         else
         {
+            TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
         }
     }

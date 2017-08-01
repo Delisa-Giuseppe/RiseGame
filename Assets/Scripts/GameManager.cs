@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
@@ -171,20 +173,7 @@ public class GameManager : MonoBehaviour {
             TurnManager.currentObjectTurn.GetComponent<AILerp>().target = null;
             if (pointAction <=0)
             {
-                pointAction = maxPointAction;
-                TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-                TileManager.ResetGrid();
-                if (TurnManager.currentObjectTurn.tag == "Player")
-                {
-                    PlayerController.canMove = true;
-                }
-                else if(TurnManager.currentObjectTurn.tag == "Enemy")
-                {
-                    EnemyController.hasMoved = true;
-                }
-                turnManager.ResetTurnColor();
-                TurnManager.currentTurn = TurnManager.currentTurn + 1;
-                StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
+                StartCoroutine(WaitTurn());
             }
             else
             {
@@ -209,10 +198,31 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+
     void InitLevel()
     {
         currentState = States.EXPLORATION;
         tileManager.CreateGrid(width, height);
+    }
+
+    IEnumerator WaitTurn()
+    {
+        StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.WAIT, TurnManager.TurnStates.INIT));
+        yield return new WaitForSeconds(2f);
+        pointAction = maxPointAction;
+        TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
+        TileManager.ResetGrid();
+        if (TurnManager.currentObjectTurn.tag == "Player")
+        {
+            PlayerController.canMove = true;
+        }
+        else if (TurnManager.currentObjectTurn.tag == "Enemy")
+        {
+            EnemyController.hasMoved = true;
+        }
+        turnManager.ResetTurnColor();
+        TurnManager.currentTurn = TurnManager.currentTurn + 1;
+        currentState = States.SELECT;
     }
 
     public static void FinishLevel()

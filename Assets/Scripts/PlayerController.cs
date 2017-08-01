@@ -135,13 +135,15 @@ public class PlayerController : ObjectController
         {
             target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
             TileManager.enemyInstance.Remove(target);
-            TurnManager.turns[TurnManager.currentTurn] = null;
+            TurnManager.turns[TurnManager.turns.IndexOf(target)] = null;
+            TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             //Destroy(target);
         }
         else
         {
+            TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
         }
     }
@@ -152,6 +154,7 @@ public class PlayerController : ObjectController
         {
             anim.SetTrigger("isResurrect");
             currentHealth = totalHealth / 2;
+            this.gameObject.GetComponent<AILerp>().canMove = true;
             UI.GetComponent<UIManager>().SetPlayerHealthBar(this.gameObject);
             TileManager.playerInstance.Add(this.gameObject);
             TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {

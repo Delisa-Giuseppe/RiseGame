@@ -6,6 +6,7 @@ public class TurnManager : MonoBehaviour {
 
     public static GameObject currentObjectTurn;
     public static List<GameObject> turns;
+    public static bool refreshTurn;
 
     private GameObject UI;
     private int previousTurn = 0;
@@ -110,6 +111,13 @@ public class TurnManager : MonoBehaviour {
 
         yield return new WaitForEndOfFrame();
 
+        while (!refreshTurn)
+        {
+            yield return null;
+        }
+
+        refreshTurn = false;
+
         if (IsAllTurnFinished())
         {
             currentTurn = 0;
@@ -118,19 +126,19 @@ public class TurnManager : MonoBehaviour {
         if (AreEnemiesAlive(enemies))
         {
             List<GameObject> removeTurn = new List<GameObject>();
-            for(int i=0; i<turns.Count; i++)
+            for (int i = 0; i < turns.Count; i++)
             {
                 if (turns[i] == null)
                 {
                     removeTurn.Add(turns[i]);
                 }
             }
-            foreach(GameObject remove in removeTurn)
+            foreach (GameObject remove in removeTurn)
             {
                 turns.Remove(remove);
             }
-
-            if (GameManager.pointAction <= 1 && removeTurn.Count>0)
+            Debug.Log(GameManager.pointAction);
+            if (GameManager.pointAction <= 2 && removeTurn.Count > 0)
             {
                 currentTurn--;
                 if (currentTurn < 0)
@@ -139,7 +147,6 @@ public class TurnManager : MonoBehaviour {
                 }
             }
 
-            yield return new WaitForSeconds(1f);
             GameManager.currentState = nextState;
             currentTurnState = turnState;
         }
@@ -149,7 +156,7 @@ public class TurnManager : MonoBehaviour {
             currentTurnState = TurnStates.FINISH;
             currentObjectTurn = null;
             turns.Clear();
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2.5f);
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
 
