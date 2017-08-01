@@ -9,6 +9,6 @@ public class EnemyHealth : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        transform.position = target.position + Vector3.up;
+        transform.position = target.position + (Vector3.up * 2.4f);
 	}
 }

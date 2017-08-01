@@ -5,7 +5,7 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour {
 
     public static GameObject currentObjectTurn;
-    public List<GameObject> turns;
+    public static List<GameObject> turns;
 
     private GameObject UI;
     private int previousTurn = 0;

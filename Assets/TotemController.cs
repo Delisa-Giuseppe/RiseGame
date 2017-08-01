@@ -12,6 +12,7 @@ public class TotemController : MonoBehaviour {
 	void Awake () {
         cutsceneName = gameObject.name.Split('_')[1];
         anim = cutscene.GetComponent<Animator>();
+        GetComponent<Animator>().SetBool("showFlash", true);
 	}
 	
 	// Update is called once per frame
@@ -23,6 +24,7 @@ public class TotemController : MonoBehaviour {
 
     IEnumerator ShowCutscene()
     {
+        GetComponent<Animator>().SetBool("showFlash", false);
         yield return new WaitForSeconds(1f);
         yield return new WaitForSeconds(11);
         anim.SetBool("showCutscene", false);

@@ -65,7 +65,7 @@ public class ObjectController : MonoBehaviour {
     {
         if(target.currentHealth <= 0)
         {
-            if(target.tag == "Enemy")
+            if (target.tag == "Enemy")
             {
                 UI.GetComponent<UIManager>().DestroyEnemyUI(target.GetComponent<EnemyController>().position);
             }

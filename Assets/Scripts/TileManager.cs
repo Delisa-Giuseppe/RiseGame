@@ -404,6 +404,7 @@ public class TileManager : MonoBehaviour {
                 }
             }
         }
+
     }
 
     public static void AddEnemy(GameObject enemyGroup)
@@ -416,9 +417,9 @@ public class TileManager : MonoBehaviour {
             {
                 playerBattlePosition = new Vector3(enemy.transform.position.x, -0.52f);
             }
-            enemy.GetComponent<SpriteRenderer>().enabled = true;
             enemy.GetComponent<BoxCollider2D>().enabled = true;
             enemy.GetComponent<EnemyController>().position = i;
+            enemy.GetComponent<EnemyController>().StartFightAnimation();
             enemyInstance.Add(enemy);
         }
         

@@ -22,6 +22,21 @@ public class EnemyController : ObjectController {
     public bool canMove;
     public static bool hasMoved = true;
 
+    private void Update()
+    {
+        if(anim)
+        {
+            if (GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
+            {
+                anim.SetBool("isWalking", false);
+            }
+            else
+            {
+                anim.SetBool("isWalking", true);
+            }
+        }
+    }
+
     public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
     {
         float closerDistance = 0;
@@ -47,7 +62,7 @@ public class EnemyController : ObjectController {
         canAttack = false;
         if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
         {
-            if ((enemyBehaviour == EnemyType.RANGED && canAttack) ||
+            if ((enemyBehaviour == EnemyType.RANGED) ||
                 (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
             {
                 canAttack = true;
@@ -181,33 +196,65 @@ public class EnemyController : ObjectController {
         }
     }
 
+    public void StartFightAnimation()
+    {
+        anim.SetBool("isFighting", true);
+    }
+
+    public void StopFightAnimation()
+    {
+        anim.SetBool("isFighting", false);
+    }
+
     public void PhysicAttack(GameObject target)
     {
-        if(target)
+        if (target)
         {
-            if(target.GetComponent<SpriteRenderer>())
+            if (transform.position.x > target.transform.position.x)
             {
-                target.GetComponent<SpriteRenderer>().color = Color.red;
+                transform.eulerAngles = new Vector3(0f, 180f);
             }
-            else
+
+            if (transform.position.x < target.transform.position.x)
             {
-                foreach(SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+                transform.eulerAngles = new Vector3(0f, 0f);
+            }
+
+            anim.SetTrigger("attack");
+
+            StartCoroutine(WaitAnimation(target));
+        }
+    }
+
+    IEnumerator WaitAnimation(GameObject target)
+    {
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+
+        foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = Color.red;
+        }
+
+        OnHit(target);
+        if (IsDead(target.GetComponent<ObjectController>()))
+        {
+            target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
+            TileManager.playerInstance.Remove(target);
+            TurnManager.turns.Remove(target);
+            StartCoroutine(ResetColor(target));
+            target.GetComponentInChildren<Animator>().SetTrigger("isDead");
+            for (int i = 0; i < TileManager.playerInstance.Count; i++)
+            {
+                if (TileManager.playerInstance[i])
                 {
-                    mesh.color = Color.red;
+                    TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber = i;
                 }
             }
-            
-            OnHit(target);
-            if (IsDead(target.GetComponent<ObjectController>()))
-            {
-                target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
-                TileManager.playerInstance.Remove(target);
-                Destroy(target);
-            }
-            else
-            {
-                StartCoroutine(ResetColor(target));
-            }
+            //Destroy(target);
+        }
+        else
+        {
+            StartCoroutine(ResetColor(target));
         }
     }
 
@@ -216,16 +263,9 @@ public class EnemyController : ObjectController {
         yield return new WaitForSeconds(0.5f);
         if(obj != null)
         {
-            if (obj.GetComponent<SpriteRenderer>())
+            foreach (SpriteMeshInstance mesh in obj.GetComponentsInChildren<SpriteMeshInstance>())
             {
-                obj.GetComponent<SpriteRenderer>().color = Color.white;
-            }
-            else
-            {
-                foreach (SpriteMeshInstance mesh in obj.GetComponentsInChildren<SpriteMeshInstance>())
-                {
-                    mesh.color = Color.white;
-                }
+                mesh.color = Color.white;
             }
         }
     }
