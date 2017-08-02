@@ -12,6 +12,7 @@ public class TileManager : MonoBehaviour {
     public static int moves;
 
     public static List<GameObject> playerInstance;
+    public static List<GameObject> playerInstanceClone = new List<GameObject>();
     public static List<GameObject> playerDead;
     public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
@@ -459,6 +460,11 @@ public class TileManager : MonoBehaviour {
             playerInstance = new List<GameObject>();
         }
 
+        if(playerInstanceClone.Count > 0)
+        {
+            playerInstance = playerInstanceClone;
+        }
+
         playerDead = new List<GameObject>();
         enemyInstance = new List<GameObject>();
 
@@ -648,6 +654,7 @@ public class TileManager : MonoBehaviour {
             playerInstance.Add(player2);
             playerInstance.Add(player3);
             playerInstance.Add(player4);
+            playerInstanceClone = playerInstance.GetRange(0, playerInstance.Count);
         }
 
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))

@@ -194,8 +194,9 @@ public class GameManager : MonoBehaviour {
             
         }
 
-        if(currentState == States.GAME_OVER)
+        if (TileManager.playerInstance.Count <= 0)
         {
+            currentState = States.GAME_OVER;
             StartCoroutine(ShowGameOver());
         }
     }
@@ -209,9 +210,9 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator ShowGameOver()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(4f);
         gameOver.SetActive(true);
-
+        StopAllCoroutines();
     }
 
     IEnumerator WaitTurn()

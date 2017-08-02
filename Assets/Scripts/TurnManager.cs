@@ -87,7 +87,6 @@ public class TurnManager : MonoBehaviour {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
 
-        Debug.Log(currentTurn);
         currentObjectTurn = turns[currentTurn];
         //currentTurn++;
         PlayerController.canMove = true;
@@ -144,7 +143,7 @@ public class TurnManager : MonoBehaviour {
             }
 
             currentTurn = turns.IndexOf(currentObjectTurn);
-            Debug.Log(currentTurn);
+
             //if (GameManager.pointAction == 0 && removeTurn.Count > 0)
             //{
             //    currentTurn--;

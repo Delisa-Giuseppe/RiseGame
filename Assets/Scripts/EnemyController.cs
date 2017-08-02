@@ -256,11 +256,6 @@ public class EnemyController : ObjectController {
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
             target.GetComponentInChildren<Animator>().SetBool("isWalking", false);
-            if (TileManager.playerInstance.Count <= 0)
-            {
-                GameManager.currentState = GameManager.States.GAME_OVER;
-                StopAllCoroutines();
-            }
             for (int i = 0; i < TileManager.playerInstance.Count; i++)
             {
                 if (TileManager.playerInstance[i])

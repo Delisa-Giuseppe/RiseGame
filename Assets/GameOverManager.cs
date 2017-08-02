@@ -1,19 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameOverManager : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (gameObject.activeSelf)
+    public void OnRestart()
+    {
+        foreach (GameObject player in TileManager.playerInstanceClone)
         {
-            Time.timeScale = 0f;
+            DontDestroyOnLoad(player);
         }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void OnMenu()
+    {
+        SceneManager.LoadScene("Menu Gioco");
     }
 }
