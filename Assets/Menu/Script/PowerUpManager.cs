@@ -40,7 +40,7 @@ public class PowerUpManager : MonoBehaviour {
             playerPanel.GetComponent<PlayerLevelUp>().Player.GetComponent<ObjectController>().skill = int.Parse(playerPanel.GetComponent<PlayerLevelUp>().skillValue.GetComponent<TextMeshProUGUI>().text);
             playerPanel.GetComponent<PlayerLevelUp>().Player.GetComponent<ObjectController>().strength = int.Parse(playerPanel.GetComponent<PlayerLevelUp>().strengthValue.GetComponent<TextMeshProUGUI>().text);
         }
-        SceneManager.LoadScene(PlayerController.nextScene);
+        SceneManager.LoadScene(TotemController.nextScene);
     }
 
     IEnumerator CheckAllComplete()
