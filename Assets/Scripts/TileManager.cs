@@ -779,8 +779,9 @@ public class TileManager : MonoBehaviour {
 
         if (enemy.GetComponent<EnemyController>().canAttack)
         {
+            enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
+            yield return new WaitForSeconds(2f);
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
-			enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
         }
         else
         {

@@ -87,6 +87,7 @@ public class TurnManager : MonoBehaviour {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
 
+        Debug.Log(currentTurn);
         currentObjectTurn = turns[currentTurn];
         //currentTurn++;
         PlayerController.canMove = true;

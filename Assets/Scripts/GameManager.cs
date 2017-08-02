@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour {
     public int width;
     public int maxPointAction;
     public static int pointAction;
+    public GameObject gameOver;
 
     public enum States
     {
@@ -23,7 +25,8 @@ public class GameManager : MonoBehaviour {
         END_MOVE,
         END_TURN,
         WAIT,
-        PAUSED
+        PAUSED,
+        GAME_OVER
     }
 
     public static States currentState;
@@ -190,6 +193,11 @@ public class GameManager : MonoBehaviour {
             }
             
         }
+
+        if(currentState == States.GAME_OVER)
+        {
+            StartCoroutine(ShowGameOver());
+        }
     }
 
 
@@ -197,6 +205,13 @@ public class GameManager : MonoBehaviour {
     {
         currentState = States.EXPLORATION;
         tileManager.CreateGrid(width, height);
+    }
+
+    IEnumerator ShowGameOver()
+    {
+        yield return new WaitForSeconds(3f);
+        gameOver.SetActive(true);
+
     }
 
     IEnumerator WaitTurn()

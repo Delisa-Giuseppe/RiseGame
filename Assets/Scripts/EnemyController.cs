@@ -21,6 +21,7 @@ public class EnemyController : ObjectController {
     public int position;
     public bool canMove;
     public static bool hasMoved = true;
+    public Color nemesyColor; 
 
     private void Update()
     {
@@ -33,6 +34,14 @@ public class EnemyController : ObjectController {
             else
             {
                 anim.SetBool("isWalking", true);
+            }
+        }
+
+        if(gameObject.name.Contains("Nemesy"))
+        {
+            foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+            {
+                mesh.color = nemesyColor;
             }
         }
     }
@@ -247,6 +256,11 @@ public class EnemyController : ObjectController {
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
             target.GetComponentInChildren<Animator>().SetBool("isWalking", false);
+            if (TileManager.playerInstance.Count <= 0)
+            {
+                GameManager.currentState = GameManager.States.GAME_OVER;
+                StopAllCoroutines();
+            }
             for (int i = 0; i < TileManager.playerInstance.Count; i++)
             {
                 if (TileManager.playerInstance[i])
