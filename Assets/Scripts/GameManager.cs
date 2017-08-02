@@ -171,6 +171,7 @@ public class GameManager : MonoBehaviour {
         {
             pointAction--;
             TurnManager.currentObjectTurn.GetComponent<AILerp>().target = null;
+            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             if (pointAction <=0)
             {
                 StartCoroutine(WaitTurn());
@@ -208,21 +209,24 @@ public class GameManager : MonoBehaviour {
     IEnumerator WaitTurn()
     {
         StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.WAIT, TurnManager.TurnStates.INIT));
-        yield return new WaitForSeconds(2f);
-        pointAction = maxPointAction;
-        TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-        TileManager.ResetGrid();
-        if (TurnManager.currentObjectTurn.tag == "Player")
+        yield return new WaitForSeconds(3.5f);
+        if (GameManager.currentState != States.EXPLORATION)
         {
-            PlayerController.canMove = true;
+            pointAction = maxPointAction;
+
+            TileManager.ResetGrid();
+            if (TurnManager.currentObjectTurn.tag == "Player")
+            {
+                PlayerController.canMove = true;
+            }
+            else if (TurnManager.currentObjectTurn.tag == "Enemy")
+            {
+                EnemyController.hasMoved = true;
+            }
+            turnManager.ResetTurnColor();
+            TurnManager.currentTurn = TurnManager.currentTurn + 1;
+            currentState = States.SELECT;
         }
-        else if (TurnManager.currentObjectTurn.tag == "Enemy")
-        {
-            EnemyController.hasMoved = true;
-        }
-        turnManager.ResetTurnColor();
-        TurnManager.currentTurn = TurnManager.currentTurn + 1;
-        currentState = States.SELECT;
     }
 
     public static void FinishLevel()
