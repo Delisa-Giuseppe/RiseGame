@@ -76,6 +76,7 @@ public class TurnManager : MonoBehaviour {
     public GameObject GetNextTurn()
     {
         refreshTurnUI = true;
+        
         if(currentTurn >= turns.Count)
         {
             currentTurn = 0;
@@ -112,7 +113,7 @@ public class TurnManager : MonoBehaviour {
     {
         GameManager.currentState = GameManager.States.WAIT;
 
-        yield return new WaitForEndOfFrame();
+        //yield return new WaitForEndOfFrame();
 
         while (!refreshTurn)
         {
@@ -141,14 +142,16 @@ public class TurnManager : MonoBehaviour {
                 turns.Remove(remove);
             }
 
-            if (GameManager.pointAction <= 2 && removeTurn.Count > 0)
-            {
-                currentTurn--;
-                if (currentTurn < 0)
-                {
-                    currentTurn = 0;
-                }
-            }
+            currentTurn = turns.IndexOf(currentObjectTurn);
+            Debug.Log(currentTurn);
+            //if (GameManager.pointAction == 0 && removeTurn.Count > 0)
+            //{
+            //    currentTurn--;
+            //    if (currentTurn < 0)
+            //    {
+            //        currentTurn = 0;
+            //    }
+            //}
 
             GameManager.currentState = nextState;
             currentTurnState = turnState;
@@ -157,10 +160,10 @@ public class TurnManager : MonoBehaviour {
         {
             currentTurn = 0;
             currentTurnState = TurnStates.FINISH;
+            GameManager.currentState = GameManager.States.END_TURN;
             currentObjectTurn = null;
             turns.Clear();
-            yield return new WaitForSeconds(2.5f);
-            GameManager.currentState = GameManager.States.EXPLORATION;
+            yield return new WaitForSeconds(3.5f);
         }
 
     }
