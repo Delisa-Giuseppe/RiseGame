@@ -713,7 +713,7 @@ public class TileManager : MonoBehaviour {
     }
 
 
-    public IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
+    public static IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
     {
         GameManager.currentState = GameManager.States.WAIT;
 

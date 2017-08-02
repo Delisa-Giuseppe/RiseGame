@@ -15,10 +15,12 @@ public class Eucarestia : Ability {
 		this.tileRange = 2;
 		this.cooldown = 4;
 		playerUI = GetComponent<PlayerController>().playerUI;
-//		playerUI.GetComponentsInChildren<Button> () [1].onClick.AddListener (delegate {
-//			AttivaAbilita (SelectType.CROCE);
-//		});
-		
-	}
+        playerUI.GetComponentsInChildren<Button>()[1].onClick.AddListener(delegate
+        {
+            AttivaAbilita(SelectType.CROCE);
+            activedAbility = this.abilityName;
+        });
+
+    }
 
 }

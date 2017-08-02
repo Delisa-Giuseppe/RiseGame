@@ -9,17 +9,19 @@ public class PioggiaDiFuoco : Ability {
 	// Use this for initialization
 	void Start () 
 	{
-		this.damage = GetComponent<PlayerController>().magicAttack / 100f * 30f;
+        abilityName = "PioggiaDiFuoco";
+        this.damage = GetComponent<PlayerController>().magicAttack / 100f * 30f;
 		this.cure = 0;
 		this.tileRange = 2;
 		this.cooldown = 5;
 		playerUI = GetComponent<PlayerController>().playerUI;
 		playerUI.GetComponentsInChildren<Button> () [1].onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.ROMBO);
-		});
+            activedAbility = this.abilityName;
+        });
 	}
 
-	public void UsaAbilita()
+	public override void UsaAbilita()
 	{
 		print ("Pioggia");
 	}

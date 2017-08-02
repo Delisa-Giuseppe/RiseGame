@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -131,8 +132,13 @@ public class GameManager : MonoBehaviour {
 
 			if(currentState == States.ABILITY)
 			{
-				TurnManager.currentObjectTurn.GetComponent <Ability>().UsaAbilita();
-			}
+                if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player")
+                {
+                    (TurnManager.currentObjectTurn.GetComponent(Type.GetType(Ability.activedAbility)) as Ability).UsaAbilita();
+                }
+                
+
+            }
         }
 
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (Input.GetMouseButtonDown(1) && currentState == States.MOVE) || currentState == States.PRE_FIGHT)

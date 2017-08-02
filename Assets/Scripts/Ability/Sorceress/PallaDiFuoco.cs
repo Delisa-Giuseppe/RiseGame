@@ -9,6 +9,8 @@ public class PallaDiFuoco : Ability {
 	// Use this for initialization
 	void Start () 
 	{
+        this.abilityType = AbilityType.SINGOLO;
+        abilityName = "PallaDiFuoco";
 		this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
 		this.cure = 0;
 		this.tileRange = 7;
@@ -16,8 +18,8 @@ public class PallaDiFuoco : Ability {
 		playerUI = GetComponent<PlayerController>().playerUI;
 		playerUI.GetComponentsInChildren<Button> () [0].onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.CROCE);
-		});
+            activedAbility = this.abilityName;
+        });
 	}
-		
 
 }

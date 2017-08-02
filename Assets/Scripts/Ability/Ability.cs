@@ -11,6 +11,8 @@ public class Ability : MonoBehaviour
     public int tileRange;
     public int turnDuration;
     public int cooldown;
+    public static string activedAbility;
+    public AbilityType abilityType;
 
     private GameObject UI;
 	protected GameObject playerUI;
@@ -19,7 +21,16 @@ public class Ability : MonoBehaviour
     {
         QUADRATO,
         ROMBO,
-        CROCE
+        CROCE,
+        COMPAGNI
+    }
+
+    public enum AbilityType
+    {
+        SINGOLO,
+        MULTIPLO,
+        MOVIMENTO,
+        TELETRASPORTO
     }
 
     // Use this for initialization
@@ -32,6 +43,7 @@ public class Ability : MonoBehaviour
         tileRange = 0;
         turnDuration = 0;
 		cooldown = 0;
+        activedAbility = "";
 
     }
 
@@ -120,6 +132,15 @@ public class Ability : MonoBehaviour
 
     }
 
+    protected void CalcolaSelezioneCompagni()
+    {
+        foreach (GameObject player in TileManager.playerInstance)
+        {
+            TileManager.tilesSelectable.Add(player.GetComponent<PlayerController>().PlayerTile);
+            player.GetComponent<PlayerController>().PlayerTile.GetComponent<SpriteRenderer>().color = Color.green;
+        }
+    }
+
     public void AttivaAbilita(SelectType currentType)
     {
         Vector2[] newPoints = null;
@@ -127,32 +148,112 @@ public class Ability : MonoBehaviour
         {
             case SelectType.QUADRATO:
                 newPoints = CalcolaSelezioneQuadrata();
-            break;
+                TileManager.ResetGrid();
+                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
+                break;
             case SelectType.ROMBO:
                 newPoints = CalcolaSelezioneRomboidale();
+                TileManager.ResetGrid();
+                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
                 break;
             case SelectType.CROCE:
                 newPoints = CalcolaSelezioneACroce();
+                TileManager.ResetGrid();
+                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
+                break;
+            case SelectType.COMPAGNI:
+                CalcolaSelezioneCompagni();
                 break;
         }
-        TileManager.ResetGrid();
-        TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
-        StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
+        
     }
 
-//    protected void PhysicAbilityAttack(GameObject[] targets)
-//    {
-//        foreach(GameObject target in targets)
-//        {
-//            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
-//            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
-//            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
-//            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
-//        }
-//    }
+    //    protected void PhysicAbilityAttack(GameObject[] targets)
+    //    {
+    //        foreach(GameObject target in targets)
+    //        {
+    //            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
+    //            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
+    //            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
+    //            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
+    //        }
+    //    }
 
-	public virtual void UsaAbilita()
+    public virtual void UsaAbilita()
 	{
-		print ("Abilita");
-	}
+        if(TileManager.CheckEnemy())
+        {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (hit.collider != null && hit.collider.tag == "Enemy" ||
+                    (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
+            {
+                //if(abilityType != AbilityType.MULTIPLO)
+                //{
+                    GameObject enemyTarget = null;
+                    foreach (GameObject enemy in TileManager.enemyInstance)
+                    {
+                        if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
+                        {
+                            enemyTarget = enemy;
+                            break;
+                        }
+                    }
+                    if(abilityType == AbilityType.SINGOLO)
+                    {
+                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+                    }
+                    else if(abilityType == AbilityType.MOVIMENTO)
+                    {
+                        GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                        GetComponent<AILerp>().target = tileNearEnemy.transform;
+                        GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+                    }
+                    //else if (abilityType == AbilityType.TELETRASPORTO)
+                    //{
+                    //    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                    //    GetComponent<AILerp>().target = tileNearEnemy.transform;
+                    //    GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                    //    //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+                    //    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+                    //}
+                //}
+                //else if(abilityType == AbilityType.MULTIPLO)
+                //{
+                //    List<GameObject> enemyTargets = new List<GameObject>();
+                //    foreach (GameObject enemy in TileManager.tilesSelectable)
+                //    {
+                //        if (enemy.GetComponent<Tile>().isEnemy)
+                //        {
+                //            enemyTargets.Add(enemy);
+                //        }
+                //    }
+                //    foreach(GameObject target in enemyTargets)
+                //    {
+                //        GetComponent<PlayerController>().PhysicAttack(target, "attack", (int)this.damage);
+                //        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, target));
+                //    }
+
+                //}
+                //if ()
+                //{
+
+                //}
+                //else
+                //{
+                //    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                //    playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
+                //    playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                //    playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
+                //    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
+                //}    
+            }
+        }
+
+    }
 }

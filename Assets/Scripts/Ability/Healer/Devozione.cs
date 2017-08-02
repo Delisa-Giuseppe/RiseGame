@@ -9,15 +9,18 @@ public class Devozione : Ability {
 	// Use this for initialization
 	void Start () 
 	{
-		this.damage = GetComponent<PlayerController>().magicAttack;
+        abilityName = "Devozione";
+        this.damage = GetComponent<PlayerController>().magicAttack;
 		this.cure = 0;
 		this.tileRange = 0;
 		this.cooldown = 5;
 		playerUI = GetComponent<PlayerController>().playerUI;
-//		playerUI.GetComponentsInChildren<Button> () [3].onClick.AddListener (delegate {
-//			AttivaAbilita (SelectType.CROCE);
-//		});
-		
-	}
+        playerUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(delegate
+        {
+            AttivaAbilita(SelectType.CROCE);
+            activedAbility = this.abilityName;
+        });
+
+    }
 
 }
