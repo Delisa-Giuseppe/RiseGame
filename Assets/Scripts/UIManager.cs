@@ -15,6 +15,9 @@ public class UIManager : MonoBehaviour {
     public GameObject turnUIBar;
     public GameObject turnUI;
 
+    public Sprite borderSelected;
+    public Sprite borderEmpty;
+
     private List<GameObject> healthEnemies;
     private List<GameObject> turnsBarUI;
 
@@ -169,7 +172,7 @@ public class UIManager : MonoBehaviour {
     public void SetTurnBarUI(List<GameObject> turns, int currentTurn)
     {
         turnUIBar.SetActive(true);
-        turnsBarUI[0].GetComponent<Image>().color = Color.red;
+        turnsBarUI[0].GetComponent<Image>().sprite = borderSelected;
         turnsBarUI[0].GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f);
         turnsBarUI[0].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
 
@@ -178,15 +181,16 @@ public class UIManager : MonoBehaviour {
         do
         {
             currentTurn++;
-            if(currentTurn>=turns.Count)
+            if (currentTurn >= turns.Count)
             {
                 currentTurn = 0;
             }
+            turnsBarUI[barPosition].GetComponent<Image>().sprite = borderEmpty;
             turnsBarUI[barPosition].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
             barPosition++;
         } while (barPosition < turns.Count);
 
-        if(turnsBarUI.Count > turns.Count)
+        if (turnsBarUI.Count > turns.Count)
         {
             Destroy(turnsBarUI.Last());
             turnsBarUI.Remove(turnsBarUI.Last());

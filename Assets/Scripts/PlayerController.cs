@@ -152,16 +152,19 @@ public class PlayerController : ObjectController
     {
         if (currentHealth <= 0)
         {
-            anim.SetTrigger("isResurrect");
             currentHealth = totalHealth / 2;
             this.gameObject.GetComponent<AILerp>().canMove = true;
             UI.GetComponent<UIManager>().SetPlayerHealthBar(this.gameObject);
             TileManager.playerInstance.Add(this.gameObject);
-            TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {
-                return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
-            });
+            StartCoroutine(PlayResurrect());
         }
 
+    }
+
+    IEnumerator PlayResurrect()
+    {
+        yield return new WaitForSeconds(2f);
+        anim.SetTrigger("isResurrect");
     }
 
     public GameObject PlayerTile

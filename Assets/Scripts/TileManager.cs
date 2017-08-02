@@ -12,6 +12,7 @@ public class TileManager : MonoBehaviour {
     public static int moves;
 
     public static List<GameObject> playerInstance;
+    public static List<GameObject> playerInstanceClone = new List<GameObject>();
     public static List<GameObject> playerDead;
     public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
@@ -211,7 +212,7 @@ public class TileManager : MonoBehaviour {
 
             }
 
-            Camera.main.GetComponent<CameraManager>().player = playerInstance[playerNumber];
+            Camera.main.GetComponent<CameraManager>().player = playerInstance[0];
         }
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
@@ -459,6 +460,11 @@ public class TileManager : MonoBehaviour {
             playerInstance = new List<GameObject>();
         }
 
+        if(playerInstanceClone.Count > 0)
+        {
+            playerInstance = playerInstanceClone;
+        }
+
         playerDead = new List<GameObject>();
         enemyInstance = new List<GameObject>();
 
@@ -648,6 +654,7 @@ public class TileManager : MonoBehaviour {
             playerInstance.Add(player2);
             playerInstance.Add(player3);
             playerInstance.Add(player4);
+            playerInstanceClone = playerInstance.GetRange(0, playerInstance.Count);
         }
 
         foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
@@ -779,8 +786,9 @@ public class TileManager : MonoBehaviour {
 
         if (enemy.GetComponent<EnemyController>().canAttack)
         {
+            enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
+            yield return new WaitForSeconds(2f);
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
-			enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
         }
         else
         {

@@ -12,6 +12,7 @@ public class PauseManager : MonoBehaviour {
 
         if (gameObject.activeSelf)
         {
+            Time.timeScale = 1f;
             GameManager.currentState = prevState;
             gameObject.SetActive(false);
         }
@@ -19,6 +20,7 @@ public class PauseManager : MonoBehaviour {
         {
             prevState = GameManager.currentState;
             GameManager.currentState = GameManager.States.PAUSED;
+            Time.timeScale = 0f;
             gameObject.SetActive(true);
         }
 
@@ -26,6 +28,7 @@ public class PauseManager : MonoBehaviour {
 
     public void OnExit()
     {
+        Time.timeScale = 1f;
         TileManager.playerInstance.Clear();
         SceneManager.LoadScene("Menu Gioco");
     }

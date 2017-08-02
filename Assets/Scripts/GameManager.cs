@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour {
     public int width;
     public int maxPointAction;
     public static int pointAction;
+    public GameObject gameOver;
 
     public enum States
     {
@@ -22,8 +24,10 @@ public class GameManager : MonoBehaviour {
         ATTACK,
         ABILITY,
         END_MOVE,
+        END_TURN,
         WAIT,
-        PAUSED
+        PAUSED,
+        GAME_OVER
     }
 
     public static States currentState;
@@ -46,10 +50,9 @@ public class GameManager : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        if (currentState == States.EXPLORATION && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
+        if (currentState == States.END_TURN && TurnManager.currentTurnState == TurnManager.TurnStates.FINISH)
         {
             pointAction = maxPointAction;
-            TurnManager.currentTurnState = TurnManager.TurnStates.WAIT;
             tileManager.HideGrid();
 
             GameManager.currentState = GameManager.States.WAIT;
@@ -62,6 +65,9 @@ public class GameManager : MonoBehaviour {
             {
                 player.GetComponent<PlayerController>().playerNumber = player.GetComponent<PlayerController>().originalPlayerNumber;
             }
+            TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {
+                return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
+            });
             GameManager.currentState = GameManager.States.EXPLORATION;
         }
 
@@ -81,20 +87,9 @@ public class GameManager : MonoBehaviour {
         if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space) 
             && (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY))
         {
-            pointAction = maxPointAction;
-            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
+            pointAction--;
             TileManager.ResetGrid();
-            if (TurnManager.currentObjectTurn.tag == "Player")
-            {
-                PlayerController.canMove = true;
-            }
-            else if (TurnManager.currentObjectTurn.tag == "Enemy")
-            {
-                EnemyController.hasMoved = true;
-            }
-            turnManager.ResetTurnColor();
-            TurnManager.currentTurn = TurnManager.currentTurn + 1;
-            StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.SELECT, TurnManager.TurnStates.INIT));
+            StartCoroutine(WaitTurn());
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -177,8 +172,10 @@ public class GameManager : MonoBehaviour {
         {
             pointAction--;
             TurnManager.currentObjectTurn.GetComponent<AILerp>().target = null;
+            TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
             if (pointAction <=0)
             {
+                TileManager.ResetGrid();
                 StartCoroutine(WaitTurn());
             }
             else
@@ -202,6 +199,12 @@ public class GameManager : MonoBehaviour {
             }
             
         }
+
+        if (TileManager.playerInstance.Count <= 0)
+        {
+            currentState = States.GAME_OVER;
+            StartCoroutine(ShowGameOver());
+        }
     }
 
 
@@ -211,24 +214,33 @@ public class GameManager : MonoBehaviour {
         tileManager.CreateGrid(width, height);
     }
 
+    IEnumerator ShowGameOver()
+    {
+        yield return new WaitForSeconds(4f);
+        gameOver.SetActive(true);
+        StopAllCoroutines();
+    }
+
     IEnumerator WaitTurn()
     {
         StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.WAIT, TurnManager.TurnStates.INIT));
-        yield return new WaitForSeconds(2f);
-        pointAction = maxPointAction;
-        TurnManager.currentObjectTurn.GetComponent<AILerp>().canMove = false;
-        TileManager.ResetGrid();
-        if (TurnManager.currentObjectTurn.tag == "Player")
+        yield return new WaitForSeconds(1f);
+        if (TurnManager.currentTurnState != TurnManager.TurnStates.FINISH)
         {
-            PlayerController.canMove = true;
+            TurnManager.currentTurn = TurnManager.currentTurn + 1;
+            pointAction = maxPointAction;
+
+            if (TurnManager.currentObjectTurn.tag == "Player")
+            {
+                PlayerController.canMove = true;
+            }
+            else if (TurnManager.currentObjectTurn.tag == "Enemy")
+            {
+                EnemyController.hasMoved = true;
+            }
+            turnManager.ResetTurnColor();
+            currentState = States.SELECT;
         }
-        else if (TurnManager.currentObjectTurn.tag == "Enemy")
-        {
-            EnemyController.hasMoved = true;
-        }
-        turnManager.ResetTurnColor();
-        TurnManager.currentTurn = TurnManager.currentTurn + 1;
-        currentState = States.SELECT;
     }
 
     public static void FinishLevel()

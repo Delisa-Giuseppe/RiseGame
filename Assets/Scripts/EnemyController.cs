@@ -21,6 +21,7 @@ public class EnemyController : ObjectController {
     public int position;
     public bool canMove;
     public static bool hasMoved = true;
+    public Color nemesyColor; 
 
     private void Update()
     {
@@ -33,6 +34,14 @@ public class EnemyController : ObjectController {
             else
             {
                 anim.SetBool("isWalking", true);
+            }
+        }
+
+        if(gameObject.name.Contains("Nemesy"))
+        {
+            foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+            {
+                mesh.color = nemesyColor;
             }
         }
     }
