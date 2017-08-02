@@ -76,7 +76,10 @@ public class TurnManager : MonoBehaviour {
     public GameObject GetNextTurn()
     {
         refreshTurnUI = true;
-        previousTurn = currentTurn;
+        if(currentTurn >= turns.Count)
+        {
+            currentTurn = 0;
+        }
         //UI.GetComponent<UIManager>().ResetColor();
         if (currentObjectTurn && currentObjectTurn.tag == "Player")
         {
@@ -137,7 +140,7 @@ public class TurnManager : MonoBehaviour {
             {
                 turns.Remove(remove);
             }
-            Debug.Log(GameManager.pointAction);
+
             if (GameManager.pointAction <= 2 && removeTurn.Count > 0)
             {
                 currentTurn--;
