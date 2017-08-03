@@ -211,38 +211,32 @@ public class Ability : MonoBehaviour
                     if(abilityType == AbilityType.SINGOLO)
                     {
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-<<<<<<< HEAD
 
                         AddAbilityToCooldownList();
 
-                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
-=======
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
->>>>>>> ab4aa0be53fb6df541c199920dd05800d3eab3a2
                     }
                     else if(abilityType == AbilityType.MOVIMENTO)
                     {
                         GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
                         GetComponent<AILerp>().target = tileNearEnemy.transform;
                         GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-<<<<<<< HEAD
+                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
                         AddAbilityToCooldownList();
-
-                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
-=======
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
->>>>>>> ab4aa0be53fb6df541c199920dd05800d3eab3a2
                     }
-                    //else if (abilityType == AbilityType.TELETRASPORTO)
-                    //{
-                    //    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-                    //    GetComponent<AILerp>().target = tileNearEnemy.transform;
-                    //    GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-                    //    //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-                    //    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
-                    //}
+                    else if (abilityType == AbilityType.TELETRASPORTO)
+                    {
+                        GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                        //GetComponent<AILerp>().target = tileNearEnemy.transform;
+                        GetComponent<AILerp>().enabled = false;
+                        this.gameObject.transform.position = tileNearEnemy.transform.position;
+                        GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                        AddAbilityToCooldownList();
+                        //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                    }
                 //}
                 //else if(abilityType == AbilityType.MULTIPLO)
                 //{
@@ -290,14 +284,15 @@ public class Ability : MonoBehaviour
 
         if(cooldownList.Count > 0)
         {
-            for (int i = 0; i<cooldownList.Count; i++)
+            for (int i = 0; i<cooldownList.Count; i++) 
             {
                 cooldownList[i].countCooldown--;
 
-                if (cooldownList[i].countCooldown <= 0)
+                if (cooldownList[i].countCooldown < 0)
                 {
-                    cooldownList.Remove(cooldownList[i]);
                     cooldownList[i].buttonPlayerUI.interactable = true;
+                    cooldownList[i].countCooldown = cooldownList[i].cooldown;
+                    cooldownList.Remove(cooldownList[i]);
                 }
             }
 
