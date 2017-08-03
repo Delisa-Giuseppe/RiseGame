@@ -4,7 +4,9 @@ using UnityEngine;
 public class TotemController : MonoBehaviour {
 
     public GameObject cutscene;
+    public string followScene;
 
+    public static string nextScene;
     private Animator anim;
     private string cutsceneName;
 
@@ -12,6 +14,7 @@ public class TotemController : MonoBehaviour {
 	void Awake () {
         cutsceneName = gameObject.name.Split('_')[1];
         anim = cutscene.GetComponent<Animator>();
+        nextScene = followScene;
         GetComponent<Animator>().SetBool("showFlash", true);
 	}
 	
@@ -29,6 +32,11 @@ public class TotemController : MonoBehaviour {
         yield return new WaitForSeconds(11);
         anim.SetBool("showCutscene", false);
         anim.SetBool(cutsceneName, false);
-        GameManager.currentState = GameManager.States.EXPLORATION;
+        foreach (GameObject player in TileManager.playerInstance)
+        {
+            DontDestroyOnLoad(player);
+        }
+
+        GameManager.FinishLevel();
     }
 }
