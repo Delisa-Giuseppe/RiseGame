@@ -14,23 +14,22 @@ public class Tile : MonoBehaviour {
     public bool isEnemy;
     public bool isPlayer;
     public bool isObstacle;
+    public bool isAttackable;
     public static Color tileColor;
     public static bool movable;
     public Sprite borderFull;
     public Sprite borderEmpty;
     public Sprite borderFullBattle;
 
-
-
     private void OnMouseOver()
     {
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GameManager.currentState == GameManager.States.MOVE
-            && !isEnemy && !isObstacle && isSelected)
+            && !isEnemy && !isObstacle && isSelected && !isAttackable)
         {
             SetImageSprite(borderFull);
         }
 
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy && isSelected
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (isSelected && isEnemy || isAttackable)
             && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderFullBattle);
@@ -41,11 +40,11 @@ public class Tile : MonoBehaviour {
     {
         
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && GameManager.currentState == GameManager.States.MOVE
-            && !isEnemy && !isObstacle && isSelected)
+            && !isEnemy && !isObstacle && isSelected && !isAttackable)
         {
             SetImageSprite(borderEmpty);
         }
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && isEnemy && isSelected
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (isSelected && isEnemy || isAttackable)
             && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderEmpty);
@@ -56,21 +55,30 @@ public class Tile : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GetComponent<SpriteRenderer>().sprite = borderEmpty;
-        if (TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
-            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || (collision.GetComponent<Tile>().isWalkable && collision.GetComponent<Tile>().isPlayer)))
+        if (!EnemyController.isMovable && (!TurnManager.currentObjectTurn || (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy" && TurnManager.currentObjectTurn.name == "Dragon"))
+            && collision.tag == "Tile" && !collision.GetComponent<Tile>().isChecked && !collision.GetComponent<Tile>().isAttackable)
         {
-            TileManager.tilesSelectable.Add(collision.gameObject);
-            collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
-            collision.GetComponent<Tile>().isSelected = true;
-            StartCoroutine(WaitColor(collision));
+            collision.GetComponent<Tile>().isAttackable = true;
+            EnemyController.tilesAttackable.Add(collision.gameObject);
         }
-        else if (TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
-            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy)))
+        else
         {
-            TileManager.tilesSelectable.Add(collision.gameObject);
-            collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
-            collision.GetComponent<Tile>().isSelected = true;
-            StartCoroutine(WaitColor(collision));
+            if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
+            && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isEnemy || (collision.GetComponent<Tile>().isWalkable && collision.GetComponent<Tile>().isPlayer)))
+            {
+                TileManager.tilesSelectable.Add(collision.gameObject);
+                collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
+                collision.GetComponent<Tile>().isSelected = true;
+                StartCoroutine(WaitColor(collision));
+            }
+            else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
+                && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy)))
+            {
+                TileManager.tilesSelectable.Add(collision.gameObject);
+                collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
+                collision.GetComponent<Tile>().isSelected = true;
+                StartCoroutine(WaitColor(collision));
+            }
         }
     }
 

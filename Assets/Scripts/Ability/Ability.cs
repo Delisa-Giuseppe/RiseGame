@@ -211,10 +211,14 @@ public class Ability : MonoBehaviour
                     if(abilityType == AbilityType.SINGOLO)
                     {
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+<<<<<<< HEAD
 
                         AddAbilityToCooldownList();
 
                     StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+=======
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+>>>>>>> ab4aa0be53fb6df541c199920dd05800d3eab3a2
                     }
                     else if(abilityType == AbilityType.MOVIMENTO)
                     {
@@ -222,10 +226,14 @@ public class Ability : MonoBehaviour
                         GetComponent<AILerp>().target = tileNearEnemy.transform;
                         GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+<<<<<<< HEAD
 
                         AddAbilityToCooldownList();
 
                     StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+=======
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+>>>>>>> ab4aa0be53fb6df541c199920dd05800d3eab3a2
                     }
                     //else if (abilityType == AbilityType.TELETRASPORTO)
                     //{

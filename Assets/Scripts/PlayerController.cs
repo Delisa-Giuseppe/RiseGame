@@ -50,7 +50,7 @@ public class PlayerController : ObjectController
             {
                 foreach (RaycastHit2D ray in rayCast)
                 {
-                    if (ray.collider.tag == "EnemyGroup" || ray.collider.tag == "Nemesy")
+                    if (ray.collider.tag == "EnemyGroup" || ray.collider.tag == "Nemesy" || ray.collider.tag == "Boss")
                     {
                         GameManager.currentState = GameManager.States.WAIT;
                         TileManager.AddEnemy(ray.collider.gameObject);

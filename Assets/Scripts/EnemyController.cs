@@ -16,13 +16,29 @@ public class EnemyController : ObjectController {
 
     private GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
+    private static Vector2[] bossPoint;
     public bool canAttack;
-    public GameObject playerAttacked;
+    public List<GameObject> playerAttacked;
+    public static List<GameObject> tilesAttackable;
     public EnemyType enemyBehaviour;
     public int position;
     public bool canMove;
     public static bool hasMoved = true;
-    public Color nemesyColor; 
+    public Color nemesyColor;
+    public static GameObject bossTileSelected;
+    public static bool isMovable = false;
+
+    private void Start()
+    {
+        bossPoint = new Vector2[] {
+            new Vector2(-1.64f, 1.74f),
+            new Vector2(-1.64f, -0.58f),
+            new Vector2(2.58f, -0.58f),
+            new Vector2(2.58f, 1.74f)
+        };
+
+        tilesAttackable = new List<GameObject>();
+    }
 
     private void Update()
     {
@@ -72,11 +88,39 @@ public class EnemyController : ObjectController {
         canAttack = false;
         if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
         {
+            playerAttacked = new List<GameObject>();
             if ((enemyBehaviour == EnemyType.RANGED) ||
                 (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
             {
                 canAttack = true;
-                playerAttacked = closerPlayer;
+                playerAttacked.Add(closerPlayer);
+            }
+            else if(enemyBehaviour == EnemyType.BOSS)
+            {
+                if(Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f)
+                {
+                    canAttack = true;
+                    playerAttacked.Add(closerPlayer);
+                    List<RaycastHit2D> playerHits = new List<RaycastHit2D>(2)
+                    {
+                        Physics2D.Raycast(closerPlayer.transform.position, Vector2.up, 1f, 1 << LayerMask.NameToLayer("GridMap")),
+                        Physics2D.Raycast(closerPlayer.transform.position, Vector2.down, 1f, 1 << LayerMask.NameToLayer("GridMap"))
+                    };
+
+                    foreach(RaycastHit2D tile in playerHits)
+                    {
+                        if(tile.collider.tag == "Tile" && tile.collider.GetComponent<Tile>().isPlayer)
+                        {
+                            foreach(GameObject player in TileManager.playerInstance)
+                            {
+                                if(player.GetComponent<PlayerController>().PlayerTile.transform.position == tile.collider.transform.position)
+                                {
+                                    playerAttacked.Add(player);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -149,6 +193,46 @@ public class EnemyController : ObjectController {
         return tileSelected;
     }
 
+    public void SetTrigger()
+    {
+        bossTileSelected = enemyTile;
+        enemyTile.layer = LayerMask.NameToLayer("GridBattle");
+        enemyTile.GetComponent<Tile>().isChecked = true;
+        enemyTile.GetComponent<Tile>().isAttackable = true;
+        enemyTile.GetComponent<PolygonCollider2D>().SetPath(0, bossPoint);
+        enemyTile.GetComponent<PolygonCollider2D>().isTrigger = true;
+
+        StartCoroutine(ResetTrigger());
+    }
+
+    public static IEnumerator ResetTrigger()
+    {
+        GameManager.currentState = GameManager.States.WAIT;
+
+        while (tilesAttackable.Count == 0)
+        {
+            yield return null;
+        }
+
+        isMovable = true;
+        bossTileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
+        bossTileSelected.GetComponent<PolygonCollider2D>().SetPath(0, TileManager.quadInitialPoint);
+    }
+
+    public static void ResetBossGrid()
+    {
+        bossTileSelected.GetComponent<Tile>().isChecked = false;
+        bossTileSelected.GetComponent<Tile>().isAttackable = false;
+        bossTileSelected.layer = LayerMask.NameToLayer("GridMap");
+        foreach (GameObject tileObj in tilesAttackable)
+        {
+            tileObj.layer = LayerMask.NameToLayer("GridMap");
+            tileObj.GetComponent<Tile>().isChecked = false;
+            tileObj.GetComponent<Tile>().isAttackable = false;
+        }
+        tilesAttackable.Clear();
+    }
+
     public List<GameObject> EnemyTileNeighbour
     {
         get
@@ -211,11 +295,6 @@ public class EnemyController : ObjectController {
         anim.SetBool("isFighting", true);
     }
 
-    public void StopFightAnimation()
-    {
-        anim.SetBool("isFighting", false);
-    }
-
 	public void PhysicAttack(GameObject target, string animationName ,int damage)
     {
         if (target)
@@ -236,7 +315,19 @@ public class EnemyController : ObjectController {
         }
     }
 
-	IEnumerator WaitAnimation(GameObject target, int damage)
+    public void PhysicAttack(List<GameObject> target, string animationName, int damage)
+    {
+        if (target.Count > 0)
+        {
+            anim.SetTrigger(animationName);
+            foreach (GameObject player in target)
+            {
+                StartCoroutine(WaitAnimation(player, damage));
+            }
+        }
+    }
+
+    IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
 
