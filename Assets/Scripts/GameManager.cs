@@ -76,8 +76,9 @@ public class GameManager : MonoBehaviour {
             if(TurnManager.currentTurnState == TurnManager.TurnStates.INIT)
             {
                 turnManager.GetNextTurn();
-                if (TurnManager.currentObjectTurn.tag == "Enemy" && 
-                    TurnManager.currentObjectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.RANGED)
+                if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy"
+                    && TurnManager.currentObjectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.RANGED &&
+                    TileManager.CheckPlayer())
                 {
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, false);
                 }
@@ -95,7 +96,14 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
                 {
-                    tileManager.UpdateGrid(TurnManager.currentObjectTurn, EnemyController.hasMoved);
+                    if(TurnManager.currentObjectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.RANGED)
+                    {
+                        tileManager.UpdateGrid(TurnManager.currentObjectTurn, !EnemyController.rangedCanAttack);
+                    }
+                    else
+                    {
+                        tileManager.UpdateGrid(TurnManager.currentObjectTurn, EnemyController.hasMoved);
+                    }   
                 }
                 
             }
@@ -261,7 +269,7 @@ public class GameManager : MonoBehaviour {
             }
             else if (TurnManager.currentObjectTurn.tag == "Enemy")
             {
-                EnemyController.hasMoved = true;
+                EnemyController.hasMoved = true;   
             }
             turnManager.ResetTurnColor();
             currentState = States.SELECT;

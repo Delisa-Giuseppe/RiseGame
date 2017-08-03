@@ -260,6 +260,18 @@ public class TileManager : MonoBehaviour {
         return false;
     }
 
+    public static bool CheckPlayer()
+    {
+        foreach (GameObject player in playerInstance)
+        {
+            if (tilesSelectable.Contains(player.GetComponent<PlayerController>().PlayerTile))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static bool CheckBoss()
     {
         foreach (GameObject tile in tilesSelectable)
@@ -827,7 +839,7 @@ public class TileManager : MonoBehaviour {
             {
                 enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
             }
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(1f);
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
         }
         else

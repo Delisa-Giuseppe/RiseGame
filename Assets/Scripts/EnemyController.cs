@@ -27,6 +27,7 @@ public class EnemyController : ObjectController {
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
+    public static bool rangedCanAttack = false;
 
     private void Start()
     {
@@ -361,6 +362,11 @@ public class EnemyController : ObjectController {
         {
             TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
+        }
+
+        if (enemyBehaviour == EnemyController.EnemyType.RANGED)
+        {
+            rangedCanAttack = TileManager.CheckPlayer();
         }
     }
 
