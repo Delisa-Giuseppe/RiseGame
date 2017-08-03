@@ -61,7 +61,7 @@ public class CostrizioneCurativa : Ability {
                     }
                 }
                 GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -(int)this.damage);
-                StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, playerTarget));
+                StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
             }
         }
                 

@@ -222,7 +222,7 @@ public class TileManager : MonoBehaviour {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
                 PlayerController.canMove = false;
-                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, false , null));
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE));
             }
         }
     }
@@ -278,7 +278,7 @@ public class TileManager : MonoBehaviour {
             {
 				playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", 
 					playerInstance[playerNumber].GetComponent<PlayerController>().physicAttack);
-                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE));
             }
             //else
             //{
@@ -320,7 +320,7 @@ public class TileManager : MonoBehaviour {
             }
 
             objectTurn.GetComponent<AILerp>().canMove = true;
-            StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE, false, null));
+            StartCoroutine(WaitMoves(objectTurn, GameManager.States.MOVE));
         }
         else
         {
@@ -339,7 +339,7 @@ public class TileManager : MonoBehaviour {
             }
 
             objectTurn.GetComponent<AILerp>().canMove = true;
-            StartCoroutine(WaitMoves(objectTurn, GameManager.States.FIGHT, false, null));
+            StartCoroutine(WaitMoves(objectTurn, GameManager.States.FIGHT));
         }
         
     }
@@ -423,7 +423,10 @@ public class TileManager : MonoBehaviour {
             }
             enemy.GetComponent<BoxCollider2D>().enabled = true;
             enemy.GetComponent<EnemyController>().position = i;
-            enemy.GetComponent<EnemyController>().StartFightAnimation();
+            if(enemyGroup.tag != "Boss")
+            {
+                enemy.GetComponent<EnemyController>().StartFightAnimation();
+            }
             
             if (enemyGroup.tag == "Nemesy")
             {
@@ -720,7 +723,7 @@ public class TileManager : MonoBehaviour {
     }
 
 
-    public static IEnumerator WaitMoves(GameObject mover, GameManager.States nextState, bool attack, GameObject enemy)
+    public static IEnumerator WaitMoves(GameObject mover, GameManager.States nextState)
     {
         GameManager.currentState = GameManager.States.WAIT;
 
@@ -786,13 +789,20 @@ public class TileManager : MonoBehaviour {
 
         if (enemy.GetComponent<EnemyController>().canAttack)
         {
-            enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
+            if(enemy.GetComponent<EnemyController>().playerAttacked.Count == 1)
+            {
+                enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked[0], "attack", enemy.GetComponent<EnemyController>().physicAttack);
+            }
+            else
+            {
+                enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
+            }
             yield return new WaitForSeconds(2f);
-            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, true, enemy.GetComponent<EnemyController>().playerAttacked));
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
         }
         else
         {
-            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE, false, null));
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
         }
     }
 
