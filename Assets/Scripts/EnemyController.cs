@@ -10,7 +10,8 @@ public class EnemyController : ObjectController {
     public enum EnemyType
     {
         MELEE,
-        RANGED
+        RANGED,
+        BOSS
     };
 
     private GameObject enemyTile;
