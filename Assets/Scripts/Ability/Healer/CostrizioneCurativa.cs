@@ -1,21 +1,23 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class CostrizioneCurativa : Ability {
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start () 
 	{
         abilityName = "CostrizioneCurativa";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.tileRange = 2;
 		this.cooldown = 3;
-		playerUI = GetComponent<PlayerController>().playerUI;
-		playerUI.GetComponentsInChildren<Button> () [0].onClick.AddListener (delegate {
+        countCooldown = this.cooldown;
+        playerUI = GetComponent<PlayerController>().playerUI;
+        buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
+        buttonPlayerUI.onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.ROMBO);
             activedAbility = this.abilityName;
         });
@@ -61,6 +63,9 @@ public class CostrizioneCurativa : Ability {
                     }
                 }
                 GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -(int)this.damage);
+
+                AddAbilityToCooldownList();
+
                 StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, playerTarget));
             }
         }

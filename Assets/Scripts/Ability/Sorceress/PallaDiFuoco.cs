@@ -15,8 +15,10 @@ public class PallaDiFuoco : Ability {
 		this.cure = 0;
 		this.tileRange = 7;
 		this.cooldown = 2;
+        countCooldown = this.cooldown;
 		playerUI = GetComponent<PlayerController>().playerUI;
-		playerUI.GetComponentsInChildren<Button> () [0].onClick.AddListener (delegate {
+        buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
+        buttonPlayerUI.onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.CROCE);
             activedAbility = this.abilityName;
         });

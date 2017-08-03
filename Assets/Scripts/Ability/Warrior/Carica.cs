@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class Carica : Ability {
 
-	// Use this for initialization
-	void Start () 
+    // Use this for initialization
+    void Start () 
 	{
         this.abilityType = AbilityType.MOVIMENTO;
 		this.abilityName = "Carica";
@@ -15,8 +15,10 @@ public class Carica : Ability {
 		this.cure = 0;
 		this.tileRange = 8;
 		this.cooldown = 4;
-		playerUI = GetComponent<PlayerController>().playerUI;
-		playerUI.GetComponentsInChildren<Button> () [0].onClick.AddListener (delegate {
+        countCooldown = this.cooldown;
+        playerUI = GetComponent<PlayerController>().playerUI;
+        buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
+        buttonPlayerUI.onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.CROCE);
             activedAbility = this.abilityName;
         });

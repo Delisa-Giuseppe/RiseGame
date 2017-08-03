@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ability : MonoBehaviour
 {
@@ -11,11 +13,14 @@ public class Ability : MonoBehaviour
     public int tileRange;
     public int turnDuration;
     public int cooldown;
+    public int countCooldown;
     public static string activedAbility;
     public AbilityType abilityType;
+    public static List<Ability> cooldownList; 
 
     private GameObject UI;
 	protected GameObject playerUI;
+    protected Button buttonPlayerUI;
 
     public enum SelectType
     {
@@ -43,7 +48,9 @@ public class Ability : MonoBehaviour
         tileRange = 0;
         turnDuration = 0;
 		cooldown = 0;
+        countCooldown = 0;
         activedAbility = "";
+        cooldownList = new List<Ability>();
 
     }
 
@@ -204,7 +211,10 @@ public class Ability : MonoBehaviour
                     if(abilityType == AbilityType.SINGOLO)
                     {
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+
+                        AddAbilityToCooldownList();
+
+                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
                     }
                     else if(abilityType == AbilityType.MOVIMENTO)
                     {
@@ -212,7 +222,10 @@ public class Ability : MonoBehaviour
                         GetComponent<AILerp>().target = tileNearEnemy.transform;
                         GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
+
+                        AddAbilityToCooldownList();
+
+                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
                     }
                     //else if (abilityType == AbilityType.TELETRASPORTO)
                     //{
@@ -253,6 +266,44 @@ public class Ability : MonoBehaviour
                 //    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
                 //}    
             }
+        }
+
+    }
+
+    protected void AddAbilityToCooldownList()
+    {
+        Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+        cooldownList.Add(ability);
+        ability.buttonPlayerUI.interactable = false;
+    }
+
+    public static void CheckCooldownList()
+    {
+
+        if(cooldownList.Count > 0)
+        {
+            for (int i = 0; i<cooldownList.Count; i++)
+            {
+                cooldownList[i].countCooldown--;
+
+                if (cooldownList[i].countCooldown <= 0)
+                {
+                    cooldownList.Remove(cooldownList[i]);
+                    cooldownList[i].buttonPlayerUI.interactable = true;
+                }
+            }
+
+            PrintCooldownList();
+        }
+
+    }
+
+    // DEBUG FUNCTION TO REMOVE
+    public static void PrintCooldownList()
+    {
+        for (int i = 0; i < cooldownList.Count; i++)
+        {
+            print(cooldownList[i].abilityName+" "+ cooldownList[i].countCooldown);
         }
 
     }
