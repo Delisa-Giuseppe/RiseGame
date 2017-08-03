@@ -16,13 +16,29 @@ public class EnemyController : ObjectController {
 
     private GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
+    private static Vector2[] bossPoint;
     public bool canAttack;
     public List<GameObject> playerAttacked;
+    public static List<GameObject> tilesAttackable;
     public EnemyType enemyBehaviour;
     public int position;
     public bool canMove;
     public static bool hasMoved = true;
-    public Color nemesyColor; 
+    public Color nemesyColor;
+    public static GameObject bossTileSelected;
+    public static bool isMovable = false;
+
+    private void Start()
+    {
+        bossPoint = new Vector2[] {
+            new Vector2(-1.64f, 1.74f),
+            new Vector2(-1.64f, -0.58f),
+            new Vector2(2.58f, -0.58f),
+            new Vector2(2.58f, 1.74f)
+        };
+
+        tilesAttackable = new List<GameObject>();
+    }
 
     private void Update()
     {
@@ -175,6 +191,46 @@ public class EnemyController : ObjectController {
         }
 
         return tileSelected;
+    }
+
+    public void SetTrigger()
+    {
+        bossTileSelected = enemyTile;
+        enemyTile.layer = LayerMask.NameToLayer("GridBattle");
+        enemyTile.GetComponent<Tile>().isChecked = true;
+        enemyTile.GetComponent<Tile>().isAttackable = true;
+        enemyTile.GetComponent<PolygonCollider2D>().SetPath(0, bossPoint);
+        enemyTile.GetComponent<PolygonCollider2D>().isTrigger = true;
+
+        StartCoroutine(ResetTrigger());
+    }
+
+    public static IEnumerator ResetTrigger()
+    {
+        GameManager.currentState = GameManager.States.WAIT;
+
+        while (tilesAttackable.Count == 0)
+        {
+            yield return null;
+        }
+
+        isMovable = true;
+        bossTileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
+        bossTileSelected.GetComponent<PolygonCollider2D>().SetPath(0, TileManager.quadInitialPoint);
+    }
+
+    public static void ResetBossGrid()
+    {
+        bossTileSelected.GetComponent<Tile>().isChecked = false;
+        bossTileSelected.GetComponent<Tile>().isAttackable = false;
+        bossTileSelected.layer = LayerMask.NameToLayer("GridMap");
+        foreach (GameObject tileObj in tilesAttackable)
+        {
+            tileObj.layer = LayerMask.NameToLayer("GridMap");
+            tileObj.GetComponent<Tile>().isChecked = false;
+            tileObj.GetComponent<Tile>().isAttackable = false;
+        }
+        tilesAttackable.Clear();
     }
 
     public List<GameObject> EnemyTileNeighbour

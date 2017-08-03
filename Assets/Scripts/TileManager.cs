@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TileManager : MonoBehaviour {
 
@@ -217,7 +218,8 @@ public class TileManager : MonoBehaviour {
         else if (GameManager.currentState == GameManager.States.MOVE)
         {
             Destroy(targetInstance);
-            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && !hit.collider.GetComponent<Tile>().isEnemy)
+            if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && !hit.collider.GetComponent<Tile>().isEnemy 
+                && !hit.collider.GetComponent<Tile>().isAttackable)
             {
                 playerInstance[playerNumber].GetComponent<AILerp>().target = hit.collider.transform;
                 playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
@@ -258,6 +260,18 @@ public class TileManager : MonoBehaviour {
         return false;
     }
 
+    public static bool CheckBoss()
+    {
+        foreach (GameObject tile in tilesSelectable)
+        {
+            if (tile.GetComponent<Tile>().isAttackable)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public bool AttackEnemy(int playerNumber)
     {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -274,20 +288,36 @@ public class TileManager : MonoBehaviour {
                 }
             }
             if (playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED
-                && tilesSelectable.Contains(enemyTarget.GetComponent<EnemyController>().EnemyTile) || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
+                || Vector2.Distance(playerInstance[playerNumber].transform.position, enemyTarget.transform.position) < 1.5f)
             {
 				playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", 
 					playerInstance[playerNumber].GetComponent<PlayerController>().physicAttack);
                 StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE));
             }
-            //else
-            //{
-            //    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-            //    playerInstance[playerNumber].GetComponent<AILerp>().target = tileNearEnemy.transform;
-            //    playerInstance[playerNumber].GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-            //    playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget);
-            //    StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE, true, enemyTarget));
-            //} 
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool AttackBoss(int playerNumber)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        if (hit.collider != null && hit.collider.tag == "Enemy" ||
+                (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isAttackable))
+        {
+            GameObject enemyTarget = GameObject.Find("Dragon");
+
+            if (playerInstance[playerNumber].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED
+               || Vector2.Distance(playerInstance[playerNumber].transform.position, hit.collider.transform.position) < 1.5f)
+            {
+                playerInstance[playerNumber].GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack",
+                    playerInstance[playerNumber].GetComponent<PlayerController>().physicAttack);
+                StartCoroutine(WaitMoves(playerInstance[playerNumber], GameManager.States.END_MOVE));
+            }
 
             return true;
         }
@@ -809,7 +839,13 @@ public class TileManager : MonoBehaviour {
     public IEnumerator StartBattle()
     {
         GameManager.currentState = GameManager.States.WAIT;
-        yield return new WaitForSeconds(1.5f);
+        //yield return new WaitForSeconds(1.5f);
+
+        if(SceneManager.GetActiveScene().name == "Castle")
+        {
+            GameObject dragon = GameObject.Find("Dragon");
+            dragon.GetComponent<EnemyController>().SetTrigger();
+        }
 
         foreach (GameObject player in playerInstance)
         {
