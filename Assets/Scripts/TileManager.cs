@@ -815,9 +815,8 @@ public class TileManager : MonoBehaviour {
 
     private IEnumerator WaitListTile(GameObject enemy)
     {
+        GameManager.States previousState = GameManager.currentState;
         GameManager.currentState = GameManager.States.WAIT;
-
-        yield return new WaitForSeconds(0.5f);
 
         while (tilesSelectable.Count == 0)
         {
@@ -827,11 +826,13 @@ public class TileManager : MonoBehaviour {
         tileSelected.GetComponent<PolygonCollider2D>().isTrigger = false;
         GameManager.RefreshPath();
         enemy.GetComponent<EnemyController>().EnemyTile.GetComponent<PolygonCollider2D>().SetPath(0, quadInitialPoint);
-        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable);
+        enemy.GetComponent<EnemyController>().EnemyIA(playerInstance, tilesSelectable, previousState);
 
-        if (enemy.GetComponent<EnemyController>().canAttack)
+        if (enemy.GetComponent<EnemyController>().canAttack && previousState == GameManager.States.FIGHT)
         {
-            if(enemy.GetComponent<EnemyController>().playerAttacked.Count == 1)
+            EnemyController.hasMoved = false;
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+            if (enemy.GetComponent<EnemyController>().playerAttacked.Count == 1)
             {
                 enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked[0], "attack", enemy.GetComponent<EnemyController>().physicAttack);
             }
@@ -839,12 +840,24 @@ public class TileManager : MonoBehaviour {
             {
                 enemy.GetComponent<EnemyController>().PhysicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "attack", enemy.GetComponent<EnemyController>().physicAttack);
             }
-            yield return new WaitForSeconds(1f);
+
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
         }
         else
         {
-            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
+            if(previousState == GameManager.States.FIGHT)
+            {
+                EnemyController.hasMoved = true;
+                ResetGrid();
+                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+                GameManager.currentState = GameManager.States.SELECT;
+            }
+            else
+            {
+                EnemyController.hasMoved = false;
+                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+                StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
+            }
         }
     }
 

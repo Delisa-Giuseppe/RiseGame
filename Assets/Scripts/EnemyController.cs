@@ -27,7 +27,6 @@ public class EnemyController : ObjectController {
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
-    public static bool rangedCanAttack = false;
 
     private void Start()
     {
@@ -64,7 +63,7 @@ public class EnemyController : ObjectController {
         }
     }
 
-    public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile)
+    public void EnemyIA(List<GameObject> players, List<GameObject> selectableTile, GameManager.States previousState)
     {
         float closerDistance = 0;
         GameObject closerPlayer = null;
@@ -147,11 +146,9 @@ public class EnemyController : ObjectController {
             }
         }
 
-        if (!canAttack && canMove)
+        if (canMove && previousState == GameManager.States.MOVE)
         {
-            hasMoved = false;
             EnemyTile = closerTile;
-            //transform.position = closerTile.transform.position;
             GetComponent<AILerp>().target = closerTile.transform;
         }
 
@@ -362,11 +359,6 @@ public class EnemyController : ObjectController {
         {
             TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
-        }
-
-        if (enemyBehaviour == EnemyController.EnemyType.RANGED)
-        {
-            rangedCanAttack = TileManager.CheckPlayer();
         }
     }
 

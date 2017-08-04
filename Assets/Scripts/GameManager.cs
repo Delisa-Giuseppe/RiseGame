@@ -76,9 +76,7 @@ public class GameManager : MonoBehaviour {
             if(TurnManager.currentTurnState == TurnManager.TurnStates.INIT)
             {
                 turnManager.GetNextTurn();
-                if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy"
-                    && TurnManager.currentObjectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.RANGED &&
-                    TileManager.CheckPlayer())
+                if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
                 {
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, false);
                 }
@@ -96,14 +94,7 @@ public class GameManager : MonoBehaviour {
                 }
                 else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
                 {
-                    if(TurnManager.currentObjectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.RANGED)
-                    {
-                        tileManager.UpdateGrid(TurnManager.currentObjectTurn, !EnemyController.rangedCanAttack);
-                    }
-                    else
-                    {
-                        tileManager.UpdateGrid(TurnManager.currentObjectTurn, EnemyController.hasMoved);
-                    }   
+                    tileManager.UpdateGrid(TurnManager.currentObjectTurn, EnemyController.hasMoved);
                 }
                 
             }
@@ -132,12 +123,12 @@ public class GameManager : MonoBehaviour {
                 }
                 
             }
-            
-           if(currentState == States.FIGHT)
-           {
-                if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && TileManager.CheckEnemy())
+
+            if (currentState == States.FIGHT)
+            {
+                if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && TileManager.CheckEnemy())
                 {
-                    if(!tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber) && PlayerController.canMove)
+                    if (!tileManager.AttackEnemy(TurnManager.currentObjectTurn.GetComponent<PlayerController>().playerNumber) && PlayerController.canMove)
                     {
                         TileManager.ResetGrid();
                         tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
@@ -151,12 +142,12 @@ public class GameManager : MonoBehaviour {
                         tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                     }
                 }
-                else if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && PlayerController.canMove)
+                else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && PlayerController.canMove)
                 {
                     TileManager.ResetGrid();
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                 }
-           }
+            }
 
 			if(currentState == States.ABILITY)
 			{
@@ -187,8 +178,8 @@ public class GameManager : MonoBehaviour {
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy" && 
                 (currentState == States.MOVE || currentState == States.FIGHT) && TurnManager.currentTurnState == TurnManager.TurnStates.EXECUTE)
         {
-            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             tileManager.MoveEnemy(TurnManager.currentObjectTurn);
+            //TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
         }
         
 
