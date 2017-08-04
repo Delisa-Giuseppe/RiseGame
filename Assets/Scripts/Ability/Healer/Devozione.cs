@@ -12,15 +12,15 @@ public class Devozione : Ability {
         abilityName = "Devozione";
         this.damage = GetComponent<PlayerController>().magicAttack;
 		this.cure = 0;
-		this.tileRange = 0;
+		this.tileRange = 1;
 		this.cooldown = 5;
-		playerUI = GetComponent<PlayerController>().playerUI;
-        playerUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(delegate
-        {
+        countCooldown = this.cooldown;
+        playerUI = GetComponent<PlayerController>().playerUI;
+        buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
+        buttonPlayerUI.onClick.AddListener(delegate {
             AttivaAbilita(SelectType.CROCE);
             activedAbility = this.abilityName;
         });
-
     }
 
 }

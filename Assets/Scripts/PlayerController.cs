@@ -12,6 +12,7 @@ public class PlayerController : ObjectController
     public int playerNumber;
     public static bool canMove;
     public GameObject playerUI;
+    public GameObject iconUI;
     public int originalPlayerNumber;
 
     public enum PlayerType
