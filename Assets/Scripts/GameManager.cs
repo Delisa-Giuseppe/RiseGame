@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour {
                     EnemyController.isMovable = false;
                     TurnManager.currentObjectTurn.GetComponent<EnemyController>().SetTrigger();
                 }
-                EnemyController.hasMoved = true;   
+                EnemyController.hasMoved = true;
             }
             turnManager.ResetTurnColor();
             currentState = States.SELECT;

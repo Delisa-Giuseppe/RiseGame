@@ -864,20 +864,20 @@ public class TileManager : MonoBehaviour {
         }
         else
         {
-            if(previousState == GameManager.States.FIGHT && EnemyController.move)
-            {
-                //EnemyController.hasMoved = true;
-                ResetGrid();
-                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
-                GameManager.currentState = GameManager.States.SELECT;
-            }
-            else if (previousState == GameManager.States.FIGHT && !EnemyController.move)
+            if(previousState == GameManager.States.FIGHT)
             {
                 EnemyController.hasMoved = true;
                 ResetGrid();
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
                 GameManager.currentState = GameManager.States.SELECT;
             }
+            //else if (previousState == GameManager.States.FIGHT && !EnemyController.move)
+            //{
+            //    EnemyController.hasMoved = true;
+            //    ResetGrid();
+            //    TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+            //    GameManager.currentState = GameManager.States.SELECT;
+            //}
             else
             {
                 //EnemyController.hasMoved = false;
@@ -885,6 +885,8 @@ public class TileManager : MonoBehaviour {
                 StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
             }
         }
+
+        yield return new WaitForSeconds(1f);
     }
 
     public IEnumerator StartBattle()

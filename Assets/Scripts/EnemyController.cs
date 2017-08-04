@@ -24,8 +24,7 @@ public class EnemyController : ObjectController {
     public EnemyType enemyBehaviour;
     public int position;
     public bool canMove;
-    public static bool hasMoved = true;
-    public static bool move = true;
+    public static bool hasMoved;
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
@@ -70,6 +69,7 @@ public class EnemyController : ObjectController {
         float closerDistance = 0;
         GameObject closerPlayer = null;
         canMagicAttack = false;
+        playerAttacked.Clear();
 
         if (enemyBehaviour == EnemyType.BOSS && GameManager.pointAction == 2)
         {
@@ -79,7 +79,6 @@ public class EnemyController : ObjectController {
             }
 
             canMagicAttack = true;
-            move = false;
         }
         else
         {
@@ -164,7 +163,6 @@ public class EnemyController : ObjectController {
 
             if (canMove && previousState == GameManager.States.MOVE)
             {
-                move = false;
                 hasMoved = false;
                 EnemyTile = closerTile;
                 GetComponent<AILerp>().target = closerTile.transform;
@@ -335,12 +333,12 @@ public class EnemyController : ObjectController {
         {
             if (transform.position.x > target[0].transform.position.x)
             {
-                transform.eulerAngles = new Vector3(0f, 180f);
+                transform.eulerAngles = new Vector3(0f, 0f);
             }
 
             if (transform.position.x < target[0].transform.position.x)
             {
-                transform.eulerAngles = new Vector3(0f, 0f);
+                transform.eulerAngles = new Vector3(0f, 180f);
             }
             anim.SetTrigger(animationName);
             StartCoroutine(WaitAnimation(target, damage));
@@ -367,7 +365,7 @@ public class EnemyController : ObjectController {
 
     IEnumerator WaitAnimation(GameObject target, int damage)
     {
-        yield return new WaitForSeconds(0.6f);
+        yield return new WaitForSeconds(0.7f);
 
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {
@@ -404,9 +402,7 @@ public class EnemyController : ObjectController {
 
     IEnumerator WaitAnimation(List<GameObject> targets, int damage)
     {
-        yield return new WaitForSeconds(0.6f);
-        Debug.Log(anim.GetCurrentAnimatorStateInfo(0).length);
-        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(1f);
 
         foreach(GameObject target in targets)
         {
