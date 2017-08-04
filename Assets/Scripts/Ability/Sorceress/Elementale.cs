@@ -15,7 +15,7 @@ public class Elementale : Ability {
 		this.tileRange = GetComponent<PlayerController>().moves;
 		this.cooldown = 7;
 		playerUI = GetComponent<PlayerController>().playerUI;
-		playerUI.GetComponentsInChildren<Button> () [3].onClick.AddListener (delegate {
+		playerUI.GetComponentsInChildren<Button> () [1].onClick.AddListener (delegate {
 			AttivaAbilita (SelectType.QUADRATO);
             activedAbility = this.abilityName;
         });

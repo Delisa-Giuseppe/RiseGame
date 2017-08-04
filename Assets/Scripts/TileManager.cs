@@ -27,10 +27,13 @@ public class TileManager : MonoBehaviour {
     private GameObject previousTile = null;
     private static Vector3 playerBattlePosition = Vector3.zero;
     private GameObject UI;
+    private GameObject bottomUI;
 
     private void Awake()
     {
         UI = GameObject.Find("UI");
+        bottomUI = GameObject.Find("Bottom UI");
+
         tilesSelectable = new List<GameObject>();
 
         quadInitialPoint = new Vector2[] {
@@ -574,7 +577,8 @@ public class TileManager : MonoBehaviour {
                     player4.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player4.GetComponent<PlayerController>().playerNumber = 3;
                     player4.GetComponent<PlayerController>().originalPlayerNumber = 3;
-                    player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, UI.transform);
+                    player4.GetComponent<PlayerController>().playerUI = Instantiate(player4.GetComponent<PlayerController>().playerUI, bottomUI.transform);
+                    player4.GetComponent<PlayerController>().iconUI = Instantiate(player4.GetComponent<PlayerController>().iconUI, bottomUI.transform);
                 }
                 
                 if(x==2 && y==4)
@@ -585,7 +589,8 @@ public class TileManager : MonoBehaviour {
                     player3.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player3.GetComponent<PlayerController>().playerNumber = 2;
                     player3.GetComponent<PlayerController>().originalPlayerNumber = 2;
-                    player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, UI.transform);
+                    player3.GetComponent<PlayerController>().playerUI = Instantiate(player3.GetComponent<PlayerController>().playerUI, bottomUI.transform);
+                    player3.GetComponent<PlayerController>().iconUI = Instantiate(player3.GetComponent<PlayerController>().iconUI, bottomUI.transform);
                 }
 
                 if (x==3 && y==4)
@@ -596,7 +601,8 @@ public class TileManager : MonoBehaviour {
                     player2.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player2.GetComponent<PlayerController>().playerNumber = 1;
                     player2.GetComponent<PlayerController>().originalPlayerNumber = 1;
-                    player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, UI.transform);
+                    player2.GetComponent<PlayerController>().playerUI = Instantiate(player2.GetComponent<PlayerController>().playerUI, bottomUI.transform);
+                    player2.GetComponent<PlayerController>().iconUI = Instantiate(player2.GetComponent<PlayerController>().iconUI, bottomUI.transform);
                 }
 
                 if (x==4 && y==4)
@@ -607,7 +613,8 @@ public class TileManager : MonoBehaviour {
                     player1.GetComponent<PlayerController>().PlayerTile = tileInstance;
                     player1.GetComponent<PlayerController>().playerNumber = 0;
                     player1.GetComponent<PlayerController>().originalPlayerNumber = 0;
-                    player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, UI.transform);
+                    player1.GetComponent<PlayerController>().playerUI = Instantiate(player1.GetComponent<PlayerController>().playerUI, bottomUI.transform);
+                    player1.GetComponent<PlayerController>().iconUI = Instantiate(player1.GetComponent<PlayerController>().iconUI, bottomUI.transform);
                 }
             }
         }

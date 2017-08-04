@@ -9,6 +9,7 @@ public class TurnManager : MonoBehaviour {
     public static bool refreshTurn;
 
     private GameObject UI;
+    private GameObject bottomUI;
     private int previousTurn = 0;
     private bool refreshTurnUI;
     public static int currentTurn = 0;
@@ -27,6 +28,7 @@ public class TurnManager : MonoBehaviour {
     private void Awake()
     {
         UI = GameObject.Find("UI");
+        bottomUI = GameObject.Find("BottomUI");
     }
 
     private void Update()

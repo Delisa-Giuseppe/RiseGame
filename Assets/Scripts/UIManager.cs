@@ -49,6 +49,7 @@ public class UIManager : MonoBehaviour {
     public void ShowPlayerUI(GameObject player)
     {
         player.GetComponent<PlayerController>().playerUI.SetActive(true);
+        player.GetComponent<PlayerController>().iconUI.SetActive(true);
     }
 
     /**
@@ -59,6 +60,7 @@ public class UIManager : MonoBehaviour {
     public void HidePlayerUI(GameObject player)
     {
         player.GetComponent<PlayerController>().playerUI.SetActive(false);
+        player.GetComponent<PlayerController>().iconUI.SetActive(false);
     }
 
     public void SetChangeTurnText(string text)

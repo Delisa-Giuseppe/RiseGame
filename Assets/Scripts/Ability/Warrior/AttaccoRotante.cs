@@ -15,11 +15,13 @@ public class AttaccoRotante : Ability {
 		this.cure = (5f + GetComponent<PlayerController>().magicAttack / 100f * 20f) * 4;
 		this.tileRange = 2;
 		this.cooldown = 5;
-		playerUI = GetComponent<PlayerController>().playerUI;
-		playerUI.GetComponentsInChildren<Button>()[3].onClick.AddListener(delegate { AttivaAbilita(SelectType.QUADRATO);
+        playerUI = GetComponent<PlayerController>().playerUI;
+        buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
+        buttonPlayerUI.onClick.AddListener(delegate
+        {
+            AttivaAbilita(SelectType.QUADRATO);
             activedAbility = this.abilityName;
         });
-
 	}
 
     public override void UsaAbilita()
