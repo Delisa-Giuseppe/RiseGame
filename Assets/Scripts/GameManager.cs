@@ -240,7 +240,7 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator ShowGameOver()
     {
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2f);
         gameOver.SetActive(true);
         StopAllCoroutines();
     }
