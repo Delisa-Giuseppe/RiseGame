@@ -124,7 +124,7 @@ public class PlayerController : ObjectController
 
 	IEnumerator WaitAnimation(GameObject target, int damage)
     {
-        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(0.6f);
 
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {

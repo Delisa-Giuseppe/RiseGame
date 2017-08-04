@@ -852,7 +852,14 @@ public class TileManager : MonoBehaviour {
         }
         else
         {
-            if(previousState == GameManager.States.FIGHT)
+            if(previousState == GameManager.States.FIGHT && EnemyController.move)
+            {
+                //EnemyController.hasMoved = true;
+                ResetGrid();
+                TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
+                GameManager.currentState = GameManager.States.SELECT;
+            }
+            else if (previousState == GameManager.States.FIGHT != EnemyController.move)
             {
                 EnemyController.hasMoved = true;
                 ResetGrid();
@@ -861,7 +868,7 @@ public class TileManager : MonoBehaviour {
             }
             else
             {
-                EnemyController.hasMoved = false;
+                //EnemyController.hasMoved = false;
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
                 StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
             }
