@@ -87,11 +87,6 @@ public class TurnManager : MonoBehaviour {
         {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
-        if (currentObjectTurn && currentObjectTurn.name == "Dragon")
-        {
-            currentObjectTurn.GetComponent<EnemyController>().SetTrigger();
-            EnemyController.isMovable = false;
-        }
         currentObjectTurn = turns[currentTurn];
         if(currentObjectTurn && currentObjectTurn.name == "Dragon")
         {

@@ -376,6 +376,10 @@ public class TileManager : MonoBehaviour {
             }
             else if (objectTurn.tag == "Enemy")
             {
+                if(objectTurn.GetComponent<EnemyController>().enemyBehaviour == EnemyController.EnemyType.BOSS && GameManager.pointAction == 2)
+                {
+                    moves = 15;
+                }
                 Tile.tileColor = objectTurn.GetComponent<EnemyController>().colorTile;
                 SetTrigger(objectTurn.GetComponent<EnemyController>().EnemyTile);
             }
@@ -843,6 +847,14 @@ public class TileManager : MonoBehaviour {
 
             StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
         }
+        else if (enemy.GetComponent<EnemyController>().canMagicAttack && previousState == GameManager.States.FIGHT)
+        {
+            EnemyController.hasMoved = false;
+            TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
+            enemy.GetComponent<EnemyController>().MagicAttack(enemy.GetComponent<EnemyController>().playerAttacked, "magic", enemy.GetComponent<EnemyController>().magicAttack);
+            
+            StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
+        }
         else
         {
             if(previousState == GameManager.States.FIGHT && EnemyController.move)
@@ -852,7 +864,7 @@ public class TileManager : MonoBehaviour {
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
                 GameManager.currentState = GameManager.States.SELECT;
             }
-            else if (previousState == GameManager.States.FIGHT != EnemyController.move)
+            else if (previousState == GameManager.States.FIGHT && !EnemyController.move)
             {
                 EnemyController.hasMoved = true;
                 ResetGrid();

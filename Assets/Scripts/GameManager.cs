@@ -248,7 +248,7 @@ public class GameManager : MonoBehaviour {
     IEnumerator WaitTurn()
     {
         StartCoroutine(turnManager.RecalculateTurn(TileManager.playerInstance, TileManager.enemyInstance, States.WAIT, TurnManager.TurnStates.INIT));
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         if (TurnManager.currentTurnState != TurnManager.TurnStates.FINISH)
         {
             TurnManager.currentTurn = TurnManager.currentTurn + 1;
@@ -260,6 +260,11 @@ public class GameManager : MonoBehaviour {
             }
             else if (TurnManager.currentObjectTurn.tag == "Enemy")
             {
+                if (TurnManager.currentObjectTurn.name == "Dragon")
+                {
+                    EnemyController.isMovable = false;
+                    TurnManager.currentObjectTurn.GetComponent<EnemyController>().SetTrigger();
+                }
                 EnemyController.hasMoved = true;   
             }
             turnManager.ResetTurnColor();

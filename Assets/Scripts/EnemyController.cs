@@ -14,10 +14,11 @@ public class EnemyController : ObjectController {
         BOSS
     };
 
-    private GameObject enemyTile;
+    public GameObject enemyTile;
     private List<GameObject> enemyTileNeighbour;
     private static Vector2[] bossPoint;
     public bool canAttack;
+    public bool canMagicAttack;
     public List<GameObject> playerAttacked;
     public static List<GameObject> tilesAttackable;
     public EnemyType enemyBehaviour;
@@ -68,94 +69,107 @@ public class EnemyController : ObjectController {
     {
         float closerDistance = 0;
         GameObject closerPlayer = null;
-        for(int i=0; i<players.Count; i++)
+        canMagicAttack = false;
+
+        if (enemyBehaviour == EnemyType.BOSS && GameManager.pointAction == 2)
         {
-            if(closerDistance != 0)
+            foreach(GameObject player in TileManager.playerInstance)
             {
-                if (closerDistance > Vector2.Distance(transform.position, players[i].transform.position))
+                playerAttacked.Add(player);
+            }
+
+            canMagicAttack = true;
+            move = false;
+        }
+        else
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (closerDistance != 0)
+                {
+                    if (closerDistance > Vector2.Distance(transform.position, players[i].transform.position))
+                    {
+                        closerDistance = Vector2.Distance(transform.position, players[i].transform.position);
+                        closerPlayer = players[i];
+                    }
+                }
+                else
                 {
                     closerDistance = Vector2.Distance(transform.position, players[i].transform.position);
                     closerPlayer = players[i];
                 }
             }
-            else
-            {
-                closerDistance = Vector2.Distance(transform.position, players[i].transform.position);
-                closerPlayer = players[i];
-            }
-        }
 
-        canMove = hasMoved;
-        canAttack = false;
-        if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
-        {
-            playerAttacked = new List<GameObject>();
-            if ((enemyBehaviour == EnemyType.RANGED) ||
-                (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
+            canMove = hasMoved;
+            canAttack = false;
+            if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
             {
-                canAttack = true;
-                playerAttacked.Add(closerPlayer);
-            }
-            else if(enemyBehaviour == EnemyType.BOSS)
-            {
-                if(Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f)
+                playerAttacked = new List<GameObject>();
+                if ((enemyBehaviour == EnemyType.RANGED) ||
+                    (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
                 {
                     canAttack = true;
                     playerAttacked.Add(closerPlayer);
-                    List<RaycastHit2D> playerHits = new List<RaycastHit2D>(2)
+                }
+                else if (enemyBehaviour == EnemyType.BOSS)
+                {
+                    if (Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f)
+                    {
+                        canAttack = true;
+                        playerAttacked.Add(closerPlayer);
+                        List<RaycastHit2D> playerHits = new List<RaycastHit2D>(2)
                     {
                         Physics2D.Raycast(closerPlayer.transform.position, Vector2.up, 1f, 1 << LayerMask.NameToLayer("GridMap")),
                         Physics2D.Raycast(closerPlayer.transform.position, Vector2.down, 1f, 1 << LayerMask.NameToLayer("GridMap"))
                     };
 
-                    foreach(RaycastHit2D tile in playerHits)
-                    {
-                        if(tile.collider.tag == "Tile" && tile.collider.GetComponent<Tile>().isPlayer)
+                        foreach (RaycastHit2D tile in playerHits)
                         {
-                            foreach(GameObject player in TileManager.playerInstance)
+                            if (tile.collider.tag == "Tile" && tile.collider.GetComponent<Tile>().isPlayer)
                             {
-                                if(player.GetComponent<PlayerController>().PlayerTile.transform.position == tile.collider.transform.position)
+                                foreach (GameObject player in TileManager.playerInstance)
                                 {
-                                    playerAttacked.Add(player);
+                                    if (player.GetComponent<PlayerController>().PlayerTile.transform.position == tile.collider.transform.position)
+                                    {
+                                        playerAttacked.Add(player);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        GameObject closerTile = null;
+            GameObject closerTile = null;
 
-        for (int i = 0; canMove && i < selectableTile.Count; i++)
-        {
-            if(closerTile != null)
+            for (int i = 0; canMove && i < selectableTile.Count; i++)
             {
-                if(!selectableTile[i].GetComponent<Tile>().isPlayer && !selectableTile[i].GetComponent<Tile>().isEnemy)
+                if (closerTile != null)
                 {
-                    float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
-                    float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);
-                    if (dist1 > dist2)
+                    if (!selectableTile[i].GetComponent<Tile>().isPlayer && !selectableTile[i].GetComponent<Tile>().isEnemy)
                     {
-                        closerTile = selectableTile[i];
+                        float dist1 = Vector2.Distance(closerTile.transform.position, closerPlayer.transform.position);
+                        float dist2 = Vector2.Distance(selectableTile[i].transform.position, closerPlayer.transform.position);
+                        if (dist1 > dist2)
+                        {
+                            closerTile = selectableTile[i];
+                        }
                     }
                 }
+                else
+                {
+                    closerTile = selectableTile[i];
+                }
             }
-            else
+
+            if (canMove && previousState == GameManager.States.MOVE)
             {
-                closerTile = selectableTile[i];
+                move = false;
+                hasMoved = false;
+                EnemyTile = closerTile;
+                GetComponent<AILerp>().target = closerTile.transform;
             }
         }
-
-        if (canMove && previousState == GameManager.States.MOVE)
-        {
-            move = false;
-            hasMoved = false;
-            EnemyTile = closerTile;
-            GetComponent<AILerp>().target = closerTile.transform;
-        }
-
-        //enemyTile.GetComponent<PolygonCollider2D>().enabled = false;
 
     }
 
@@ -196,6 +210,8 @@ public class EnemyController : ObjectController {
 
     public void SetTrigger()
     {
+        StartCoroutine(ResetTrigger());
+
         bossTileSelected = enemyTile;
         enemyTile.layer = LayerMask.NameToLayer("GridBattle");
         enemyTile.GetComponent<Tile>().isChecked = true;
@@ -203,13 +219,10 @@ public class EnemyController : ObjectController {
         enemyTile.GetComponent<PolygonCollider2D>().SetPath(0, bossPoint);
         enemyTile.GetComponent<PolygonCollider2D>().isTrigger = true;
 
-        StartCoroutine(ResetTrigger());
     }
 
     public static IEnumerator ResetTrigger()
     {
-        GameManager.currentState = GameManager.States.WAIT;
-
         while (tilesAttackable.Count == 0)
         {
             yield return null;
@@ -224,14 +237,12 @@ public class EnemyController : ObjectController {
     {
         bossTileSelected.GetComponent<Tile>().isChecked = false;
         bossTileSelected.GetComponent<Tile>().isAttackable = false;
-        bossTileSelected.GetComponent<Tile>().isSelected = false;
         bossTileSelected.layer = LayerMask.NameToLayer("GridMap");
         foreach (GameObject tileObj in tilesAttackable)
         {
             tileObj.layer = LayerMask.NameToLayer("GridMap");
             tileObj.GetComponent<Tile>().isChecked = false;
             tileObj.GetComponent<Tile>().isAttackable = false;
-            tileObj.GetComponent<Tile>().isSelected = false;
         }
         tilesAttackable.Clear();
     }
@@ -322,6 +333,33 @@ public class EnemyController : ObjectController {
     {
         if (target.Count > 0)
         {
+            if (transform.position.x > target[0].transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 180f);
+            }
+
+            if (transform.position.x < target[0].transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 0f);
+            }
+            anim.SetTrigger(animationName);
+            StartCoroutine(WaitAnimation(target, damage));
+        }
+    }
+
+    public void MagicAttack(List<GameObject> target, string animationName, int damage)
+    {
+        if (target.Count > 0)
+        {
+            if (transform.position.x > target[0].transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 0f);
+            }
+
+            if (transform.position.x < target[0].transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 180f);
+            }
             anim.SetTrigger(animationName);
             StartCoroutine(WaitAnimation(target, damage));
         }
