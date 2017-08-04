@@ -24,6 +24,7 @@ public class EnemyController : ObjectController {
     public int position;
     public bool canMove;
     public static bool hasMoved = true;
+    public static bool move = true;
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
@@ -148,6 +149,7 @@ public class EnemyController : ObjectController {
 
         if (canMove && previousState == GameManager.States.MOVE)
         {
+            move = false;
             hasMoved = false;
             EnemyTile = closerTile;
             GetComponent<AILerp>().target = closerTile.transform;
@@ -222,12 +224,14 @@ public class EnemyController : ObjectController {
     {
         bossTileSelected.GetComponent<Tile>().isChecked = false;
         bossTileSelected.GetComponent<Tile>().isAttackable = false;
+        bossTileSelected.GetComponent<Tile>().isSelected = false;
         bossTileSelected.layer = LayerMask.NameToLayer("GridMap");
         foreach (GameObject tileObj in tilesAttackable)
         {
             tileObj.layer = LayerMask.NameToLayer("GridMap");
             tileObj.GetComponent<Tile>().isChecked = false;
             tileObj.GetComponent<Tile>().isAttackable = false;
+            tileObj.GetComponent<Tile>().isSelected = false;
         }
         tilesAttackable.Clear();
     }
@@ -319,16 +323,13 @@ public class EnemyController : ObjectController {
         if (target.Count > 0)
         {
             anim.SetTrigger(animationName);
-            foreach (GameObject player in target)
-            {
-                StartCoroutine(WaitAnimation(player, damage));
-            }
+            StartCoroutine(WaitAnimation(target, damage));
         }
     }
 
     IEnumerator WaitAnimation(GameObject target, int damage)
     {
-        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(0.6f);
 
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {
@@ -360,6 +361,49 @@ public class EnemyController : ObjectController {
         {
             TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
+        }
+    }
+
+    IEnumerator WaitAnimation(List<GameObject> targets, int damage)
+    {
+        yield return new WaitForSeconds(0.6f);
+        Debug.Log(anim.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorStateInfo(0).length);
+
+        foreach(GameObject target in targets)
+        {
+            foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+            {
+                mesh.color = Color.red;
+            }
+
+            OnHit(target, damage);
+
+            if (IsDead(target.GetComponent<ObjectController>()))
+            {
+                target.GetComponent<PlayerController>().PlayerTile.GetComponent<Tile>().isPlayer = false;
+                TileManager.playerInstance.Remove(target);
+                TileManager.playerDead.Add(target);
+                TurnManager.turns[TurnManager.turns.IndexOf(target)] = null;
+                TurnManager.refreshTurn = true;
+                StartCoroutine(ResetColor(target));
+                target.GetComponentInChildren<Animator>().SetTrigger("isDead");
+                target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
+                target.GetComponentInChildren<Animator>().SetBool("isWalking", false);
+                for (int i = 0; i < TileManager.playerInstance.Count; i++)
+                {
+                    if (TileManager.playerInstance[i])
+                    {
+                        TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber = i;
+                    }
+                }
+                //Destroy(target);
+            }
+            else
+            {
+                TurnManager.refreshTurn = true;
+                StartCoroutine(ResetColor(target));
+            }
         }
     }
 
