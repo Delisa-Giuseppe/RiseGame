@@ -148,6 +148,7 @@ public class EnemyController : ObjectController {
 
         if (canMove && previousState == GameManager.States.MOVE)
         {
+            hasMoved = false;
             EnemyTile = closerTile;
             GetComponent<AILerp>().target = closerTile.transform;
         }

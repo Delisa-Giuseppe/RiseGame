@@ -830,7 +830,7 @@ public class TileManager : MonoBehaviour {
 
         if (enemy.GetComponent<EnemyController>().canAttack && previousState == GameManager.States.FIGHT)
         {
-            EnemyController.hasMoved = false;
+            //EnemyController.hasMoved = false;
             TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
             if (enemy.GetComponent<EnemyController>().playerAttacked.Count == 1)
             {
@@ -845,16 +845,16 @@ public class TileManager : MonoBehaviour {
         }
         else
         {
-            if(previousState == GameManager.States.FIGHT)
+            if(previousState == GameManager.States.FIGHT && GameManager.pointAction > 1)
             {
-                EnemyController.hasMoved = true;
+                //EnemyController.hasMoved = true;
                 ResetGrid();
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
                 GameManager.currentState = GameManager.States.SELECT;
             }
             else
             {
-                EnemyController.hasMoved = false;
+                //EnemyController.hasMoved = false;
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTED;
                 StartCoroutine(WaitMoves(enemy, GameManager.States.END_MOVE));
             }
