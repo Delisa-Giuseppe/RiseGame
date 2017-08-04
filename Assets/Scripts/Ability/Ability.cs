@@ -215,7 +215,6 @@ public class Ability : MonoBehaviour
                         AddAbilityToCooldownList();
 
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
-                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                     }
                     else if(abilityType == AbilityType.MOVIMENTO)
                     {
@@ -227,16 +226,19 @@ public class Ability : MonoBehaviour
                         AddAbilityToCooldownList();
 
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                    }
+                    else if (abilityType == AbilityType.TELETRASPORTO)
+                    {
+                        GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
+                        GetComponent<AILerp>().enabled = false;
+                        this.gameObject.transform.position = tileNearEnemy.transform.position;
+                        GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
+                        //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+
+                        AddAbilityToCooldownList();
+
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                     }
-                    //else if (abilityType == AbilityType.TELETRASPORTO)
-                    //{
-                    //    GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-                    //    GetComponent<AILerp>().target = tileNearEnemy.transform;
-                    //    GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-                    //    //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-                    //    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, enemyTarget));
-                    //}
                 //}
                 //else if(abilityType == AbilityType.MULTIPLO)
                 //{
@@ -277,6 +279,8 @@ public class Ability : MonoBehaviour
         Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
         cooldownList.Add(ability);
         ability.buttonPlayerUI.interactable = false;
+        ability.buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(true);
+        ability.buttonPlayerUI.GetComponentInChildren<Text>().text = ability.countCooldown.ToString();
     }
 
     public static void CheckCooldownList()
@@ -286,12 +290,15 @@ public class Ability : MonoBehaviour
         {
             for (int i = 0; i<cooldownList.Count; i++)
             {
+                cooldownList[i].buttonPlayerUI.GetComponentInChildren<Text>().text = cooldownList[i].countCooldown.ToString();
                 cooldownList[i].countCooldown--;
 
-                if (cooldownList[i].countCooldown <= 0)
+                if (cooldownList[i].countCooldown < 0)
                 {
-                    cooldownList.Remove(cooldownList[i]);
+                    cooldownList[i].buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(false);
                     cooldownList[i].buttonPlayerUI.interactable = true;
+                    cooldownList[i].countCooldown = cooldownList[i].cooldown;
+                    cooldownList.Remove(cooldownList[i]);
                 }
             }
 
