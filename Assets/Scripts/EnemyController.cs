@@ -19,6 +19,7 @@ public class EnemyController : ObjectController {
     private static Vector2[] bossPoint;
     public bool canAttack;
     public bool canMagicAttack;
+	public bool stunned = false;
     public List<GameObject> playerAttacked;
     public static List<GameObject> tilesAttackable;
     public EnemyType enemyBehaviour;
@@ -171,15 +172,16 @@ public class EnemyController : ObjectController {
 
     }
 
-	public List<GameObject> GetTileNearEnemy()
+	public GameObject GetTileNearEnemy(Vector2 direction)
     {
-		List<GameObject> tileNeighbour = new List<GameObject>();
+        //EnemyTileNeighbour = new List<GameObject>();
+		GameObject tileToSelect = null;
         List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
         {
-            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
-            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
-            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
-            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridBattle"))
+            Physics2D.RaycastAll(EnemyTile.transform.position, direction, 1f, 1 << LayerMask.NameToLayer("GridBattle"))
+//            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, -1), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
+//            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(1, 0), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
+//            Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(-1, 0), 1f, 1 << LayerMask.NameToLayer("GridBattle"))
         };
 
         foreach (RaycastHit2D[] rayCast in hits)
@@ -188,7 +190,7 @@ public class EnemyController : ObjectController {
             {
                 if (ray.collider != null && ray.collider.tag == "Tile" && ray.collider.transform != EnemyTile.transform)
                 {
-					tileNeighbour.Add(ray.collider.gameObject);
+					tileToSelect = ray.collider.gameObject;
                 }
             }
         }
@@ -203,7 +205,7 @@ public class EnemyController : ObjectController {
 //            }
 //        }
 
-		return tileNeighbour;
+		return tileToSelect;
     }
 
     public void SetTrigger()
@@ -402,15 +404,9 @@ public class EnemyController : ObjectController {
 
     IEnumerator WaitAnimation(List<GameObject> targets, int damage)
     {
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.name == "Dragon")
-        {
-            DragonController.instanceFlame = true;
-        }
-
         yield return new WaitForSeconds(1f);
-        
 
-        foreach (GameObject target in targets)
+        foreach(GameObject target in targets)
         {
             foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
             {

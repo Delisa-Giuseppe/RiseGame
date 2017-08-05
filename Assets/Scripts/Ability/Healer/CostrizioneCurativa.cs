@@ -13,7 +13,7 @@ public class CostrizioneCurativa : Ability {
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.tileRange = 2;
-		this.cooldown = 3;
+		this.cooldown = 1;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
