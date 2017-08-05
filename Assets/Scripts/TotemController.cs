@@ -20,6 +20,7 @@ public class TotemController : MonoBehaviour {
 	
 	// Update is called once per frame
 	public void OnCutscene () {
+        cutscene.SetActive(true);
         anim.SetBool(cutsceneName, true);
         anim.SetBool("showCutscene", true);
         StartCoroutine(ShowCutscene());

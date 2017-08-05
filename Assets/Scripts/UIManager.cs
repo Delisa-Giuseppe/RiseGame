@@ -9,7 +9,7 @@ public class UIManager : MonoBehaviour {
 
     public TextMeshProUGUI popupDamage;
     public GameObject changeTurnText;
-    public Image fightImage;
+    public TextMeshProUGUI fightImage;
     public List<GameObject> playersTurns;
     public GameObject enemyHealth;
     public GameObject turnUIBar;
@@ -73,9 +73,9 @@ public class UIManager : MonoBehaviour {
 
     public void ShowImageFight()
     {
-        Image img = Instantiate(fightImage);
-        img.transform.SetParent(transform, false);
-        StartCoroutine(DestroyImage(img, 2.5f));
+        TextMeshProUGUI txt = Instantiate(fightImage);
+        txt.transform.SetParent(transform, false);
+        StartCoroutine(DestroyText(txt, 2.5f));
     }
 
     public void SetPlayerHealthBar(GameObject player)
@@ -174,6 +174,14 @@ public class UIManager : MonoBehaviour {
     public void SetTurnBarUI(List<GameObject> turns, int currentTurn)
     {
         turnUIBar.SetActive(true);
+        if (turns.Count > turnsBarUI.Count)
+        {
+            foreach(GameObject turnUI in turnsBarUI)
+            {
+                Destroy(turnUI);
+            }
+            SetTurnList(turns);
+        }
         turnsBarUI[0].GetComponent<Image>().sprite = borderSelected;
         turnsBarUI[0].GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f);
         turnsBarUI[0].transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = turns[currentTurn].GetComponent<ObjectController>().iconObject;
@@ -242,12 +250,6 @@ public class UIManager : MonoBehaviour {
     }
 
     IEnumerator DestroyObject(GameObject obj, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        Destroy(obj.gameObject);
-    }
-
-    IEnumerator DestroyImage(Image obj, float delay)
     {
         yield return new WaitForSeconds(delay);
         Destroy(obj.gameObject);
