@@ -28,8 +28,7 @@ public class TotemController : MonoBehaviour {
     IEnumerator ShowCutscene()
     {
         GetComponent<Animator>().SetBool("showFlash", false);
-        yield return new WaitForSeconds(1f);
-        yield return new WaitForSeconds(11);
+        yield return new WaitForSeconds(11f);
         anim.SetBool("showCutscene", false);
         anim.SetBool(cutsceneName, false);
         foreach (GameObject player in TileManager.playerInstance)
