@@ -411,6 +411,12 @@ public class EnemyController : ObjectController {
 
     IEnumerator WaitAnimation(List<GameObject> targets, int damage)
     {
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.name == "Dragon")
+        {
+            DragonController.instanceFlame = true;
+        }
+
+
         yield return new WaitForSeconds(1f);
 
         foreach(GameObject target in targets)

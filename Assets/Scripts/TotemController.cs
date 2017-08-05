@@ -29,12 +29,16 @@ public class TotemController : MonoBehaviour {
     IEnumerator ShowCutscene()
     {
         GetComponent<Animator>().SetBool("showFlash", false);
-        yield return new WaitForSeconds(11f);
+        yield return new WaitForSeconds(11.5f);
         anim.SetBool("showCutscene", false);
         anim.SetBool(cutsceneName, false);
-        foreach (GameObject player in TileManager.playerInstance)
+
+        if(cutsceneName != "Final")
         {
-            DontDestroyOnLoad(player);
+            foreach (GameObject player in TileManager.playerInstance)
+            {
+                DontDestroyOnLoad(player);
+            }
         }
 
         GameManager.FinishLevel();
