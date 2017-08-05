@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour {
         } 
 
         if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space) 
-            && (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY))
+			&& (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY && !CostrizioneCurativa.isRunning))
         {
             pointAction--;
             TileManager.ResetGrid();

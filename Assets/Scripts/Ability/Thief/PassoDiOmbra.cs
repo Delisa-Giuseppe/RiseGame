@@ -28,21 +28,22 @@ public class PassoDiOmbra : Ability {
 	{
 		//GameObject playerTarget = null;
 		RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-		if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected) {
+		if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected
+			&& !hit.collider.GetComponent<Tile>().isEnemy && !hit.collider.GetComponent<Tile>().isPlayer) {
 			//playerTarget.transform.position = hit.collider.gameObject.transform.position;
 			GetComponent<AILerp>().enabled = false;
 			this.gameObject.transform.position = hit.collider.gameObject.transform.position;
 
 			GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
 
-			GetComponent<AILerp> ().enabled = true;
+
 			GetComponent<AILerp> ().target = hit.collider.gameObject.transform;
+			GetComponent<AILerp> ().targetReached = true;
+			GetComponent<AILerp> ().enabled = true;
 
 
 			AddAbilityToCooldownList();
 
-
-			
 
 			StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 		}

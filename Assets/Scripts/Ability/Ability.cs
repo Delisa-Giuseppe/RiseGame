@@ -56,7 +56,7 @@ public class Ability : MonoBehaviour
 
 	void Update()
 	{
-		if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1))
+		if (GameManager.currentState == GameManager.States.ABILITY && Input.GetMouseButtonDown(1) && !CostrizioneCurativa.isRunning)
 		{
 			TileManager.ResetGrid();
 			GameManager.currentState = GameManager.States.SELECT;
@@ -139,15 +139,6 @@ public class Ability : MonoBehaviour
 
     }
 
-    protected void CalcolaSelezioneCompagni()
-    {
-        foreach (GameObject player in TileManager.playerInstance)
-        {
-            TileManager.tilesSelectable.Add(player.GetComponent<PlayerController>().PlayerTile);
-            player.GetComponent<PlayerController>().PlayerTile.GetComponent<SpriteRenderer>().color = Color.green;
-        }
-    }
-
     public void AttivaAbilita(SelectType currentType)
     {
         Vector2[] newPoints = null;
@@ -155,26 +146,17 @@ public class Ability : MonoBehaviour
         {
             case SelectType.QUADRATO:
                 newPoints = CalcolaSelezioneQuadrata();
-                TileManager.ResetGrid();
-                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
-                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
                 break;
             case SelectType.ROMBO:
                 newPoints = CalcolaSelezioneRomboidale();
-                TileManager.ResetGrid();
-                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
-                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
                 break;
             case SelectType.CROCE:
                 newPoints = CalcolaSelezioneACroce();
-                TileManager.ResetGrid();
-                TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
-                StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
-                break;
-            case SelectType.COMPAGNI:
-                CalcolaSelezioneCompagni();
                 break;
         }
+		TileManager.ResetGrid();
+		TileManager.SetTrigger(this.GetComponent<PlayerController>().PlayerTile, newPoints);
+		StartCoroutine(TileManager.WaitMovesAbility(this.gameObject));
         
     }
 
@@ -247,9 +229,11 @@ public class Ability : MonoBehaviour
 							}
 						}
 						            
+						
 						GetComponent<AILerp>().target = tileToSelect.transform;
 						GetComponent<PlayerController>().PlayerTile = tileToSelect;
-                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+
+						GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
                         AddAbilityToCooldownList();
 

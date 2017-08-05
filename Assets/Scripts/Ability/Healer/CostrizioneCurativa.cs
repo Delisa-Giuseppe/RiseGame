@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class CostrizioneCurativa : Ability {
 
+	public static bool isRunning = false;
+
     // Use this for initialization
     void Start () 
 	{
@@ -44,10 +46,10 @@ public class CostrizioneCurativa : Ability {
                 }
                 GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
                 TileManager.ResetGrid();
-                StartCoroutine(SelectPlayers(2f));
+                StartCoroutine(SelectPlayers(0.5f));
             }
         }
-        else
+		else if(isRunning)
         {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             if (hit.collider != null && hit.collider.tag == "Player" ||
@@ -67,6 +69,7 @@ public class CostrizioneCurativa : Ability {
 
                 AddAbilityToCooldownList();
 
+				isRunning = false;
                 StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 
             }
@@ -77,8 +80,15 @@ public class CostrizioneCurativa : Ability {
 
     IEnumerator SelectPlayers(float delay)
     {
+
+		isRunning = true;
         yield return new WaitForSeconds(delay);
-        AttivaAbilita(SelectType.COMPAGNI);
+
+		foreach (GameObject player in TileManager.playerInstance)
+		{
+			TileManager.tilesSelectable.Add(player.GetComponent<PlayerController>().PlayerTile);
+			player.GetComponent<PlayerController>().PlayerTile.GetComponent<SpriteRenderer>().color = Color.green;
+		}
     }
 
 }

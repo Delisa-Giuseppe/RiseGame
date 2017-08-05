@@ -162,7 +162,7 @@ public class PlayerController : ObjectController
 
     }
 
-    IEnumerator PlayResurrect()
+    public IEnumerator PlayResurrect()
     {
         yield return new WaitForSeconds(2f);
         anim.SetTrigger("isResurrect");
