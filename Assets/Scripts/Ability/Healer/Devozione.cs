@@ -26,7 +26,6 @@ public class Devozione : Ability {
 
 	public override void UsaAbilita()
 	{
-		print ("Gesu");
 		RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 		if (hit.collider != null && hit.collider.tag == "Player" ||
 		    (hit.collider != null && hit.collider.tag == "Tile")) {

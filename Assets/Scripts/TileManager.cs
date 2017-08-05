@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TileManager : MonoBehaviour {
 
@@ -917,6 +918,9 @@ public class TileManager : MonoBehaviour {
                 yield return null;
             }
         }
+
+		bottomUI.GetComponent<Image> ().color = new Color (bottomUI.GetComponent<Image> ().color.r, 
+			bottomUI.GetComponent<Image> ().color.b, bottomUI.GetComponent<Image> ().color.g, 255f);
 
         yield return new WaitForSeconds(0.8f);
 

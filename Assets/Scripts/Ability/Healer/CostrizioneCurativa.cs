@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class CostrizioneCurativa : Ability {
 
-	public static bool isRunning = false;
-
     // Use this for initialization
     void Start () 
 	{

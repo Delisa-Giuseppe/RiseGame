@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class Ability : MonoBehaviour
 {
 
+	public static bool isRunning = false;
+
     public string abilityName;
     public float damage;
     public float cure;
