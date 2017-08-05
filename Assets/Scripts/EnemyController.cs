@@ -402,9 +402,15 @@ public class EnemyController : ObjectController {
 
     IEnumerator WaitAnimation(List<GameObject> targets, int damage)
     {
-        yield return new WaitForSeconds(1f);
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.name == "Dragon")
+        {
+            DragonController.instanceFlame = true;
+        }
 
-        foreach(GameObject target in targets)
+        yield return new WaitForSeconds(1f);
+        
+
+        foreach (GameObject target in targets)
         {
             foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
             {

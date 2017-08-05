@@ -80,7 +80,8 @@ namespace DigitalRuby.PyroParticles
             meteor.transform.localScale = new Vector3(scale, scale, scale);
             meteor.transform.position = src;
             Vector3 dest = gameObject.transform.position + (UnityEngine.Random.insideUnitSphere * DestinationRadius);
-            dest.y = 0.0f;
+            //dest.y = 0.0f;
+            dest.z = 0.0f;
 
             // get the direction and set speed based on how fast the meteor should arrive at the destination
             Vector3 dir = (dest - src);
@@ -89,7 +90,7 @@ namespace DigitalRuby.PyroParticles
             r.velocity = vel;
             float xRot = UnityEngine.Random.Range(-90.0f, 90.0f);
             float yRot = UnityEngine.Random.Range(-90.0f, 90.0f);
-            float zRot = UnityEngine.Random.Range(-90.0f, 90.0f);
+            float zRot = 0f;
             r.angularVelocity = new Vector3(xRot, yRot, zRot);
             r.mass *= (scale * scale);
 
