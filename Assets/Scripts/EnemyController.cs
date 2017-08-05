@@ -171,9 +171,9 @@ public class EnemyController : ObjectController {
 
     }
 
-    public GameObject GetTileNearEnemy()
+	public List<GameObject> GetTileNearEnemy()
     {
-        EnemyTileNeighbour = new List<GameObject>();
+		List<GameObject> tileNeighbour = new List<GameObject>();
         List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
         {
             Physics2D.RaycastAll(EnemyTile.transform.position, new Vector2(0, 1), 1f, 1 << LayerMask.NameToLayer("GridBattle")),
@@ -188,22 +188,22 @@ public class EnemyController : ObjectController {
             {
                 if (ray.collider != null && ray.collider.tag == "Tile" && ray.collider.transform != EnemyTile.transform)
                 {
-                    EnemyTileNeighbour.Add(ray.collider.gameObject);
+					tileNeighbour.Add(ray.collider.gameObject);
                 }
             }
         }
 
-        GameObject tileSelected = null;
-        foreach(GameObject tile in EnemyTileNeighbour)
-        {
-            if(tile.GetComponent<Tile>().isWalkable)
-            {
-                tileSelected = tile;
-                break;
-            }
-        }
+//        GameObject tileSelected = null;
+//        foreach(GameObject tile in EnemyTileNeighbour)
+//        {
+//            if(tile.GetComponent<Tile>().isWalkable)
+//            {
+//                tileSelected = tile;
+//                break;
+//            }
+//        }
 
-        return tileSelected;
+		return tileNeighbour;
     }
 
     public void SetTrigger()
