@@ -788,6 +788,7 @@ public class TileManager : MonoBehaviour {
     {
         GameManager.currentState = GameManager.States.WAIT;
 
+
         while (tilesSelectable.Count == 0)
         {
             yield return null;
