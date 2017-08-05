@@ -864,8 +864,9 @@ public class TileManager : MonoBehaviour {
         }
         else
         {
-            if(previousState == GameManager.States.FIGHT)
+            if(previousState == GameManager.States.FIGHT && !EnemyController.move)
             {
+                EnemyController.move = true;
                 EnemyController.hasMoved = true;
                 ResetGrid();
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;

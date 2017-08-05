@@ -169,7 +169,7 @@ public class TurnManager : MonoBehaviour {
             GameManager.currentState = GameManager.States.END_TURN;
             currentObjectTurn = null;
             turns.Clear();
-            yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(1.5f);
         }
 
     }
