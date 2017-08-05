@@ -224,7 +224,7 @@ public class GameManager : MonoBehaviour {
             
         }
 
-        if (TileManager.playerInstance.Count <= 0)
+        if (TileManager.playerInstance != null && TileManager.playerInstance.Count <= 0)
         {
             currentState = States.GAME_OVER;
             StartCoroutine(ShowGameOver());
@@ -279,7 +279,15 @@ public class GameManager : MonoBehaviour {
         {
             player.GetComponent<AILerp>().target = null;
         }
-        SceneManager.LoadScene("PowerUpScene");
+
+        if(SceneManager.GetActiveScene().name == "Castle")
+        {
+            SceneManager.LoadScene("Scena Crediti");
+        }
+        else
+        {
+            SceneManager.LoadScene("PowerUpScene");
+        }
     }
 
     public static void RefreshPath()
