@@ -26,9 +26,11 @@ public class EnemyController : ObjectController {
     public int position;
     public bool canMove;
     public static bool hasMoved;
+    public static bool move;
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
+    private bool rotate;
 
     private void Start()
     {
@@ -316,11 +318,13 @@ public class EnemyController : ObjectController {
             if (transform.position.x > target.transform.position.x)
             {
                 transform.eulerAngles = new Vector3(0f, 180f);
+                rotate = true;
             }
 
             if (transform.position.x < target.transform.position.x)
             {
                 transform.eulerAngles = new Vector3(0f, 0f);
+                rotate = true;
             }
 
             anim.SetTrigger(animationName);
@@ -393,7 +397,10 @@ public class EnemyController : ObjectController {
                     TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber = i;
                 }
             }
-            //Destroy(target);
+            if (rotate)
+            {
+                transform.eulerAngles = new Vector3(0f, 180f);
+            }
         }
         else
         {
@@ -433,7 +440,7 @@ public class EnemyController : ObjectController {
                         TileManager.playerInstance[i].GetComponent<PlayerController>().playerNumber = i;
                     }
                 }
-                //Destroy(target);
+                
             }
             else
             {

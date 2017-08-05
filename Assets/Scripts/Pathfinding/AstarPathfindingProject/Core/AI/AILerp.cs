@@ -84,7 +84,7 @@ public class AILerp : VersionedMonoBehaviour {
 
 	/** True if the end-of-path is reached.
 	 * \see TargetReached */
-	public bool targetReached { get; private set; }
+	public bool targetReached { get; set; }
 
 	/** Only when the previous path has been returned should be search for a new path */
 	protected bool canSearchAgain = true;

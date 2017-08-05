@@ -8,6 +8,13 @@ public class EnemyHealth : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        transform.position = target.position + (Vector3.up * 2.4f);
+        if(target.name == "Nemesy_Warrior")
+        {
+            transform.position = target.position + (Vector3.up * 3f);
+        }
+        else
+        {
+            transform.position = target.position + (Vector3.up * 2.2f);
+        }
 	}
 }

@@ -10,7 +10,6 @@ public class TurnManager : MonoBehaviour {
 
     private GameObject UI;
     private GameObject bottomUI;
-    private int previousTurn = 0;
     private bool refreshTurnUI;
     public static int currentTurn = 0;
 
@@ -169,7 +168,7 @@ public class TurnManager : MonoBehaviour {
             GameManager.currentState = GameManager.States.END_TURN;
             currentObjectTurn = null;
             turns.Clear();
-            yield return new WaitForSeconds(3.5f);
+            yield return new WaitForSeconds(1.5f);
         }
 
     }

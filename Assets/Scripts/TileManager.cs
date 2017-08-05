@@ -428,19 +428,27 @@ public class TileManager : MonoBehaviour {
             playerInstance[i].GetComponent<PlayerController>().StartFightAnimation();
             if (playerInstance[i].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.MELEE)
             {
-                startPointMelee = new Vector3(startPointMelee.x - (1.2f * 2), startPointMelee.y);
+                if(i==0)
+                {
+                    startPointMelee = new Vector3(startPointMelee.x - (1.2f * 4), startPointMelee.y);
+                }
+                else
+                {
+                    startPointMelee = new Vector3(playerBattlePosition.x - (1.2f * 6), playerBattlePosition.y - (1.2f * 2));
+                }
+                
                 positions[i] = startPointMelee;
             }
             else if(playerInstance[i].GetComponent<PlayerController>().playerBehaviour == PlayerController.PlayerType.RANGED)
             {
                 if(positive)
                 {
-                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 3), playerBattlePosition.y - (1.2f * 2));
+                    startPointRanged = new Vector3(startPointMelee.x - (1.2f * 2), playerBattlePosition.y);
                     positions[i] = startPointRanged;
                 }
                 else
                 {
-                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 3), playerBattlePosition.y + (1.2f * 2));
+                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 6), playerBattlePosition.y + (1.2f * 2));
                     positions[i] = startPointRanged;
                     positive = true;
                 }
@@ -477,7 +485,7 @@ public class TileManager : MonoBehaviour {
                 enemy.GetComponent<EnemyController>().StartFightAnimation();
             }
             
-            if (enemyGroup.tag == "Nemesy")
+            if (enemyGroup.tag == "Nemesy" && i==0)
             {
                 playerBattlePosition = new Vector3(enemy.transform.position.x, -0.52f);
                 string nemesyName = enemy.name.Split('_')[1];
@@ -865,8 +873,9 @@ public class TileManager : MonoBehaviour {
         }
         else
         {
-            if(previousState == GameManager.States.FIGHT)
+            if(previousState == GameManager.States.FIGHT && !EnemyController.move)
             {
+                EnemyController.move = true;
                 EnemyController.hasMoved = true;
                 ResetGrid();
                 TurnManager.currentTurnState = TurnManager.TurnStates.EXECUTE;
