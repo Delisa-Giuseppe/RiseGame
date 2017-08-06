@@ -48,7 +48,15 @@ public class Devozione : Ability {
 				TileManager.playerDead.Remove (playerTarget);
 				TurnManager.turns.Add (playerTarget);
 
-				GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -playerTarget.GetComponent<PlayerController>().totalHealth / 2);
+                foreach (GameObject player in TileManager.playerInstance)
+                {
+                    player.GetComponent<PlayerController>().playerNumber = player.GetComponent<PlayerController>().originalPlayerNumber;
+                }
+                TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {
+                    return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
+                });
+
+                GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -playerTarget.GetComponent<PlayerController>().totalHealth / 2);
 
 				AddAbilityToCooldownList(this);
 
