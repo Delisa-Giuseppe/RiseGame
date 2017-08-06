@@ -61,6 +61,9 @@ public class Elementale : Ability {
 
 	public override void ResettaValori()
 	{
+		AddAbilityToCooldownList (this);
+		countTurnDuration = turnDuration;
+		turnDurationList.Remove(this);
 		PlayerController controller = GetComponent <PlayerController> ();
 		controller.mind = currentMind;
 		controller.constitution = currentConstitution;

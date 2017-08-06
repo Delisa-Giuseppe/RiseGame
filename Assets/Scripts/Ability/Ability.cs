@@ -299,9 +299,6 @@ public class Ability : MonoBehaviour
 				if (turnDurationList[i].countTurnDuration < 0)
 				{
 					turnDurationList[i].ResettaValori ();
-					turnDurationList[i].AddAbilityToCooldownList (turnDurationList [i]);
-					turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
-					turnDurationList.Remove(turnDurationList[i]);
 				}
 			}
 
@@ -332,6 +329,7 @@ public class Ability : MonoBehaviour
 	{
 		for (int i = 0; i<turnDurationList.Count; i++)
 		{
+			turnDurationList [i].ResettaValori ();
 			turnDurationList[i].buttonPlayerUI.interactable = true;
 			turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
 		}

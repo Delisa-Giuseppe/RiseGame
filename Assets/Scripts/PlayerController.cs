@@ -126,6 +126,7 @@ public class PlayerController : ObjectController
 				{
 					damage = (int)(physicAttack / 100f * 80f);
 				}
+				GetComponent<RitornoPlanare>().ResettaValori ();
 			}
 
 			anim.SetTrigger(animationName);

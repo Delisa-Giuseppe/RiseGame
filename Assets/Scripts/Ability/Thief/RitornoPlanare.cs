@@ -27,6 +27,8 @@ public class RitornoPlanare : Ability {
 			StartCoroutine (Wait(0.5f));
 			activedAbility = this.abilityName;
         });
+
+
 	}
 
 	IEnumerator Wait(float delay)
@@ -49,9 +51,11 @@ public class RitornoPlanare : Ability {
 
 	public override void ResettaValori()
 	{
+		AddAbilityToCooldownList (this);
+		countTurnDuration = turnDuration;
+		turnDurationList.Remove(this);
 		PlayerController controller = GetComponent <PlayerController> ();
 		controller.moves = currentMoves;
 		controller.CalculateStatistics ();
 	}
-
 }
