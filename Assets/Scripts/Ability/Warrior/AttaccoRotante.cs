@@ -49,7 +49,7 @@ public class AttaccoRotante : Ability {
 
 			}
 
-			GetComponent<PlayerController> ().PhysicAttack (enemyTargets, "attack", (int)this.damage);
+			GetComponent<PlayerController> ().PhysicAttack (enemyTargets, "stomp", (int)this.damage);
 
 			AddAbilityToCooldownList (this);
 
