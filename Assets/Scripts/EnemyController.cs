@@ -30,6 +30,7 @@ public class EnemyController : ObjectController {
     public Color nemesyColor;
     public static GameObject bossTileSelected;
     public static bool isMovable = false;
+
     private bool rotate;
 
     private void Start()

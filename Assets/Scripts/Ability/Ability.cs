@@ -315,6 +315,29 @@ public class Ability : MonoBehaviour
 	{
 		
 	}
+
+	public static void ResetCooldown()
+	{
+		for (int i = 0; i<cooldownList.Count; i++)
+		{
+			cooldownList[i].buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(false);
+			cooldownList[i].buttonPlayerUI.interactable = true;
+			cooldownList[i].countCooldown = cooldownList[i].cooldown;
+
+		}
+		cooldownList.Clear ();
+	}
+
+	public static void ResetTurnDuration()
+	{
+		for (int i = 0; i<turnDurationList.Count; i++)
+		{
+			turnDurationList[i].buttonPlayerUI.interactable = true;
+			turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
+		}
+		turnDurationList.Clear ();
+	}
+
     // DEBUG FUNCTION TO REMOVE
 //    public static void PrintCooldownList()
 //    {

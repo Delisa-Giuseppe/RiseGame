@@ -58,6 +58,15 @@ public class GameManager : MonoBehaviour {
             pointAction = maxPointAction;
             tileManager.HideGrid();
 
+			print (Ability.cooldownList.Count);
+			print (Ability.turnDurationList.Count);
+
+			Ability.ResetTurnDuration ();
+			Ability.ResetCooldown ();
+
+			print (Ability.cooldownList.Count);
+			print (Ability.turnDurationList.Count);
+
             GameManager.currentState = GameManager.States.WAIT;
             foreach (GameObject player in TileManager.playerDead)
             {
