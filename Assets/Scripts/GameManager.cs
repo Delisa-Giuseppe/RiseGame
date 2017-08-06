@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
     public GameObject transitionLevel;
     public GameObject cutscene;
     public Button skipButton;
+	private GameObject bottomUI;
 
     public enum States
     {
@@ -48,6 +49,7 @@ public class GameManager : MonoBehaviour {
         tileManager = GetComponent<TileManager>();
         turnManager = GetComponent<TurnManager>();
         pathfind = GameObject.FindGameObjectWithTag("Pathfind");
+		bottomUI = GameObject.Find("Bottom UI");
         InitLevel();
         pathfind.GetComponent<AstarPath>().Scan();
         skipButton.onClick.AddListener(SkipTurn);
@@ -62,14 +64,16 @@ public class GameManager : MonoBehaviour {
             pointAction = maxPointAction;
             tileManager.HideGrid();
 
-			print (Ability.cooldownList.Count);
-			print (Ability.turnDurationList.Count);
+			bottomUI.GetComponent<Image> ().color = new Color (bottomUI.GetComponent<Image> ().color.r, 
+				bottomUI.GetComponent<Image> ().color.b, bottomUI.GetComponent<Image> ().color.g, 0f);
+			for(int i = 0; i < bottomUI.transform.childCount; i++)
+			{
+				bottomUI.transform.GetChild(i).gameObject.SetActive (false);
+			}
+
 
 			Ability.ResetTurnDuration ();
 			Ability.ResetCooldown ();
-
-			print (Ability.cooldownList.Count);
-			print (Ability.turnDurationList.Count);
 
             GameManager.currentState = GameManager.States.WAIT;
             foreach (GameObject player in TileManager.playerDead)

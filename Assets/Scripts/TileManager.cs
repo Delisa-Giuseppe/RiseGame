@@ -921,6 +921,7 @@ public class TileManager : MonoBehaviour {
 
 		bottomUI.GetComponent<Image> ().color = new Color (bottomUI.GetComponent<Image> ().color.r, 
 			bottomUI.GetComponent<Image> ().color.b, bottomUI.GetComponent<Image> ().color.g, 255f);
+		bottomUI.transform.GetChild(0).gameObject.SetActive (true);
 
         yield return new WaitForSeconds(0.8f);
 
