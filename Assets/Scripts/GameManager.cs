@@ -252,7 +252,11 @@ public class GameManager : MonoBehaviour {
     IEnumerator CreateLevel()
     {
         yield return new WaitForSeconds(2f);
-        cutscene.SetActive(false);
+        if(cutscene)
+        {
+            cutscene.SetActive(false);
+        }
+        
         tileManager.CreateGrid(width, height);
     }
 
