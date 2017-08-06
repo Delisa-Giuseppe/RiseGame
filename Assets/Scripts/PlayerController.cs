@@ -116,6 +116,18 @@ public class PlayerController : ObjectController
                 transform.eulerAngles = new Vector3(0f, 0f);
             }
 
+			if(name == "Thief(Clone)")
+			{
+				if(target.transform.position.y == transform.position.y && target.transform.eulerAngles == transform.eulerAngles)
+				{
+					damage = (int)(physicAttack / 100f * 150f) ;
+				}
+				else 
+				{
+					damage = (int)(physicAttack / 100f * 80f);
+				}
+			}
+
 			anim.SetTrigger(animationName);
 
 			StartCoroutine(WaitAnimation(target, damage));
@@ -126,15 +138,15 @@ public class PlayerController : ObjectController
 	{
 		if (target.Count > 0)
 		{
-			if (transform.position.x > target[0].transform.position.x)
-			{
-				transform.eulerAngles = new Vector3(0f, 0f);
-			}
-
-			if (transform.position.x < target[0].transform.position.x)
-			{
-				transform.eulerAngles = new Vector3(0f, 180f);
-			}
+//			if (transform.position.x > target[0].transform.position.x)
+//			{
+//				transform.eulerAngles = new Vector3(0f, 0f);
+//			}
+//
+//			if (transform.position.x < target[0].transform.position.x)
+//			{
+//				transform.eulerAngles = new Vector3(0f, 180f);
+//			}
 			anim.SetTrigger(animationName);
 			StartCoroutine(WaitAnimation(target, damage));
 		}
