@@ -414,10 +414,12 @@ public class EnemyController : ObjectController {
         if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.name == "Dragon")
         {
             DragonController.instanceFlame = true;
+            yield return new WaitForSeconds(1.5f);
         }
-
-
-        yield return new WaitForSeconds(1f);
+        else
+        {
+            yield return new WaitForSeconds(1f);
+        }
 
         foreach(GameObject target in targets)
         {

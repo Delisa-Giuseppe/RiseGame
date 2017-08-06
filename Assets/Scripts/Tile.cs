@@ -29,7 +29,7 @@ public class Tile : MonoBehaviour {
             SetImageSprite(borderFull);
         }
 
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (isSelected && isEnemy || isAttackable)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && ((isSelected && isEnemy) || (isSelected && isAttackable))
             && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderFullBattle);
@@ -44,7 +44,7 @@ public class Tile : MonoBehaviour {
         {
             SetImageSprite(borderEmpty);
         }
-        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && (isSelected && isEnemy || isAttackable)
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && ((isSelected && isEnemy) || (isSelected && isAttackable))
             && GameManager.currentState == GameManager.States.FIGHT)
         {
             SetImageSprite(borderEmpty);
@@ -72,7 +72,8 @@ public class Tile : MonoBehaviour {
                 StartCoroutine(WaitColor(collision));
             }
             else if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && collision.tag == "Tile" && !collision.GetComponent<Tile>().isObstacle
-                && !collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy)))
+                && (!collision.GetComponent<Tile>().isChecked && (!collision.GetComponent<Tile>().isPlayer || (collision.GetComponent<Tile>().isWalkable && !collision.GetComponent<Tile>().isEnemy))
+                || ((collision.GetComponent<Tile>().isEnemy && collision.GetComponent<Tile>().isAttackable))))
             {
                 TileManager.tilesSelectable.Add(collision.gameObject);
                 collision.gameObject.layer = LayerMask.NameToLayer("GridBattle");
