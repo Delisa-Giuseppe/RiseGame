@@ -122,6 +122,24 @@ public class PlayerController : ObjectController
         }
     }
 
+	public void PhysicAttack(List<GameObject> target, string animationName, int damage)
+	{
+		if (target.Count > 0)
+		{
+			if (transform.position.x > target[0].transform.position.x)
+			{
+				transform.eulerAngles = new Vector3(0f, 0f);
+			}
+
+			if (transform.position.x < target[0].transform.position.x)
+			{
+				transform.eulerAngles = new Vector3(0f, 180f);
+			}
+			anim.SetTrigger(animationName);
+			StartCoroutine(WaitAnimation(target, damage));
+		}
+	}
+
 	IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(0.6f);
@@ -148,6 +166,38 @@ public class PlayerController : ObjectController
             StartCoroutine(ResetColor(target));
         }
     }
+
+	IEnumerator WaitAnimation(List<GameObject> targets, int damage)
+	{
+		yield return new WaitForSeconds(1f);
+
+		foreach(GameObject target in targets)
+		{
+			foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+			{
+				mesh.color = Color.red;
+			}
+
+			OnHit(target, damage);
+			if (IsDead(target.GetComponent<ObjectController>()))
+			{
+				target.GetComponent<EnemyController>().EnemyTile.GetComponent<Tile>().isEnemy = false;
+				TileManager.enemyInstance.Remove(target);
+				TurnManager.turns[TurnManager.turns.IndexOf(target)] = null;
+				TurnManager.refreshTurn = true;
+				StartCoroutine(ResetColor(target));
+				target.GetComponentInChildren<Animator>().SetTrigger("isDead");
+				//Destroy(target);
+			}
+			else
+			{
+				TurnManager.refreshTurn = true;
+				StartCoroutine(ResetColor(target));
+			}
+		}
+	}
+
+
 
     public void ResurrectPlayer()
     {

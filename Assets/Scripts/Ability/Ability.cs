@@ -37,9 +37,7 @@ public class Ability : MonoBehaviour
     public enum AbilityType
     {
         SINGOLO,
-        MULTIPLO,
-        MOVIMENTO,
-        TELETRASPORTO
+        MOVIMENTO
     }
 
     // Use this for initialization
@@ -185,104 +183,66 @@ public class Ability : MonoBehaviour
             if (hit.collider != null && hit.collider.tag == "Enemy" ||
                     (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
             {
-                //if(abilityType != AbilityType.MULTIPLO)
-                //{
-                    GameObject enemyTarget = null;
-                    foreach (GameObject enemy in TileManager.enemyInstance)
+                GameObject enemyTarget = null;
+                foreach (GameObject enemy in TileManager.enemyInstance)
+                {
+                    if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
                     {
-                        if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
-                        {
-                            enemyTarget = enemy;
-                            break;
-                        }
+                        enemyTarget = enemy;
+                        break;
                     }
-                    if(abilityType == AbilityType.SINGOLO)
-                    {
-                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-						
-						Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
-                        AddAbilityToCooldownList(ability);
+                }
+                if(abilityType == AbilityType.SINGOLO)
+                {
+                    GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+					
+					Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                    AddAbilityToCooldownList(ability);
 
-                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
-                    }
-                    else if(abilityType == AbilityType.MOVIMENTO)
-                    {
-						
-						Vector2 playerPosition = this.gameObject.transform.position;
-						Vector2 enemyPosition = enemyTarget.transform.position;
+                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                }
+                else if(abilityType == AbilityType.MOVIMENTO)
+                {
+					
+					Vector2 playerPosition = this.gameObject.transform.position;
+					Vector2 enemyPosition = enemyTarget.transform.position;
 
-						GameObject tileToSelect = null;
-						
-						if(playerPosition.x != enemyPosition.x)
+					GameObject tileToSelect = null;
+					
+					if(playerPosition.x != enemyPosition.x)
+					{
+						if(playerPosition.x < enemyPosition.x)
 						{
-							if(playerPosition.x < enemyPosition.x)
-							{
-								tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.left);
-							}
-							else
-							{
-								tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.right);
-							}
+							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.left);
 						}
-						else if(playerPosition.y != enemyPosition.y)
-							{
-							if(playerPosition.y < enemyPosition.y)
-							{
-								tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.down);
-							}
-							else
-							{
-								tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.up);
-							}
+						else
+						{
+							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.right);
 						}
-						            
-						
-						GetComponent<AILerp>().target = tileToSelect.transform;
-						GetComponent<PlayerController>().PlayerTile = tileToSelect;
+					}
+					else if(playerPosition.y != enemyPosition.y)
+						{
+						if(playerPosition.y < enemyPosition.y)
+						{
+							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.down);
+						}
+						else
+						{
+							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.up);
+						}
+					}
+					            
+					
+					GetComponent<AILerp>().target = tileToSelect.transform;
+					GetComponent<PlayerController>().PlayerTile = tileToSelect;
 
-						GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
+					GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
-						Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
-                        AddAbilityToCooldownList(ability);
+					Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                    AddAbilityToCooldownList(ability);
 
-                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
-                    }
-//                    else if (abilityType == AbilityType.TELETRASPORTO)
-//                    {
-//						List<GameObject> tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-//						foreach(GameObject tile in tileNearEnemy)
-//						{
-//							tile.GetComponent<Tile> ().GetComponent<SpriteRenderer> ().color = Color.yellow;
-//						}
-//							
-////                        GameObject tileNearEnemy = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy();
-////                        GetComponent<AILerp>().enabled = false;
-////                        this.gameObject.transform.position = tileNearEnemy.transform.position;
-////                        GetComponent<PlayerController>().PlayerTile = tileNearEnemy;
-////                        //GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-////
-////                        AddAbilityToCooldownList();
-////
-////                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
-//                    }
-                //}
-                //else if(abilityType == AbilityType.MULTIPLO)
-                //{
-                //    List<GameObject> enemyTargets = new List<GameObject>();
-                //    foreach (GameObject enemy in TileManager.tilesSelectable)
-                //    {
-                //        if (enemy.GetComponent<Tile>().isEnemy)
-                //        {
-                //            enemyTargets.Add(enemy);
-                //        }
-                //    }
-                //    foreach(GameObject target in enemyTargets)
-                //    {
-                //        GetComponent<PlayerController>().PhysicAttack(target, "attack", (int)this.damage);
-                //        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE, true, target));
-                //    }
-
-                //}  
+                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                }
             }
         }
 

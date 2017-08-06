@@ -11,7 +11,7 @@ public class AttaccoPotenziato : Ability {
 	// Use this for initialization
 	void Start ()
     {
-        this.abilityType = AbilityType.MULTIPLO;
+        
         this.abilityName = "AttaccoPotenziato";
         this.damage = GetComponent<PlayerController>().physicAttack / 100f * 125f;
         this.cure = 0;
