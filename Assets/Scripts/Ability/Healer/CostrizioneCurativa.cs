@@ -64,8 +64,7 @@ public class CostrizioneCurativa : Ability {
                 }
                 GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -(int)this.damage);
 
-
-                AddAbilityToCooldownList();
+                AddAbilityToCooldownList(this);
 
 				isRunning = false;
                 StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));

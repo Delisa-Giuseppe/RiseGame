@@ -42,7 +42,7 @@ public class PassoDiOmbra : Ability {
 			GetComponent<AILerp> ().enabled = true;
 
 
-			AddAbilityToCooldownList();
+			AddAbilityToCooldownList(this);
 
 
 			StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));

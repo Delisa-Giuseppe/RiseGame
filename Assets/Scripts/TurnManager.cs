@@ -81,6 +81,7 @@ public class TurnManager : MonoBehaviour {
         if(currentTurn >= turns.Count)
         {
             currentTurn = 0;
+            Ability.CheckTurnDurationList();
             Ability.CheckCooldownList();
         }
         //UI.GetComponent<UIManager>().ResetColor();

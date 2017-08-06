@@ -18,8 +18,11 @@ public class Elementale : Ability {
 		this.damage = 0;
 		this.cure = 0;
 		this.tileRange = GetComponent<PlayerController> ().moves;
-		this.cooldown = 7;
+		this.cooldown = 1;
 		countCooldown = this.cooldown;
+		this.turnDuration = 1;
+		countTurnDuration = this.turnDuration;
+
 		playerUI = GetComponent<PlayerController>().playerUI;
 		buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
 		buttonPlayerUI.onClick.AddListener(delegate {
@@ -39,7 +42,7 @@ public class Elementale : Ability {
 		GetComponent<PlayerController> ().mind += 5;
 		GetComponent<PlayerController> ().CalculateStatistics ();
 
-		AddAbilityToCooldownList();
+		AddAbilityToTurnDurationList(this);
 
 		StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 
@@ -54,6 +57,14 @@ public class Elementale : Ability {
 		GetComponent<PlayerController>().PlayerTile.GetComponent<SpriteRenderer>().color = Color.green;
 
 		UsaAbilita ();
+	}
+
+	public override void ResettaValori()
+	{
+		PlayerController controller = GetComponent <PlayerController> ();
+		controller.mind = currentMind;
+		controller.constitution = currentConstitution;
+		controller.CalculateStatistics ();
 	}
 
 

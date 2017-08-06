@@ -50,7 +50,7 @@ public class Devozione : Ability {
 
 				GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -playerTarget.GetComponent<PlayerController>().totalHealth / 2);
 
-				AddAbilityToCooldownList();
+				AddAbilityToCooldownList(this);
 
 				StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 			}

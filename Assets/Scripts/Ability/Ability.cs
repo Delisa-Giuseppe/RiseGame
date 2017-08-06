@@ -14,11 +14,13 @@ public class Ability : MonoBehaviour
     public float cure;
     public int tileRange;
     public int turnDuration;
+	public int countTurnDuration;
     public int cooldown;
     public int countCooldown;
     public static string activedAbility;
     public AbilityType abilityType;
     public static List<Ability> cooldownList; 
+	public static List<Ability> turnDurationList; 
 
     private GameObject UI;
 	protected GameObject playerUI;
@@ -51,8 +53,10 @@ public class Ability : MonoBehaviour
         turnDuration = 0;
 		cooldown = 0;
         countCooldown = 0;
+		countTurnDuration = 0;
         activedAbility = "";
         cooldownList = new List<Ability>();
+		turnDurationList = new List<Ability>();
 
     }
 
@@ -195,8 +199,9 @@ public class Ability : MonoBehaviour
                     if(abilityType == AbilityType.SINGOLO)
                     {
                         GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-
-                        AddAbilityToCooldownList();
+						
+						Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                        AddAbilityToCooldownList(ability);
 
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                     }
@@ -237,7 +242,8 @@ public class Ability : MonoBehaviour
 
 						GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
-                        AddAbilityToCooldownList();
+						Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                        AddAbilityToCooldownList(ability);
 
                         StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                     }
@@ -282,9 +288,8 @@ public class Ability : MonoBehaviour
 
     }
 
-    protected void AddAbilityToCooldownList()
+	protected void AddAbilityToCooldownList(Ability ability)
     {
-        Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
         cooldownList.Add(ability);
         ability.buttonPlayerUI.interactable = false;
         ability.buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(true);
@@ -315,6 +320,41 @@ public class Ability : MonoBehaviour
 
     }
 
+	protected void AddAbilityToTurnDurationList(Ability ability)
+	{
+		ability.buttonPlayerUI.interactable = false;
+		turnDurationList.Add(ability);
+		ability.buttonPlayerUI.interactable = false;
+	}
+
+	public static void CheckTurnDurationList()
+	{
+
+		if(turnDurationList.Count > 0)
+		{
+			for (int i = 0; i<turnDurationList.Count; i++)
+			{
+				turnDurationList[i].countTurnDuration--;
+
+				if (turnDurationList[i].countTurnDuration < 0)
+				{
+					turnDurationList[i].ResettaValori ();
+					turnDurationList[i].AddAbilityToCooldownList (turnDurationList [i]);
+					turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
+					turnDurationList.Remove(turnDurationList[i]);
+				}
+			}
+
+			//            PrintCooldownList();
+		}
+
+	}
+
+
+	public virtual void ResettaValori()
+	{
+		
+	}
     // DEBUG FUNCTION TO REMOVE
 //    public static void PrintCooldownList()
 //    {
