@@ -40,7 +40,7 @@ namespace DigitalRuby.PyroParticles
         public Vector3 ProjectileDirection = Vector3.forward;
 
         [Tooltip("What layers the collider can collide with.")]
-        public LayerMask ProjectileCollisionLayers = Physics.AllLayers;
+        public LayerMask ProjectileCollisionLayers = Physics2D.AllLayers;
 
         [Tooltip("Particle systems to destroy upon collision.")]
         public ParticleSystem[] ProjectileDestroyParticleSystemsOnCollision;
@@ -94,8 +94,8 @@ namespace DigitalRuby.PyroParticles
             }
 
             // if we have contacts, play the collision particle system and call the delegate
-            if (c.contacts.Length != 0)
-            {
+            //if (c.contacts.Length != 0)
+            //{
                 ProjectileExplosionParticleSystem.transform.position = c.contacts[0].point;
                 ProjectileExplosionParticleSystem.Play();
                 FireBaseScript.CreateExplosion(c.contacts[0].point, ProjectileExplosionRadius, ProjectileExplosionForce);
@@ -103,7 +103,7 @@ namespace DigitalRuby.PyroParticles
                 {
                     CollisionDelegate(this, c.contacts[0].point);
                 }
-            }
+            //}
         }
     }
 }

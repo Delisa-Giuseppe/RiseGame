@@ -14,6 +14,7 @@ public class PlayerController : ObjectController
     public GameObject playerUI;
     public GameObject iconUI;
     public int originalPlayerNumber;
+    public GameObject fireBall;
 
     public enum PlayerType
     {
@@ -128,6 +129,11 @@ public class PlayerController : ObjectController
 				}
 				GetComponent<RitornoPlanare>().ResettaValori ();
 			}
+
+            if(Ability.activedAbility == "PallaDiFuoco")
+            {
+               Instantiate(fireBall, target.transform);
+            }
 
 			anim.SetTrigger(animationName);
 

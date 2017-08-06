@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour {
         TextMeshProUGUI popup = Instantiate(popupDamage);
         popup.transform.SetParent(transform, false);
         popup.transform.position = location.position + Vector3.up;
-        popup.text = damage.ToString();
+        popup.text = Mathf.Abs(damage).ToString();
         StartCoroutine(DestroyText(popup, 1));
     }
 
