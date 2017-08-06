@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour {
     public GameObject enemyHealth;
     public GameObject turnUIBar;
     public GameObject turnUI;
+    public GameObject healthTurn;
 
     public Sprite borderSelected;
     public Sprite borderEmpty;
@@ -87,6 +88,9 @@ public class UIManager : MonoBehaviour {
 
         GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).GetChild(1).gameObject;
         healthBar.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
+
+        healthTurn.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
+        healthTurn.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(currentHealth.ToString()+"/"+totalHealth.ToString()+" HP");
     }
 
     //public void SetTextHealth()

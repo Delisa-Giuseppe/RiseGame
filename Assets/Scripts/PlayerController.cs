@@ -132,7 +132,7 @@ public class PlayerController : ObjectController
 
             if(Ability.activedAbility == "PallaDiFuoco")
             {
-               Instantiate(fireBall, target.transform);
+               (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
             }
 
 			anim.SetTrigger(animationName);
