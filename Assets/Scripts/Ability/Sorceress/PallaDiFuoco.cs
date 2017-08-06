@@ -14,7 +14,7 @@ public class PallaDiFuoco : Ability {
 		this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
 		this.cure = 0;
 		this.tileRange = 7;
-		this.cooldown = 2;
+		this.cooldown = 1;
         countCooldown = this.cooldown;
 		playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];

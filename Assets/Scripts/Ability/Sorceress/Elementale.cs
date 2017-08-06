@@ -18,9 +18,9 @@ public class Elementale : Ability {
 		this.damage = 0;
 		this.cure = 0;
 		this.tileRange = GetComponent<PlayerController> ().moves;
-		this.cooldown = 1;
+		this.cooldown = 4;
 		countCooldown = this.cooldown;
-		this.turnDuration = 1;
+		this.turnDuration = 3;
 		countTurnDuration = this.turnDuration;
 
 		playerUI = GetComponent<PlayerController>().playerUI;

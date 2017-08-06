@@ -14,7 +14,7 @@ public class AttaccoRotante : Ability {
         this.damage = GetComponent<PlayerController>().physicAttack / 100f * 50f;
 		this.cure = (5f + GetComponent<PlayerController>().magicAttack / 100f * 20f) * 4;
 		this.tileRange = 2;
-		this.cooldown = 5;
+		this.cooldown = 4;
 		countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];

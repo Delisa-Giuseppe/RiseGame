@@ -13,7 +13,7 @@ public class RitornoPlanare : Ability {
 		this.damage = 0;
 		this.cure = 0;
 		this.tileRange = 2;
-		this.cooldown = 6;
+		this.cooldown = 4;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[2];

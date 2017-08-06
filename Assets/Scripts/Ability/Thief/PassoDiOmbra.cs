@@ -14,7 +14,7 @@ public class PassoDiOmbra : Ability {
         this.damage = 0;
 		this.cure = 0;
 		this.tileRange = 3;
-		this.cooldown = 4;
+		this.cooldown = 3;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
