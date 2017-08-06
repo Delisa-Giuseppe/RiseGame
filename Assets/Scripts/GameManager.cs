@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
     public static int pointAction;
     public GameObject gameOver;
     public GameObject transitionLevel;
+    public GameObject cutscene;
+    public Button skipButton;
 
     public enum States
     {
@@ -48,6 +50,8 @@ public class GameManager : MonoBehaviour {
         pathfind = GameObject.FindGameObjectWithTag("Pathfind");
         InitLevel();
         pathfind.GetComponent<AstarPath>().Scan();
+        skipButton.onClick.AddListener(SkipTurn);
+        skipButton.interactable = false;
     }
 
     // Update is called once per frame
@@ -81,6 +85,7 @@ public class GameManager : MonoBehaviour {
                 return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
             });
             GameManager.currentState = GameManager.States.EXPLORATION;
+            skipButton.interactable = false;
         }
 
         if (currentState == States.SELECT)
@@ -90,10 +95,12 @@ public class GameManager : MonoBehaviour {
                 turnManager.GetNextTurn();
                 if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Enemy")
                 {
+                    skipButton.interactable = false;
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, false);
                 }
                 else
                 {
+                    skipButton.interactable = true;
                     tileManager.UpdateGrid(TurnManager.currentObjectTurn, true);
                 }
                     
@@ -112,12 +119,9 @@ public class GameManager : MonoBehaviour {
             }
         } 
 
-        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player" && Input.GetKeyDown(KeyCode.Space) 
-			&& (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY && !Ability.isRunning))
+        if( Input.GetKeyDown(KeyCode.Space))
         {
-            pointAction--;
-            TileManager.ResetGrid();
-            StartCoroutine(WaitTurn());
+            SkipTurn();
         }
 
         if (Input.GetMouseButtonDown(0))
@@ -167,8 +171,6 @@ public class GameManager : MonoBehaviour {
                 {
                     (TurnManager.currentObjectTurn.GetComponent(Type.GetType(Ability.activedAbility)) as Ability).UsaAbilita();
                 }
-                
-
             }
         }
 
@@ -243,12 +245,53 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    void SkipTurn()
+    {
+        if (TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player"
+            && (currentState == States.MOVE || currentState == States.FIGHT || currentState == States.ABILITY && !Ability.isRunning))
+        {
+            pointAction--;
+            TileManager.ResetGrid();
+            StartCoroutine(WaitTurn());
+        }
+            
+    }
 
     void InitLevel()
     {
-        currentState = States.EXPLORATION;
-        transitionLevel.SetActive(true);
+        if (SceneManager.GetActiveScene().name == "Forest")
+        {
+            StartCoroutine(ShowInitialCutscene());
+        }
+        else
+        {
+            transitionLevel.SetActive(true);
+            StartCoroutine(CreateLevel());
+        }
+    }
+
+    IEnumerator CreateLevel()
+    {
+        yield return new WaitForSeconds(2f);
+        if(cutscene)
+        {
+            cutscene.SetActive(false);
+        }
+        
         tileManager.CreateGrid(width, height);
+    }
+
+    IEnumerator ShowInitialCutscene()
+    {
+        Animator anim = cutscene.GetComponent<Animator>();
+        cutscene.SetActive(true);
+        anim.SetBool("Init", true);
+        anim.SetBool("showCutscene", true);
+        yield return new WaitForSeconds(10.5f);
+        anim.SetBool("Init", false);
+        anim.SetBool("showCutscene", false);
+        transitionLevel.SetActive(true);
+        StartCoroutine(CreateLevel());
     }
 
     IEnumerator ShowGameOver()
