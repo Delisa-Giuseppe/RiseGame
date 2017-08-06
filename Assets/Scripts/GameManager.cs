@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour {
     public int maxPointAction;
     public static int pointAction;
     public GameObject gameOver;
+    public GameObject transitionLevel;
 
     public enum States
     {
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour {
     TileManager tileManager;
     TurnManager turnManager;
     static GameObject pathfind;
+    string sceneName;
+
 
     // Use this for initialization
     void Start () {
@@ -235,6 +238,7 @@ public class GameManager : MonoBehaviour {
     void InitLevel()
     {
         currentState = States.EXPLORATION;
+        transitionLevel.SetActive(true);
         tileManager.CreateGrid(width, height);
     }
 
