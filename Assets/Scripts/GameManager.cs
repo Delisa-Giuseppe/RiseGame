@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour {
     public static int pointAction;
     public GameObject gameOver;
     public GameObject transitionLevel;
+    public GameObject cutscene;
 
     public enum States
     {
@@ -237,9 +238,35 @@ public class GameManager : MonoBehaviour {
 
     void InitLevel()
     {
-        currentState = States.EXPLORATION;
-        transitionLevel.SetActive(true);
+        if (SceneManager.GetActiveScene().name == "Forest")
+        {
+            StartCoroutine(ShowInitialCutscene());
+        }
+        else
+        {
+            transitionLevel.SetActive(true);
+            StartCoroutine(CreateLevel());
+        }
+    }
+
+    IEnumerator CreateLevel()
+    {
+        yield return new WaitForSeconds(2f);
+        cutscene.SetActive(false);
         tileManager.CreateGrid(width, height);
+    }
+
+    IEnumerator ShowInitialCutscene()
+    {
+        Animator anim = cutscene.GetComponent<Animator>();
+        cutscene.SetActive(true);
+        anim.SetBool("Init", true);
+        anim.SetBool("showCutscene", true);
+        yield return new WaitForSeconds(10.5f);
+        anim.SetBool("Init", false);
+        anim.SetBool("showCutscene", false);
+        transitionLevel.SetActive(true);
+        StartCoroutine(CreateLevel());
     }
 
     IEnumerator ShowGameOver()
