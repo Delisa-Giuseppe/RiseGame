@@ -59,7 +59,7 @@ public class PassoDiOmbra : Ability {
 
             AddAbilityToCooldownList(this);
 
-
+            activedAbility = "";
 			StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 		}
 	}

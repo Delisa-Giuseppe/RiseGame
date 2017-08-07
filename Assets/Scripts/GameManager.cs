@@ -77,10 +77,6 @@ public class GameManager : MonoBehaviour {
 				bottomUI.transform.GetChild(i).gameObject.SetActive (false);
 			}
 
-
-			Ability.ResetTurnDuration ();
-			Ability.ResetCooldown ();
-
             GameManager.currentState = GameManager.States.WAIT;
             foreach (GameObject player in TileManager.playerDead)
             {
@@ -94,8 +90,12 @@ public class GameManager : MonoBehaviour {
             TileManager.playerInstance.Sort(delegate (GameObject a, GameObject b) {
                 return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
             });
+            EnemyController.listEnemyStunned.Clear();
+            Ability.ResetTurnDuration();
+            Ability.ResetCooldown();
             GameManager.currentState = GameManager.States.EXPLORATION;
             skipButton.interactable = false;
+            
         }
 
         if (currentState == States.SELECT)

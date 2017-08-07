@@ -26,7 +26,7 @@ public class AttaccoRotante : Ability {
 			GameManager.currentState = GameManager.States.ABILITY;
 			activedAbility = this.abilityName;
             AttivaAbilita(SelectType.QUADRATO);
-			StartCoroutine (SelectPlayers (1.5f));
+			StartCoroutine (SelectPlayers (0.5f));
         });
         EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
         EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -64,10 +64,11 @@ public class AttaccoRotante : Ability {
 
 			}
 
-			GetComponent<PlayerController> ().PhysicAttack (enemyTargets, "stomp", (int)this.damage);
+            AddAbilityToCooldownList(this);
 
-			AddAbilityToCooldownList (this);
+            GetComponent<PlayerController> ().PhysicAttack (enemyTargets, "stomp", (int)this.damage);
 
+            activedAbility = "";
 			StartCoroutine (TileManager.WaitMoves (this.gameObject, GameManager.States.END_MOVE));
 		}
 

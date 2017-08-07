@@ -74,6 +74,7 @@ public class Devozione : Ability {
 
 				AddAbilityToCooldownList(this);
 
+                activedAbility = "";
 				StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 			}
 

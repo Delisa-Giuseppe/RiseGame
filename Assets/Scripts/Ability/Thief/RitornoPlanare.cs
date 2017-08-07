@@ -59,6 +59,7 @@ public class RitornoPlanare : Ability {
         GetComponent<PlayerController>().SetTransparency();
         GetComponent<PlayerController> ().moves += 2; 
 		AddAbilityToTurnDurationList(this);
+        activedAbility = "";
 		StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 	}
 

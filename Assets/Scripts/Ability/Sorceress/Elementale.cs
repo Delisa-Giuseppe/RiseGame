@@ -58,6 +58,7 @@ public class Elementale : Ability {
 
         AddAbilityToTurnDurationList(this);
 
+        activedAbility = "";
 		StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 
 	}
