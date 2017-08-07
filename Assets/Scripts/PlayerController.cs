@@ -38,7 +38,7 @@ public class PlayerController : ObjectController
             else
             {
                 GetAnimator().SetBool("isWalking", true);
-                SFXManager.GetComponent<charactersSFX>().PlayFootstep();
+                //SFXManager.GetComponent<charactersSFX>().PlayFootstep();
             }
         }
         
