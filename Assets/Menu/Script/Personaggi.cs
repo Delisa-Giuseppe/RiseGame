@@ -27,10 +27,7 @@ public class Personaggi : MonoBehaviour {
     }
 
     public void sblocco() {
-       
             Conferma.interactable = true;
-
-            Debug.Log("Partiamo"); 
     }
 
     public void reset()
@@ -41,6 +38,5 @@ public class Personaggi : MonoBehaviour {
 
     public void ImIn() {
         party++;
-        Debug.Log(party);
     }
 }

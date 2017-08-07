@@ -29,15 +29,18 @@ public class PlayerController : ObjectController
     // Update is called once per frame
     void Update () {
 
-        if(GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
+        if(GetAnimator() != null)
         {
-            GetAnimator().SetBool("isWalking", false);
+            if (GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
+            {
+                GetAnimator().SetBool("isWalking", false);
+            }
+            else
+            {
+                GetAnimator().SetBool("isWalking", true);
+            }
         }
-        else
-        {
-            GetAnimator().SetBool("isWalking", true);
-        }
-
+        
         if (GameManager.currentState == GameManager.States.EXPLORATION)
         {
             List<RaycastHit2D[]> hits = new List<RaycastHit2D[]>(4)
@@ -132,9 +135,19 @@ public class PlayerController : ObjectController
 				GetComponent<RitornoPlanare>().ResettaValori ();
 			}
 
-            if(name.Contains("Sorceress") && Ability.activedAbility == "PallaDiFuoco")
+            if(name.Contains("Sorceress"))
             {
-               (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
+                if(Ability.activedAbility == "PallaDiFuoco")
+                {
+                    (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
+                }
+                else
+                {
+                    //GameObject flame = Instantiate(flames, target.transform);
+                    //flame.transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
+                    //Destroy(flame, 1.5f);
+                }
+               
             }
 
             GetAnimator().SetTrigger(animationName);
