@@ -11,12 +11,14 @@ public class CostrizioneCurativa : Ability {
     void Start () 
 	{
         this.abilityName = "CostrizioneCurativa";
-        this.abilityDescription = " Risucchia vita di un singolo nemico per 50% Att.Magico, poi cura se stesso o un compagno";
+        this.realName = "Healing Costriction";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.tileRange = 3;
 		this.cooldown = 2;
         countCooldown = this.cooldown;
+        this.abilityDescription = " The Cleric steals "+this.damage+" hp to an enemy and heals an ally target or himself for the same amount";
+
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
         buttonPlayerUI.onClick.AddListener (delegate {

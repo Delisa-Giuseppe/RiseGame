@@ -13,7 +13,8 @@ public class RitornoPlanare : Ability {
 	void Start ()
 	{
 		this.abilityName = "RitornoPlanare";
-        this.abilityDescription = "Per 3 turni il ladro guadagna invisibilità e 2 caselle movimento in più e non può essere colpito; attaccando un bersaglio esce dallo stato di immunità ed invisibilità";
+        this.realName = "Planar Return";
+        this.abilityDescription = "For 3 turns the Assassin returns to his original existence plan, becoming invisible and untargettable by enemies and gaining 2 movement tiles. Attacking an enemy will end this effect";
         currentMoves = GetComponent<PlayerController> ().moves; 
 		this.damage = 0;
 		this.cure = 0;

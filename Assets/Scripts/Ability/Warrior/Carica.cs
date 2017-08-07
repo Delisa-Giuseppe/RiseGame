@@ -11,13 +11,14 @@ public class Carica : Ability {
     void Start () 
 	{
         this.abilityType = AbilityType.MOVIMENTO;
+        this.realName = "Charge";
 		this.abilityName = "Carica";
-        this.abilityDescription = "Carica un nemico stordendolo per 1 turno";
         this.damage = GetComponent<PlayerController>().physicAttack / 100f * 70f;
 		this.cure = 0;
 		this.tileRange = 8;
 		this.cooldown = 4;
         countCooldown = this.cooldown;
+        this.abilityDescription = "Charge an enemy dealing " + this.damage + " and stunning him for 1 turn";
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
         buttonPlayerUI.onClick.AddListener (delegate {

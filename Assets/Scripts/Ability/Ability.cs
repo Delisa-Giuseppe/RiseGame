@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class Ability : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Ability : MonoBehaviour
 	public static bool isRunning = false;
 
     public string abilityName;
+    public string realName;
     public string abilityDescription;
     public float damage;
     public float cure;
@@ -23,6 +25,7 @@ public class Ability : MonoBehaviour
     public AbilityType abilityType;
     public static List<Ability> cooldownList; 
 	public static List<Ability> turnDurationList; 
+    public Sprite image;
 
     private GameObject UI;
 	protected GameObject playerUI;
@@ -346,11 +349,15 @@ public class Ability : MonoBehaviour
 
     public void OnPointerEnterDelegate(PointerEventData data)
     {
-        print(this.abilityName);
+        GameObject panel = UI.transform.GetChild(4).gameObject;
+        panel.SetActive(true);
+        panel.transform.GetChild(0).GetComponent<Image>().sprite = image;
+        panel.transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = realName;
+        panel.transform.GetChild(2).GetComponent<TextMeshProUGUI>().text = abilityDescription;
     }
 
     public void OnPointerExitDelegate(PointerEventData data)
     {
-        print("Gesu");
+        UI.transform.GetChild(4).gameObject.SetActive(false);
     }
 }
