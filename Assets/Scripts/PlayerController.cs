@@ -131,7 +131,7 @@ public class PlayerController : ObjectController
 				GetComponent<RitornoPlanare>().ResettaValori ();
 			}
 
-            if(Ability.activedAbility == "PallaDiFuoco")
+            if(name.Contains("Sorceress") && Ability.activedAbility == "PallaDiFuoco")
             {
                (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
             }

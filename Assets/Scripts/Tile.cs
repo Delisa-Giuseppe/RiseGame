@@ -86,7 +86,7 @@ public class Tile : MonoBehaviour {
     public void ResetSpriteImage()
     {
         GetComponent<SpriteRenderer>().sprite = borderEmpty;
-        GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1f);
+        GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 0.4f);
     }
 
     public void SetImageSprite(Sprite image)
@@ -98,7 +98,7 @@ public class Tile : MonoBehaviour {
         }
         else
         {
-            GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1f);
+            GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 0.4f);
         }
     }
 
@@ -107,10 +107,10 @@ public class Tile : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         if(GameManager.currentState == GameManager.States.ABILITY)
         {
-            collision.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 140f / 255f, 0f / 255f, 1f);
+            collision.GetComponent<SpriteRenderer>().color = new Color(255f / 255f, 140f / 255f, 0f / 255f, 0.4f);
         } else
         {
-            collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 1f);
+            collision.GetComponent<SpriteRenderer>().color = new Color(tileColor.r, tileColor.g, tileColor.b, 0.4f);
         }
         
     }

@@ -116,7 +116,7 @@ public class TileManager : MonoBehaviour {
         foreach(Tile tile in tiles)
         {
             tile.GetComponent<Tile>().ResetSpriteImage();
-            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.2f);
+            tile.TileObject.GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 0.1f);
         }
     }
 
