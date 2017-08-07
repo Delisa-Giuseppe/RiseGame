@@ -15,7 +15,7 @@ public class PassoDiOmbra : Ability {
         //this.abilityType = AbilityType.TELETRASPORTO;
         this.damage = 0;
 		this.cure = 0;
-		this.tileRange = 3;
+		this.tileRange = 4;
 		this.cooldown = 3;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;

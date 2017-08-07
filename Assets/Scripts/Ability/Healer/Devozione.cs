@@ -68,7 +68,7 @@ public class Devozione : Ability {
                     return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
                 });
 
-                GetComponent<PlayerController>().PhysicAttack(playerTarget, "resurrect", 0);
+                GetComponent<PlayerController>().Cure(playerTarget, "resurrect", (int)damage);
 
 				AddAbilityToCooldownList(this);
 
