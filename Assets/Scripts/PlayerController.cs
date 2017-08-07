@@ -122,6 +122,7 @@ public class PlayerController : ObjectController
 				if(target.transform.position.y == transform.position.y && target.transform.eulerAngles == transform.eulerAngles)
 				{
 					damage = (int)(physicAttack / 100f * 150f) ;
+                    animationName = "backstab";
 				}
 				else 
 				{
