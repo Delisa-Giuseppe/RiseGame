@@ -15,6 +15,7 @@ public class PlayerController : ObjectController
     public GameObject iconUI;
     public int originalPlayerNumber;
     public GameObject fireBall;
+    public GameObject transformMage;
 
     public enum PlayerType
     {
