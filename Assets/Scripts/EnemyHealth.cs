@@ -8,7 +8,7 @@ public class EnemyHealth : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if(target.name == "Nemesy_Warrior")
+        if(target.name.Contains("Nemesy"))
         {
             transform.position = target.position + (Vector3.up * 3f);
         }
