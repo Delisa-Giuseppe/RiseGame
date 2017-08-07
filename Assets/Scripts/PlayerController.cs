@@ -263,6 +263,30 @@ public class PlayerController : ObjectController
         }
     }
 
+    public void SetTransparency()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = new Color(1f, 1f, 1f, .5f);
+        }
+    }
+
+    public void DeleteTransparency()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = new Color(1f, 1f, 1f, 1f);
+        }
+    }
+
+    public void Disappear()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = Color.clear;
+        }
+    }
+
     IEnumerator ResetColor(GameObject obj)
     {
         yield return new WaitForSeconds(0.5f);

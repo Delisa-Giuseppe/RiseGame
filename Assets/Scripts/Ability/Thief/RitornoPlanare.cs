@@ -55,14 +55,16 @@ public class RitornoPlanare : Ability {
 
 	public override void UsaAbilita()
 	{
-		GetComponent<PlayerController> ().moves += 2; 
+        GetComponent<PlayerController>().SetTransparency();
+        GetComponent<PlayerController> ().moves += 2; 
 		AddAbilityToTurnDurationList(this);
 		StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 	}
 
 	public override void ResettaValori()
 	{
-		AddAbilityToCooldownList (this);
+        GetComponent<PlayerController>().DeleteTransparency();
+        AddAbilityToCooldownList (this);
 		countTurnDuration = turnDuration;
 		turnDurationList.Remove(this);
 		PlayerController controller = GetComponent <PlayerController> ();

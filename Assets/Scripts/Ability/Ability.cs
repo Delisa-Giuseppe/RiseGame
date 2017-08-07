@@ -167,17 +167,6 @@ public class Ability : MonoBehaviour
         
     }
 
-    //    protected void PhysicAbilityAttack(GameObject[] targets)
-    //    {
-    //        foreach(GameObject target in targets)
-    //        {
-    //            UI.GetComponent<UIManager>().ShowPopupDamage((int)damage, target.transform);
-    //            Debug.Log("Prima: " + target.GetComponent<ObjectController>().currentHealth);
-    //            target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - (int)damage;
-    //            Debug.Log("Dopo: " + target.GetComponent<ObjectController>().currentHealth);
-    //        }
-    //    }
-
     public virtual void UsaAbilita()
 	{
         if(TileManager.CheckEnemy())
@@ -281,8 +270,6 @@ public class Ability : MonoBehaviour
                     cooldownList.Remove(cooldownList[i]);
                 }
             }
-
-//            PrintCooldownList();
         }
 
     }
@@ -309,7 +296,6 @@ public class Ability : MonoBehaviour
 				}
 			}
 
-			//            PrintCooldownList();
 		}
 
 	}
@@ -342,16 +328,6 @@ public class Ability : MonoBehaviour
 		}
 		turnDurationList.Clear ();
 	}
-
-    // DEBUG FUNCTION TO REMOVE
-    //    public static void PrintCooldownList()
-    //    {
-    //        for (int i = 0; i < cooldownList.Count; i++)
-    //        {
-    //            print(cooldownList[i].abilityName+" "+ cooldownList[i].countCooldown);
-    //        }
-    //
-    //    }
 
     public void OnPointerEnterDelegate(PointerEventData data)
     {
