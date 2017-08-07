@@ -435,7 +435,7 @@ public class TileManager : MonoBehaviour {
                 }
                 else
                 {
-                    startPointMelee = new Vector3(playerBattlePosition.x - (1.2f * 6), playerBattlePosition.y - (1.2f * 2));
+                    startPointMelee = new Vector3(playerBattlePosition.x - (1.2f * 5), playerBattlePosition.y - 1.2f);
                 }
                 
                 positions[i] = startPointMelee;
@@ -444,12 +444,12 @@ public class TileManager : MonoBehaviour {
             {
                 if(positive)
                 {
-                    startPointRanged = new Vector3(startPointMelee.x - (1.2f * 2), playerBattlePosition.y);
+                    startPointRanged = new Vector3(startPointMelee.x - 1.2f, playerBattlePosition.y);
                     positions[i] = startPointRanged;
                 }
                 else
                 {
-                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 6), playerBattlePosition.y + (1.2f * 2));
+                    startPointRanged = new Vector3(playerBattlePosition.x - (1.2f * 5), playerBattlePosition.y + 1.2f);
                     positions[i] = startPointRanged;
                     positive = true;
                 }

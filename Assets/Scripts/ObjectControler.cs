@@ -48,7 +48,14 @@ public class ObjectController : MonoBehaviour {
     protected Animator GetAnimator()
     {
         anim = GetComponentInChildren<Animator>();
-        return anim;
+        if(anim != null)
+        {
+            return anim;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     protected void OnHit(GameObject target, int damage)
