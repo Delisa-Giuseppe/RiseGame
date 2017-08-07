@@ -90,6 +90,8 @@ public class CostrizioneCurativa : Ability {
                 AddAbilityToCooldownList(this);
 
 				isRunning = false;
+
+                activedAbility = "";
                 StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 
             }

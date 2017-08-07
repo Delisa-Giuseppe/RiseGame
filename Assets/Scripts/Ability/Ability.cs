@@ -209,6 +209,7 @@ public class Ability : MonoBehaviour
                     Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
                     AddAbilityToCooldownList(ability);
 
+                activedAbility = "";
                     StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                 }
                 else if (abilityType == AbilityType.MOVIMENTO)
@@ -242,20 +243,24 @@ public class Ability : MonoBehaviour
                         }
                     }
 
+                    if(tileToSelect && !tileToSelect.GetComponent<Tile>().isPlayer && !tileToSelect.GetComponent<Tile>().isEnemy)
+                    {
+                        GetComponent<AILerp>().target = tileToSelect.transform;
+                        GetComponent<PlayerController>().PlayerTile = tileToSelect;
 
-                    GetComponent<AILerp>().target = tileToSelect.transform;
-                    GetComponent<PlayerController>().PlayerTile = tileToSelect;
+                        EnemyController enemyController = enemyTarget.GetComponent<EnemyController>();
+                        enemyController.stunned = true;
+                        enemyController.AddEnemyStunned();
 
-                    EnemyController enemyController = enemyTarget.GetComponent<EnemyController>();
-                    enemyController.stunned = true;
-                    enemyController.AddEnemyStunned();
+                        GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
-                    GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
+                        Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                        AddAbilityToCooldownList(ability);
 
-                    Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
-                    AddAbilityToCooldownList(ability);
-
-                    StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                        activedAbility = "";
+                        StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
+                    }
+                   
                 }
             //}
         }
@@ -326,25 +331,33 @@ public class Ability : MonoBehaviour
 
 	public static void ResetCooldown()
 	{
-		for (int i = 0; i<cooldownList.Count; i++)
-		{
-			cooldownList[i].buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(false);
-			cooldownList[i].buttonPlayerUI.interactable = true;
-			cooldownList[i].countCooldown = cooldownList[i].cooldown;
+        if(cooldownList.Count > 0)
+        {
+            for (int i = 0; i < cooldownList.Count; i++)
+            {
+                cooldownList[i].buttonPlayerUI.transform.GetChild(0).gameObject.SetActive(false);
+                cooldownList[i].buttonPlayerUI.interactable = true;
+                cooldownList[i].countCooldown = cooldownList[i].cooldown;
 
-		}
-		cooldownList.Clear ();
+            }
+            cooldownList.Clear();
+        }
+		
 	}
 
 	public static void ResetTurnDuration()
 	{
-		for (int i = 0; i<turnDurationList.Count; i++)
-		{
-			turnDurationList [i].ResettaValori ();
-			turnDurationList[i].buttonPlayerUI.interactable = true;
-			turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
-		}
-		turnDurationList.Clear ();
+        if(turnDurationList.Count > 0)
+        {
+            for (int i = 0; i < turnDurationList.Count; i++)
+            {
+                turnDurationList[i].ResettaValori();
+                turnDurationList[i].buttonPlayerUI.interactable = true;
+                turnDurationList[i].countTurnDuration = turnDurationList[i].turnDuration;
+            }
+            turnDurationList.Clear();
+        }
+		
 	}
 
     public void OnPointerEnterDelegate(PointerEventData data)
