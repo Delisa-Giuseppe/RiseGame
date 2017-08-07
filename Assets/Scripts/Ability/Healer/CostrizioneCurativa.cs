@@ -14,7 +14,7 @@ public class CostrizioneCurativa : Ability {
         this.abilityDescription = " Risucchia vita di un singolo nemico per 50% Att.Magico, poi cura se stesso o un compagno";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
-		this.tileRange = 2;
+		this.tileRange = 3;
 		this.cooldown = 3;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
@@ -73,7 +73,7 @@ public class CostrizioneCurativa : Ability {
                         break;
                     }
                 }
-                GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -(int)this.damage);
+                GetComponent<PlayerController>().Cure(playerTarget, "attack", (int)this.damage);
 
                 AddAbilityToCooldownList(this);
 

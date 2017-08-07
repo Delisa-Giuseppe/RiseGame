@@ -53,8 +53,9 @@ public class Elementale : Ability {
         GetComponent<PlayerController> ().constitution += 2; 
 		GetComponent<PlayerController> ().mind += 5;
 		GetComponent<PlayerController> ().CalculateStatistics ();
+        this.tileRange = GetComponent<PlayerController>().moves;
 
-		AddAbilityToTurnDurationList(this);
+        AddAbilityToTurnDurationList(this);
 
 		StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 
@@ -89,6 +90,7 @@ public class Elementale : Ability {
 		controller.mind = currentMind;
 		controller.constitution = currentConstitution;
 		controller.CalculateStatistics ();
+        this.tileRange = GetComponent<PlayerController>().moves;
         GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(true);
         GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(false);
     }

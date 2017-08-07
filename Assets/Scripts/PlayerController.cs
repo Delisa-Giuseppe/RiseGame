@@ -161,6 +161,26 @@ public class PlayerController : ObjectController
 		}
 	}
 
+    public void Cure(GameObject target, string animationName, int cure)
+    {
+        if (target)
+        {
+            if (transform.position.x > target.transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 180f);
+            }
+
+            if (transform.position.x < target.transform.position.x)
+            {
+                transform.eulerAngles = new Vector3(0f, 0f);
+            }
+
+            GetAnimator().SetTrigger(animationName);
+
+            StartCoroutine(WaitAnimationCure(target, cure));
+        }
+    }
+
 	IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(0.6f);
@@ -218,7 +238,19 @@ public class PlayerController : ObjectController
 		}
 	}
 
+    IEnumerator WaitAnimationCure(GameObject target, int cure)
+    {
+        yield return new WaitForSeconds(0.6f);
 
+        foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = Color.green;
+        }
+
+        OnCure(target, cure);
+        TurnManager.refreshTurn = true;
+        StartCoroutine(ResetColor(target));
+    }
 
     public void ResurrectPlayer()
     {

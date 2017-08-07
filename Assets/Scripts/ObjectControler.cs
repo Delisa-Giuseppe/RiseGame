@@ -65,6 +65,24 @@ public class ObjectController : MonoBehaviour {
         }
     }
 
+    protected void OnCure(GameObject target, int cure)
+    {
+        ObjectController controller = target.GetComponent<ObjectController>();
+
+        if (controller.currentHealth + cure > controller.totalHealth)
+        {
+            cure = controller.totalHealth - controller.currentHealth;
+        }
+        if (Ability.activedAbility == "Devozione")
+        {
+            cure = controller.totalHealth / 2;
+        }
+        UI.GetComponent<UIManager>().ShowPopupDamage(cure, target.transform);
+        target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth + cure;
+        UI.GetComponent<UIManager>().SetPlayerHealthBar(target);
+        
+    }
+
     protected bool IsDead(ObjectController target)
     {
         if(target.currentHealth <= 0)

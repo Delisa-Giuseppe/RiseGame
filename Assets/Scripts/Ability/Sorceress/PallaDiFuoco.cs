@@ -15,7 +15,7 @@ public class PallaDiFuoco : Ability {
         this.abilityDescription = "Colpisce tutti i nemici entro 1 casella dal guerriero e li stordisce per 1 turno";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
 		this.cure = 0;
-		this.tileRange = 7;
+		this.tileRange = 8;
 		this.cooldown = 1;
         countCooldown = this.cooldown;
 		playerUI = GetComponent<PlayerController>().playerUI;
