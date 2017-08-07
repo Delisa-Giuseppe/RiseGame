@@ -51,8 +51,11 @@ public class AttaccoRotante : Ability {
 			foreach (GameObject tileEnemy in TileManager.tilesSelectable) {
 				if (tileEnemy.GetComponent<Tile> ().isEnemy) {
 					foreach (GameObject enemy in TileManager.enemyInstance) {
-						if (enemy.GetComponent<EnemyController> ().EnemyTile.transform.position == tileEnemy.transform.position) {
+                        EnemyController controller = enemy.GetComponent<EnemyController>();
+                        if (controller.EnemyTile.transform.position == tileEnemy.transform.position) {
 							enemyTargets.Add (enemy);
+                            controller.stunned = true;
+                            controller.AddEnemyStunned();
 						}
 					}
 				}
@@ -68,5 +71,4 @@ public class AttaccoRotante : Ability {
 
 
 	}
-
 }

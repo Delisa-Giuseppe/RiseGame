@@ -239,6 +239,10 @@ public class Ability : MonoBehaviour
 					GetComponent<AILerp>().target = tileToSelect.transform;
 					GetComponent<PlayerController>().PlayerTile = tileToSelect;
 
+                    EnemyController enemyController = enemyTarget.GetComponent<EnemyController>();
+                    enemyController.stunned = true;
+                    enemyController.AddEnemyStunned();
+
 					GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
 					Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
