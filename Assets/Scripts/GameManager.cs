@@ -84,8 +84,6 @@ public class GameManager : MonoBehaviour {
                 return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
             });
             EnemyController.listEnemyStunned.Clear();
-            Ability.turnDurationList.Clear();
-            Ability.cooldownList.Clear();
             skipButton.interactable = false;
 
             StartCoroutine(Wait());
@@ -274,6 +272,8 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator Wait()
     {
+        Ability.ResetTurnDuration();
+        Ability.ResetCooldown();
         yield return new WaitForSeconds(2f);
         GameManager.currentState = GameManager.States.EXPLORATION;
     }
