@@ -32,7 +32,6 @@ public class ObjectController : MonoBehaviour {
     {
         CalculateStatistics();
         UI = GameObject.Find("UI");
-        anim = GetComponentInChildren<Animator>();
     }
 
     public void CalculateStatistics()
@@ -46,8 +45,13 @@ public class ObjectController : MonoBehaviour {
         currentHealth = totalHealth;
     }
 
+    protected Animator GetAnimator()
+    {
+        anim = GetComponentInChildren<Animator>();
+        return anim;
+    }
 
-	protected void OnHit(GameObject target, int damage)
+    protected void OnHit(GameObject target, int damage)
     {
         UI.GetComponent<UIManager>().ShowPopupDamage(damage, target.transform);
         target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - damage;

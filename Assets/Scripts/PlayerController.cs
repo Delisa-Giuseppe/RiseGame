@@ -30,11 +30,11 @@ public class PlayerController : ObjectController
 
         if(GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
         {
-            anim.SetBool("isWalking", false);
+            GetAnimator().SetBool("isWalking", false);
         }
         else
         {
-            anim.SetBool("isWalking", true);
+            GetAnimator().SetBool("isWalking", true);
         }
 
         if (GameManager.currentState == GameManager.States.EXPLORATION)
@@ -84,12 +84,12 @@ public class PlayerController : ObjectController
 
     public void StartFightAnimation()
     {
-        anim.SetBool("isFighting", true);
+        GetAnimator().SetBool("isFighting", true);
     }
 
     public void StopFightAnimation()
     {
-        anim.SetBool("isFighting", false);
+        GetAnimator().SetBool("isFighting", false);
     }
 
     private void OnDestroy()
@@ -135,7 +135,7 @@ public class PlayerController : ObjectController
                (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
             }
 
-			anim.SetTrigger(animationName);
+            GetAnimator().SetTrigger(animationName);
 
 			StartCoroutine(WaitAnimation(target, damage));
         }
@@ -145,16 +145,16 @@ public class PlayerController : ObjectController
 	{
 		if (target.Count > 0)
 		{
-//			if (transform.position.x > target[0].transform.position.x)
-//			{
-//				transform.eulerAngles = new Vector3(0f, 0f);
-//			}
-//
-//			if (transform.position.x < target[0].transform.position.x)
-//			{
-//				transform.eulerAngles = new Vector3(0f, 180f);
-//			}
-			anim.SetTrigger(animationName);
+            //			if (transform.position.x > target[0].transform.position.x)
+            //			{
+            //				transform.eulerAngles = new Vector3(0f, 0f);
+            //			}
+            //
+            //			if (transform.position.x < target[0].transform.position.x)
+            //			{
+            //				transform.eulerAngles = new Vector3(0f, 180f);
+            //			}
+            GetAnimator().SetTrigger(animationName);
 			StartCoroutine(WaitAnimation(target, damage));
 		}
 	}
@@ -234,7 +234,7 @@ public class PlayerController : ObjectController
     public IEnumerator PlayResurrect()
     {
         yield return new WaitForSeconds(2f);
-        anim.SetTrigger("isResurrect");
+        GetAnimator().SetTrigger("isResurrect");
     }
 
     public GameObject PlayerTile

@@ -56,15 +56,15 @@ public class EnemyController : ObjectController {
 
     private void Update()
     {
-        if(anim)
+        if(GetAnimator())
         {
             if (GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
             {
-                anim.SetBool("isWalking", false);
+                GetAnimator().SetBool("isWalking", false);
             }
             else
             {
-                anim.SetBool("isWalking", true);
+                GetAnimator().SetBool("isWalking", true);
             }
         }
 
@@ -334,7 +334,7 @@ public class EnemyController : ObjectController {
 
     public void StartFightAnimation()
     {
-        anim.SetBool("isFighting", true);
+        GetAnimator().SetBool("isFighting", true);
     }
 
 	public void PhysicAttack(GameObject target, string animationName ,int damage)
@@ -353,7 +353,7 @@ public class EnemyController : ObjectController {
                 rotate = true;
             }
 
-            anim.SetTrigger(animationName);
+            GetAnimator().SetTrigger(animationName);
 
             StartCoroutine(WaitAnimation(target, damage));
         }
@@ -372,7 +372,7 @@ public class EnemyController : ObjectController {
             {
                 transform.eulerAngles = new Vector3(0f, 180f);
             }
-            anim.SetTrigger(animationName);
+            GetAnimator().SetTrigger(animationName);
             StartCoroutine(WaitAnimation(target, damage));
         }
     }
@@ -390,7 +390,7 @@ public class EnemyController : ObjectController {
             {
                 transform.eulerAngles = new Vector3(0f, 180f);
             }
-            anim.SetTrigger(animationName);
+            GetAnimator().SetTrigger(animationName);
             StartCoroutine(WaitAnimation(target, damage));
         }
     }

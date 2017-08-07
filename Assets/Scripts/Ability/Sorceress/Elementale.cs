@@ -47,9 +47,11 @@ public class Elementale : Ability {
 
 	public override void UsaAbilita()
 	{
-		
+        GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(true);
+        GetComponent<PlayerController>().StartFightAnimation();
 
-		GetComponent<PlayerController> ().constitution += 2; 
+        GetComponent<PlayerController> ().constitution += 2; 
 		GetComponent<PlayerController> ().mind += 5;
 		GetComponent<PlayerController> ().CalculateStatistics ();
 
@@ -79,7 +81,9 @@ public class Elementale : Ability {
 		controller.mind = currentMind;
 		controller.constitution = currentConstitution;
 		controller.CalculateStatistics ();
-	}
+        GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(false);
+    }
 
 
 }
