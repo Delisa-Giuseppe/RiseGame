@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PassoDiOmbra : Ability {
 
@@ -10,6 +11,7 @@ public class PassoDiOmbra : Ability {
 	void Start () 
 	{
         this.abilityName = "PassoDiOmbra";
+        this.abilityDescription = "Il ladro si può teletrasportare in un range di 3 caselle. L’abilità non è considerata azione di movimento";
         //this.abilityType = AbilityType.TELETRASPORTO;
         this.damage = 0;
 		this.cure = 0;
@@ -22,7 +24,16 @@ public class PassoDiOmbra : Ability {
             AttivaAbilita(SelectType.ROMBO);
             activedAbility = this.abilityName;
         });
-	}
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
+    }
 
 	public override void UsaAbilita()
 	{
@@ -48,4 +59,5 @@ public class PassoDiOmbra : Ability {
 			StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 		}
 	}
+
 }

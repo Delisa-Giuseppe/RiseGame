@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class AttaccoRotante : Ability {
 
@@ -10,6 +10,7 @@ public class AttaccoRotante : Ability {
 	void Start () 
 	{
 		this.abilityName = "AttaccoRotante";
+        this.abilityDescription = "Colpisce tutti i nemici entro 1 casella dal guerriero e li stordisce per 1 turno";
         activedAbility = this.abilityName;
         this.damage = GetComponent<PlayerController>().physicAttack / 100f * 50f;
 		this.cure = (5f + GetComponent<PlayerController>().magicAttack / 100f * 20f) * 4;
@@ -25,7 +26,16 @@ public class AttaccoRotante : Ability {
             AttivaAbilita(SelectType.QUADRATO);
 			StartCoroutine (SelectPlayers (1.5f));
         });
-	}
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
+    }
 
 	IEnumerator SelectPlayers(float delay)
 	{

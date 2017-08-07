@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Elementale : Ability {
 
@@ -13,7 +14,8 @@ public class Elementale : Ability {
 	void Start ()
 	{
 		abilityName = "Elementale";
-		currentMind = GetComponent<PlayerController> ().mind; 
+        this.abilityDescription = "La maga scatena il proprio potere per 3 Turni, guadagnando 5 punti intelligenza e 2 punti costituzione";
+        currentMind = GetComponent<PlayerController> ().mind; 
 		currentConstitution = GetComponent<PlayerController> ().constitution; 
 		this.damage = 0;
 		this.cure = 0;
@@ -32,7 +34,16 @@ public class Elementale : Ability {
 
 
 		});
-	}
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
+    }
 
 	public override void UsaAbilita()
 	{

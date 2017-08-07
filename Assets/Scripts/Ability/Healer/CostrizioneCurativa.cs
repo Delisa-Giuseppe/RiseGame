@@ -3,13 +3,15 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class CostrizioneCurativa : Ability {
 
     // Use this for initialization
     void Start () 
 	{
-        abilityName = "CostrizioneCurativa";
+        this.abilityName = "CostrizioneCurativa";
+        this.abilityDescription = " Risucchia vita di un singolo nemico per 50% Att.Magico, poi cura se stesso o un compagno";
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.tileRange = 2;
@@ -21,8 +23,17 @@ public class CostrizioneCurativa : Ability {
 			AttivaAbilita (SelectType.ROMBO);
             activedAbility = this.abilityName;
         });
-		
-	}
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
+
+    }
 
     public override void UsaAbilita()
     {
