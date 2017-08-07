@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Devozione : Ability {
 
@@ -10,6 +11,7 @@ public class Devozione : Ability {
 	void Start () 
 	{
         abilityName = "Devozione";
+        this.abilityDescription = "Seleziona un compagno singolo e lo riporta in vita, restituendo in punti vita il 100% del proprio Att.Magico";
         this.damage = GetComponent<PlayerController>().magicAttack;
 		this.cure = 0;
 		this.tileRange = 1;
@@ -22,6 +24,15 @@ public class Devozione : Ability {
 			StartCoroutine (SelectPlayers(1f));
             activedAbility = this.abilityName;
         });
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
     }
 
 	public override void UsaAbilita()
@@ -78,6 +89,5 @@ public class Devozione : Ability {
 			player.GetComponent<PlayerController>().PlayerTile.GetComponent<SpriteRenderer>().color = Color.green;
 		}
 	}
-
 
 }

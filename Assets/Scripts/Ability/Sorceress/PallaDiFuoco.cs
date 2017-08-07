@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PallaDiFuoco : Ability {
 
@@ -10,8 +11,9 @@ public class PallaDiFuoco : Ability {
 	void Start () 
 	{
         this.abilityType = AbilityType.SINGOLO;
-        abilityName = "PallaDiFuoco";
-		this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
+        this.abilityName = "PallaDiFuoco";
+        this.abilityDescription = "Colpisce tutti i nemici entro 1 casella dal guerriero e li stordisce per 1 turno";
+        this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
 		this.cure = 0;
 		this.tileRange = 7;
 		this.cooldown = 1;
@@ -22,6 +24,15 @@ public class PallaDiFuoco : Ability {
 			AttivaAbilita (SelectType.CROCE);
             activedAbility = this.abilityName;
         });
-	}
+        EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback.AddListener((data) => { OnPointerEnterDelegate((PointerEventData)data); });
+        trigger.triggers.Add(entry);
+        EventTrigger.Entry exit = new EventTrigger.Entry();
+        exit.eventID = EventTriggerType.PointerExit;
+        exit.callback.AddListener((data) => { OnPointerExitDelegate((PointerEventData)data); });
+        trigger.triggers.Add(exit);
+    }
 
 }

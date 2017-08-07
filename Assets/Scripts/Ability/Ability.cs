@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Ability : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class Ability : MonoBehaviour
 	public static bool isRunning = false;
 
     public string abilityName;
+    public string abilityDescription;
     public float damage;
     public float cure;
     public int tileRange;
@@ -45,6 +47,7 @@ public class Ability : MonoBehaviour
     {
         UI = GameObject.Find("UI");
         abilityName = "";
+        abilityDescription = "";
         damage = 0;
         cure = 0;
         tileRange = 0;
@@ -337,12 +340,22 @@ public class Ability : MonoBehaviour
 	}
 
     // DEBUG FUNCTION TO REMOVE
-//    public static void PrintCooldownList()
-//    {
-//        for (int i = 0; i < cooldownList.Count; i++)
-//        {
-//            print(cooldownList[i].abilityName+" "+ cooldownList[i].countCooldown);
-//        }
-//
-//    }
+    //    public static void PrintCooldownList()
+    //    {
+    //        for (int i = 0; i < cooldownList.Count; i++)
+    //        {
+    //            print(cooldownList[i].abilityName+" "+ cooldownList[i].countCooldown);
+    //        }
+    //
+    //    }
+
+    public void OnPointerEnterDelegate(PointerEventData data)
+    {
+        print(this.abilityName);
+    }
+
+    public void OnPointerExitDelegate(PointerEventData data)
+    {
+        print("Gesu");
+    }
 }
