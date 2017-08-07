@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Anima2D;
+using System;
 
 
 
@@ -19,7 +20,12 @@ public class EnemyController : ObjectController {
     private static Vector2[] bossPoint;
     public bool canAttack;
     public bool canMagicAttack;
+
+
 	public bool stunned = false;
+    public int countStunned;
+    public static List<GameObject> listEnemyStunned;
+
     public List<GameObject> playerAttacked;
     public static List<GameObject> tilesAttackable;
     public EnemyType enemyBehaviour;
@@ -35,6 +41,9 @@ public class EnemyController : ObjectController {
 
     private void Start()
     {
+        countStunned = 0;
+        listEnemyStunned = new List<GameObject>();
+
         bossPoint = new Vector2[] {
             new Vector2(-1.64f, 1.74f),
             new Vector2(-1.64f, -0.58f),
@@ -88,7 +97,22 @@ public class EnemyController : ObjectController {
         {
             for (int i = 0; i < players.Count; i++)
             {
-                if (closerDistance != 0)
+                bool contains = false;
+                if (players[i].name == "Thief(Clone)")
+                {
+                    
+                    if (Ability.turnDurationList.Count > 0)
+                    {
+                        foreach (Ability ability in Ability.turnDurationList)
+                        {
+                            if (ability.abilityName == "RitornoPlanare")
+                            {
+                                contains = true;
+                            }
+                        }
+                    }
+                }
+                if (closerDistance != 0 && !contains)
                 {
                     if (closerDistance > Vector2.Distance(transform.position, players[i].transform.position))
                     {
@@ -96,7 +120,7 @@ public class EnemyController : ObjectController {
                         closerPlayer = players[i];
                     }
                 }
-                else
+                else if(!contains)
                 {
                     closerDistance = Vector2.Distance(transform.position, players[i].transform.position);
                     closerPlayer = players[i];
@@ -111,8 +135,9 @@ public class EnemyController : ObjectController {
                 if ((enemyBehaviour == EnemyType.RANGED) ||
                     (enemyBehaviour == EnemyType.MELEE && Vector2.Distance(transform.position, closerPlayer.transform.position) < 1.5f))
                 {
-                    canAttack = true;
-                    playerAttacked.Add(closerPlayer);
+                        canAttack = true;
+                        playerAttacked.Add(closerPlayer);
+                
                 }
                 else if (enemyBehaviour == EnemyType.BOSS)
                 {
@@ -367,6 +392,39 @@ public class EnemyController : ObjectController {
             }
             anim.SetTrigger(animationName);
             StartCoroutine(WaitAnimation(target, damage));
+        }
+    }
+
+    public static void CheckEnemyStunned()
+    {
+        if(listEnemyStunned.Count > 0)
+        {
+            GameObject[] list = new GameObject[listEnemyStunned.Count];
+            for (int i = 0; i < listEnemyStunned.Count; i++)
+            {
+                EnemyController controller = listEnemyStunned[i].GetComponent<EnemyController>();
+                controller.countStunned--;
+
+                if (controller.countStunned <= 0)
+                {
+                    controller.stunned = false;
+                    controller.countStunned = 0;
+                    list[i] = listEnemyStunned[i];
+                }
+            }
+            foreach(GameObject enemy in list)
+            {
+                listEnemyStunned.Remove(enemy);
+            }
+        }
+    }
+
+    public void AddEnemyStunned()
+    {
+        this.countStunned++;
+        if(!listEnemyStunned.Contains(this.gameObject))
+        {
+            listEnemyStunned.Add(this.gameObject);
         }
     }
 

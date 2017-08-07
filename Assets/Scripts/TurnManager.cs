@@ -83,13 +83,22 @@ public class TurnManager : MonoBehaviour {
             currentTurn = 0;
             Ability.CheckTurnDurationList();
             Ability.CheckCooldownList();
+            EnemyController.CheckEnemyStunned();
         }
+
         //UI.GetComponent<UIManager>().ResetColor();
         if (currentObjectTurn && currentObjectTurn.tag == "Player")
         {
             UI.GetComponent<UIManager>().HidePlayerUI(currentObjectTurn);
         }
         currentObjectTurn = turns[currentTurn];
+
+        if(currentObjectTurn.tag == "Enemy" && currentObjectTurn.GetComponent<EnemyController>().stunned)
+        {
+            currentTurn++;
+            GetNextTurn();
+        }
+
         if(currentObjectTurn && currentObjectTurn.name == "Dragon")
         {
             EnemyController.ResetBossGrid();
