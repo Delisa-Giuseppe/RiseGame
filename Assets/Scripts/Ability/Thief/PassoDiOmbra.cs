@@ -22,6 +22,7 @@ public class PassoDiOmbra : Ability {
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
         buttonPlayerUI.onClick.AddListener(delegate {
             AttivaAbilita(SelectType.ROMBO);
+            GetComponent<PlayerController>().SetTransparency();
             activedAbility = this.abilityName;
         });
         EventTrigger trigger = buttonPlayerUI.GetComponent<EventTrigger>();
@@ -41,8 +42,9 @@ public class PassoDiOmbra : Ability {
 		RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 		if (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected
 			&& !hit.collider.GetComponent<Tile>().isEnemy && !hit.collider.GetComponent<Tile>().isPlayer) {
-			//playerTarget.transform.position = hit.collider.gameObject.transform.position;
-			GetComponent<AILerp>().enabled = false;
+            GetComponent<PlayerController>().Disappear();
+            //playerTarget.transform.position = hit.collider.gameObject.transform.position;
+            GetComponent<AILerp>().enabled = false;
 			this.gameObject.transform.position = hit.collider.gameObject.transform.position;
 
 			GetComponent<PlayerController>().PlayerTile = hit.collider.gameObject;
@@ -52,12 +54,25 @@ public class PassoDiOmbra : Ability {
 			GetComponent<AILerp> ().targetReached = true;
 			GetComponent<AILerp> ().enabled = true;
 
+            StartCoroutine(AppearTransparent(.5f));
 
-			AddAbilityToCooldownList(this);
+            AddAbilityToCooldownList(this);
 
 
 			StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
 		}
 	}
 
+    IEnumerator AppearTransparent(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GetComponent<PlayerController>().SetTransparency();
+        StartCoroutine(Appear(.5f));
+    }
+
+    IEnumerator Appear(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        GetComponent<PlayerController>().DeleteTransparency();
+    }
 }

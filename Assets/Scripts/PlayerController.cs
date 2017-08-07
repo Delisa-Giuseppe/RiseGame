@@ -122,6 +122,7 @@ public class PlayerController : ObjectController
 				if(target.transform.position.y == transform.position.y && target.transform.eulerAngles == transform.eulerAngles)
 				{
 					damage = (int)(physicAttack / 100f * 150f) ;
+                    animationName = "backstab";
 				}
 				else 
 				{
@@ -259,6 +260,30 @@ public class PlayerController : ObjectController
             }
 
             playerTile = value;
+        }
+    }
+
+    public void SetTransparency()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = new Color(1f, 1f, 1f, .5f);
+        }
+    }
+
+    public void DeleteTransparency()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = new Color(1f, 1f, 1f, 1f);
+        }
+    }
+
+    public void Disappear()
+    {
+        foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
+        {
+            mesh.color = Color.clear;
         }
     }
 
