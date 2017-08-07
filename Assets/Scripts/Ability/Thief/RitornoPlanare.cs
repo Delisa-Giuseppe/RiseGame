@@ -68,7 +68,7 @@ public class RitornoPlanare : Ability {
         GetComponent<PlayerController>().DeleteTransparency();
         AddAbilityToCooldownList (this);
 		countTurnDuration = turnDuration;
-		turnDurationList.Remove(this);
+		//turnDurationList.Remove(this);
 		PlayerController controller = GetComponent <PlayerController> ();
 		controller.moves = currentMoves;
 		controller.CalculateStatistics ();

@@ -87,7 +87,7 @@ public class Elementale : Ability {
 	{
 		AddAbilityToCooldownList (this);
 		countTurnDuration = turnDuration;
-		turnDurationList.Remove(this);
+		//turnDurationList.Remove(this);
 		PlayerController controller = GetComponent <PlayerController> ();
 		controller.mind = currentMind;
 		controller.constitution = currentConstitution;
