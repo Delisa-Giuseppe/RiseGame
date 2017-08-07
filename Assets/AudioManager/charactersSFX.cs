@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class charactersSFX : MonoBehaviour {
+public class CharactersSFX : MonoBehaviour {
 	[Header("Effetti Sonori dei personaggi")]
 	[Space]
 	[Tooltip ("Questi audio possono essere usate nelle battaglie per i personaggi e per i nemici")]
@@ -22,49 +22,43 @@ public class charactersSFX : MonoBehaviour {
 	
 	public void PlayHitMelee()
     {
-        if (!music.isPlaying)
-        {
-            music.PlayOneShot(hit1, 0.8f);
-        }
+        music.PlayOneShot(hit1, 0.8f);    
     }
 
     public void PlayHitRanged()
     {
-        if (!music.isPlaying)
-        {
+  
             music.PlayOneShot(hit2, 0.8f);
-        }
+        
     }
 
     public void PlayHealing()
     {
-        if (!music.isPlaying)
-        {
+  
             music.PlayOneShot(healing, 0.8f);
-        }
+        
     }
 
     public void PlayWarp()
     {
-        if (!music.isPlaying)
-        {
+
             music.PlayOneShot(warp, 0.8f);
-        }
+        
     }
 
     public void PlaySpell()
     {
-        if (!music.isPlaying)
-        {
+
             music.PlayOneShot(spell, 0.8f);
-        }
+        
     }
 
     public void PlayFootstep()
     {
         if(!music.isPlaying)
         {
-            music.PlayOneShot(footstep, 0.8f);
+            music.clip = footstep;
+            music.Play();
         }
     }
 

@@ -355,15 +355,6 @@ public class EnemyController : ObjectController {
 
             GetAnimator().SetTrigger(animationName);
 
-            if (enemyBehaviour == EnemyController.EnemyType.MELEE)
-            {
-                SFXManager.GetComponent<charactersSFX>().PlayHitMelee();
-            }
-            else if (enemyBehaviour == EnemyController.EnemyType.RANGED)
-            {
-                SFXManager.GetComponent<charactersSFX>().PlayHitRanged();
-            }
-
             StartCoroutine(WaitAnimation(target, damage));
         }
     }

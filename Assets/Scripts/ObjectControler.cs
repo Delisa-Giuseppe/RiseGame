@@ -28,6 +28,7 @@ public class ObjectController : MonoBehaviour {
 
     protected GameObject UI;
     protected GameObject SFXManager;
+    public List<AudioClip> clipAudio;
 
     private void Awake()
     {

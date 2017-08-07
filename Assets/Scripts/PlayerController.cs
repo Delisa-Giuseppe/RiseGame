@@ -35,12 +35,17 @@ public class PlayerController : ObjectController
             if (GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
             {
                 GetAnimator().SetBool("isWalking", false);
-                SFXManager.GetComponent<charactersSFX>().StopMusic();
+                //GetComponent<AudioSource>().Stop();
             }
             else
             {
                 GetAnimator().SetBool("isWalking", true);
-                SFXManager.GetComponent<charactersSFX>().PlayFootstep();
+                GetComponent<AudioSource>().clip = clipAudio[0];
+                if(!GetComponent<AudioSource>().isPlaying)
+                {
+                    GetComponent<AudioSource>().volume = 0.5f;
+                    GetComponent<AudioSource>().Play();
+                }
             }
         }
         
@@ -127,7 +132,8 @@ public class PlayerController : ObjectController
 
 			if(name == "Thief(Clone)")
 			{
-				if(target.transform.position.y == transform.position.y && target.transform.eulerAngles == transform.eulerAngles)
+                
+                if (target.transform.position.y == transform.position.y && target.transform.eulerAngles == transform.eulerAngles)
 				{
 					damage = (int)(physicAttack / 100f * 150f) ;
                     animationName = "backstab";
@@ -153,16 +159,7 @@ public class PlayerController : ObjectController
                 }
                
             }
-
-            if (playerBehaviour == PlayerType.MELEE)
-            {
-                SFXManager.GetComponent<charactersSFX>().PlayHitMelee();
-            }
-            else if (playerBehaviour == PlayerType.RANGED)
-            {
-                SFXManager.GetComponent<charactersSFX>().PlaySpell();
-            }
-
+            
             GetAnimator().SetTrigger(animationName);
 
 			StartCoroutine(WaitAnimation(target, damage));
@@ -210,6 +207,9 @@ public class PlayerController : ObjectController
 	IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(0.6f);
+
+        GetComponent<AudioSource>().clip = clipAudio[1];
+        GetComponent<AudioSource>().Play();
 
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {
