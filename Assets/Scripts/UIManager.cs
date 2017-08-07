@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour {
     public GameObject turnUIBar;
     public GameObject turnUI;
     public GameObject healthTurn;
+    public GameObject healthTurnText;
 
     public Sprite borderSelected;
     public Sprite borderEmpty;
@@ -30,7 +31,15 @@ public class UIManager : MonoBehaviour {
 
     private void Update()
     {
-        //SetTextHealth();
+        if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player")
+        {
+            int totalHealth = TurnManager.currentObjectTurn.GetComponent<ObjectController>().totalHealth;
+            int currentHealth = TurnManager.currentObjectTurn.GetComponent<ObjectController>().currentHealth;
+            float barHealth = (float)currentHealth / totalHealth;
+
+            healthTurn.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthTurn.transform.localScale.y, healthTurn.transform.localScale.z);
+            healthTurnText.GetComponent<TextMeshProUGUI>().SetText(currentHealth.ToString() + "/" + totalHealth.ToString() + " HP");
+        }
     }
 
     public void ShowPopupDamage(int damage, Transform location)
@@ -51,6 +60,8 @@ public class UIManager : MonoBehaviour {
     {
         player.GetComponent<PlayerController>().playerUI.SetActive(true);
         player.GetComponent<PlayerController>().iconUI.SetActive(true);
+        healthTurn.gameObject.SetActive(true);
+        healthTurnText.gameObject.SetActive(true);
     }
 
     /**
@@ -62,6 +73,8 @@ public class UIManager : MonoBehaviour {
     {
         player.GetComponent<PlayerController>().playerUI.SetActive(false);
         player.GetComponent<PlayerController>().iconUI.SetActive(false);
+        healthTurn.gameObject.SetActive(false);
+        healthTurnText.gameObject.SetActive(false);
     }
 
     public void SetChangeTurnText(string text)
@@ -89,8 +102,6 @@ public class UIManager : MonoBehaviour {
         GameObject healthBar = playersTurns[playerNumber].transform.GetChild(1).GetChild(1).gameObject;
         healthBar.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
 
-        healthTurn.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthBar.transform.localScale.y, healthBar.transform.localScale.z);
-        healthTurn.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(currentHealth.ToString()+"/"+totalHealth.ToString()+" HP");
     }
 
     //public void SetTextHealth()
@@ -244,6 +255,9 @@ public class UIManager : MonoBehaviour {
         for(int i=0; i<TileManager.playerInstance.Count;i++)
         {
             playersTurns[i].transform.GetChild(0).GetComponent<Image>().sprite = TileManager.playerInstance[i].GetComponent<ObjectController>().iconObject;
+            int totalHealth = TileManager.playerInstance[i].GetComponent<ObjectController>().totalHealth;
+            int currentHealth = TileManager.playerInstance[i].GetComponent<ObjectController>().currentHealth;
+            healthTurnText.GetComponent<TextMeshProUGUI>().SetText(currentHealth.ToString() + "/" + totalHealth.ToString() + " HP");
         }
     }
 
