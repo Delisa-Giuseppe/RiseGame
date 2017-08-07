@@ -47,9 +47,8 @@ public class Elementale : Ability {
 
 	public override void UsaAbilita()
 	{
-        GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(true);
-        GetComponent<PlayerController>().StartFightAnimation();
+        GameObject transformMage = Instantiate(GetComponent<PlayerController>().transformMage, GetComponent<PlayerController>().transform);
+        StartCoroutine(TransformMage(transformMage));
 
         GetComponent<PlayerController> ().constitution += 2; 
 		GetComponent<PlayerController> ().mind += 5;
@@ -72,6 +71,15 @@ public class Elementale : Ability {
 
 		UsaAbilita ();
 	}
+
+    IEnumerator TransformMage(GameObject transformMage)
+    {
+        GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        yield return new WaitForSeconds(2f);
+        Destroy(transformMage);
+        GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(true);
+        GetComponent<PlayerController>().StartFightAnimation();
+    }
 
 	public override void ResettaValori()
 	{
