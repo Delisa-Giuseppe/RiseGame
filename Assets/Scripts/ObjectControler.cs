@@ -82,10 +82,6 @@ public class ObjectController : MonoBehaviour {
         {
             cure = controller.totalHealth - controller.currentHealth;
         }
-        if (Ability.activedAbility == "Devozione")
-        {
-            cure = controller.totalHealth / 2;
-        }
         UI.GetComponent<UIManager>().ShowPopupDamage(cure, target.transform);
         target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth + cure;
         UI.GetComponent<UIManager>().SetPlayerHealthBar(target);

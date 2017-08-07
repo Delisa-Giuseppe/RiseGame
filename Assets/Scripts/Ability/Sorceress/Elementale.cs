@@ -14,7 +14,7 @@ public class Elementale : Ability {
 	void Start ()
 	{
 		abilityName = "Elementale";
-        this.abilityDescription = "La maga scatena il proprio potere per 3 Turni, guadagnando 5 punti intelligenza e 2 punti costituzione";
+        this.realName = "Elemental Power";
         currentMind = GetComponent<PlayerController> ().mind; 
 		currentConstitution = GetComponent<PlayerController> ().constitution; 
 		this.damage = 0;
@@ -24,8 +24,9 @@ public class Elementale : Ability {
 		countCooldown = this.cooldown;
 		this.turnDuration = 3;
 		countTurnDuration = this.turnDuration;
+        this.abilityDescription = "The Mage unleashes her inner fire, gaining 5 Intelligence and 2 Constitution for 3 turns";
 
-		playerUI = GetComponent<PlayerController>().playerUI;
+        playerUI = GetComponent<PlayerController>().playerUI;
 		buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
 		buttonPlayerUI.onClick.AddListener(delegate {
 			TileManager.ResetGrid ();

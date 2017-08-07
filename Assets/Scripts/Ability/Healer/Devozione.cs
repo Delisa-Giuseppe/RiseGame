@@ -11,12 +11,14 @@ public class Devozione : Ability {
 	void Start () 
 	{
         abilityName = "Devozione";
-        this.abilityDescription = "Seleziona un compagno singolo e lo riporta in vita, restituendo in punti vita il 100% del proprio Att.Magico";
+        this.realName = "Devotion";
         this.damage = GetComponent<PlayerController>().magicAttack;
 		this.cure = 0;
 		this.tileRange = 1;
 		this.cooldown = 5;
         countCooldown = this.cooldown;
+        this.abilityDescription = "The Cleric selects a fallen ally and resurrects him with "+this.damage+" hps";
+
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
         buttonPlayerUI.onClick.AddListener(delegate {

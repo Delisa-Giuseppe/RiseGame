@@ -11,7 +11,8 @@ public class PassoDiOmbra : Ability {
 	void Start () 
 	{
         this.abilityName = "PassoDiOmbra";
-        this.abilityDescription = "Il ladro si può teletrasportare in un range di 3 caselle. L’abilità non è considerata azione di movimento";
+        this.realName = "Shadow Step";
+        this.abilityDescription = "The Assassin can teleport 3 tiles away from his position. This ability is not considered a movement action";
         //this.abilityType = AbilityType.TELETRASPORTO;
         this.damage = 0;
 		this.cure = 0;

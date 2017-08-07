@@ -10,13 +10,15 @@ public class AttaccoRotante : Ability {
 	void Start () 
 	{
 		this.abilityName = "AttaccoRotante";
-        this.abilityDescription = "Colpisce tutti i nemici entro 1 casella dal guerriero e li stordisce per 1 turno";
+        this.realName = "Stomp";
+        
         activedAbility = this.abilityName;
         this.damage = GetComponent<PlayerController>().physicAttack / 100f * 50f;
 		this.cure = (5f + GetComponent<PlayerController>().magicAttack / 100f * 20f) * 4;
 		this.tileRange = 2;
 		this.cooldown = 4;
 		countCooldown = this.cooldown;
+        this.abilityDescription = "The Warrior stomps the ground around him, dealing "+this.damage+" and stunning enemies hit for 1 turn";
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[1];
         buttonPlayerUI.onClick.AddListener(delegate
