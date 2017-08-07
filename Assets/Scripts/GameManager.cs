@@ -84,8 +84,8 @@ public class GameManager : MonoBehaviour {
                 return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
             });
             EnemyController.listEnemyStunned.Clear();
-            Ability.ResetTurnDuration();
-            Ability.ResetCooldown();
+            Ability.turnDurationList.Clear();
+            Ability.cooldownList.Clear();
             skipButton.interactable = false;
 
             StartCoroutine(Wait());
