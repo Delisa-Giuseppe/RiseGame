@@ -55,8 +55,9 @@ public class Devozione : Ability {
 			{
 				
 				playerTarget.GetComponent<PlayerController> ().ResurrectPlayer ();
+                playerTarget.GetComponentInChildren<Animator>().SetTrigger("isFighting");
 
-				TileManager.playerDead.Remove (playerTarget);
+                TileManager.playerDead.Remove (playerTarget);
 				TurnManager.turns.Add (playerTarget);
 
                 foreach (GameObject player in TileManager.playerInstance)
@@ -67,7 +68,7 @@ public class Devozione : Ability {
                     return (a.GetComponent<PlayerController>().playerNumber).CompareTo(b.GetComponent<PlayerController>().playerNumber);
                 });
 
-                GetComponent<PlayerController>().PhysicAttack(playerTarget, "attack", -playerTarget.GetComponent<PlayerController>().totalHealth / 2);
+                GetComponent<PlayerController>().PhysicAttack(playerTarget, "resurrect", 0);
 
 				AddAbilityToCooldownList(this);
 
