@@ -331,7 +331,7 @@ public class Ability : MonoBehaviour
 
 	public static void ResetCooldown()
 	{
-        if(cooldownList.Count > 0)
+        if(cooldownList != null && cooldownList.Count > 0)
         {
             for (int i = 0; i < cooldownList.Count; i++)
             {
@@ -347,7 +347,7 @@ public class Ability : MonoBehaviour
 
 	public static void ResetTurnDuration()
 	{
-        if(turnDurationList.Count > 0)
+        if(turnDurationList != null && turnDurationList.Count > 0)
         {
             for (int i = 0; i < turnDurationList.Count; i++)
             {

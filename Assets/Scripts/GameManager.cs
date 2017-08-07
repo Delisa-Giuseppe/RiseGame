@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour {
             tileManager.HideGrid();
 
 			bottomUI.GetComponent<Image> ().color = new Color (bottomUI.GetComponent<Image> ().color.r, 
-				bottomUI.GetComponent<Image> ().color.b, bottomUI.GetComponent<Image> ().color.g, 0f);
+		bottomUI.GetComponent<Image> ().color.b, bottomUI.GetComponent<Image> ().color.g, 0f);
 			for(int i = 0; i < bottomUI.transform.childCount; i++)
 			{
 				bottomUI.transform.GetChild(i).gameObject.SetActive (false);
@@ -86,9 +86,9 @@ public class GameManager : MonoBehaviour {
             EnemyController.listEnemyStunned.Clear();
             Ability.ResetTurnDuration();
             Ability.ResetCooldown();
-            GameManager.currentState = GameManager.States.EXPLORATION;
             skipButton.interactable = false;
-            
+
+            StartCoroutine(Wait());
         }
 
         if (currentState == States.SELECT)
@@ -270,6 +270,12 @@ public class GameManager : MonoBehaviour {
             transitionLevel.SetActive(true);
             StartCoroutine(CreateLevel());
         }
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(2f);
+        GameManager.currentState = GameManager.States.EXPLORATION;
     }
 
     IEnumerator CreateLevel()
