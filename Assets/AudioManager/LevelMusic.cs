@@ -24,8 +24,10 @@ public class LevelMusic : MonoBehaviour {
 	public AudioClip gameOver;
 
 	static LevelMusic instance=null;
-	private AudioSource music;
-    private AudioSource currentMusic;
+	public AudioSource main;
+    public AudioSource second;
+    private AudioClip currentMusic;
+    private bool isPlay = true;
 
 	void Awake ()
 	{
@@ -35,7 +37,6 @@ public class LevelMusic : MonoBehaviour {
 
 			instance = this;
 			GameObject.DontDestroyOnLoad (gameObject);
-			music = GetComponent<AudioSource> ();
 			SceneManager.sceneLoaded += OnSceneLoaded;
 		}
     }
@@ -50,67 +51,91 @@ public class LevelMusic : MonoBehaviour {
 		} else {
 			instance = this; 
 			GameObject.DontDestroyOnLoad (gameObject);
-			music = GetComponent<AudioSource> ();
-			music.clip = menu;
-			music.loop = true;
-			music.Play ();
+			main.clip = menu;
+			main.Play ();
 		}
-	}
+    }
 	// Aggiungere il nome o l'index della scena
 	void OnSceneLoaded (Scene scene, LoadSceneMode loadscenemode){
         //music.Stop ();
         if (scene.buildIndex == 1) {
-            music.clip = menu;
+            main.clip = menu;
         }
         if (scene.buildIndex == 2) {
-            music.clip = credits;
+            main.clip = credits;
         }
         if (scene.buildIndex == 3) {
-            music.clip = forest;
+            main.clip = forest;
         }
 	    if (scene.buildIndex == 4) {
-		    music.clip = desert;
+            main.clip = desert;
 	    }
 	    if (scene.buildIndex == 5) {
-		    music.clip = iceLand;
+            main.clip = iceLand;
 	    }
 	    if (scene.buildIndex == 6) {
-		    music.clip = swamp;
+            main.clip = swamp;
 	    }
 	    if (scene.buildIndex == 7) {
-		    music.clip = castel;
+            main.clip = castel;
 	    }
 	    if (scene.buildIndex == 8) {
-		    music.clip = levelUp;
-	    }
+            main.clip = levelUp;
+            main.loop = false;
+        }
 
-        music.loop=true;
-        StartCoroutine(FadeIn(music, 1f));
+        if (scene.buildIndex != 8)
+        {
+            main.loop = true;
+        }
+
+        StartCoroutine(FadeIn(main, 1f));
     }
 
     private void Update()
-    {
-        if(GameManager.currentState == GameManager.States.ENGAGE_ENEMY)
+    {   
+        if (GameManager.currentState == GameManager.States.ENGAGE_ENEMY)
         {
-            currentMusic = music;
-            StartCoroutine(FadeOutIn(music, 0.5f, enemyFight));
+            main.Pause();
+            if(PlayerController.enemyEngaged == "EnemyGroup")
+            {
+                StartCoroutine(FadeOutIn(second, 1f, enemyFight));
+            }
+            else if(PlayerController.enemyEngaged == "Nemesy")
+            {
+                StartCoroutine(FadeOutIn(second, 1f, nemesi));
+            }
+            else if(PlayerController.enemyEngaged == "Boss")
+            {
+                StartCoroutine(FadeOutIn(second, 1f, bossFight));
+            }
+            isPlay = false;
         }
-        else
+        else if (GameManager.currentState == GameManager.States.GAME_OVER)
         {
-            music = currentMusic;
-            StartCoroutine(FadeOutIn(music, 0.5f, enemyFight));
+            main.Pause();
+            isPlay = false;
+            StartCoroutine(FadeOutIn(second, 1f, gameOver));
+        }
+        else if (GameManager.currentState == GameManager.States.EXPLORATION && !isPlay)
+        {
+            second.Pause();
+            StartCoroutine(FadeIn(main, 1f));
+            isPlay = true;
         }
     }
 
     public IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
     {
-
         float startVolume = 0.2f;
 
         audioSource.volume = 0;
-        audioSource.Play();
+        if(!audioSource.isPlaying)
+        {
+            audioSource.Play();
+        }
 
-        while (audioSource.volume < 1.0f)
+        while (audioSource && audioSource.volume < 1.0f)
         {
             audioSource.volume += startVolume * Time.deltaTime / FadeTime;
 
@@ -124,7 +149,7 @@ public class LevelMusic : MonoBehaviour {
     {
         float startVolume = 1f;
 
-        while (audioSource.volume > 0f)
+        while (audioSource && audioSource.volume > 0f)
         {
             audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
 
@@ -132,10 +157,9 @@ public class LevelMusic : MonoBehaviour {
         }
 
         audioSource.volume = 0f;
+        second.clip = newClip;
 
-        music.clip = newClip;
-
-        StartCoroutine(FadeIn(music, 0.5f));
+        StartCoroutine(FadeIn(second, 0.5f));
     }
 
 }

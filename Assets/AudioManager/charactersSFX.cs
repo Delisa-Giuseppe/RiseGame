@@ -20,16 +20,57 @@ public class charactersSFX : MonoBehaviour {
         music = GetComponent<AudioSource>();
 	}
 	
-	void Update () {
-        music.clip = footstep;
-        StartCoroutine(FadeIn(music, 1f));
-	}
+	public void PlayHitMelee()
+    {
+        if (!music.isPlaying)
+        {
+            music.PlayOneShot(hit1, 0.8f);
+        }
+    }
+
+    public void PlayHitRanged()
+    {
+        if (!music.isPlaying)
+        {
+            music.PlayOneShot(hit2, 0.8f);
+        }
+    }
+
+    public void PlayHealing()
+    {
+        if (!music.isPlaying)
+        {
+            music.PlayOneShot(healing, 0.8f);
+        }
+    }
+
+    public void PlayWarp()
+    {
+        if (!music.isPlaying)
+        {
+            music.PlayOneShot(warp, 0.8f);
+        }
+    }
+
+    public void PlaySpell()
+    {
+        if (!music.isPlaying)
+        {
+            music.PlayOneShot(spell, 0.8f);
+        }
+    }
 
     public void PlayFootstep()
     {
-        music.clip = footstep;
-        music.Play();
-        //StartCoroutine(FadeIn(music, 1f));
+        if(!music.isPlaying)
+        {
+            music.PlayOneShot(footstep, 0.8f);
+        }
+    }
+
+    public void StopMusic()
+    {
+        music.Stop();
     }
 
     public IEnumerator FadeIn(AudioSource audioSource, float FadeTime)

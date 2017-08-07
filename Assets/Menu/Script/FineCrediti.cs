@@ -7,6 +7,7 @@ using System;
 public class FineCrediti : MonoBehaviour {
     public float Time = 2.0f;
     public bool timer = true;
+	public int sceneIndex = 1;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +20,6 @@ public class FineCrediti : MonoBehaviour {
 	}
 
     void cambiaScena() {
-        SceneManager.LoadScene(0);
+		SceneManager.LoadScene(sceneIndex);
     }
 }

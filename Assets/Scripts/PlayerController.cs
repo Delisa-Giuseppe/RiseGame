@@ -16,6 +16,7 @@ public class PlayerController : ObjectController
     public int originalPlayerNumber;
     public GameObject fireBall;
     public GameObject transformMage;
+    public static string enemyEngaged;
 
     public enum PlayerType
     {
@@ -34,11 +35,12 @@ public class PlayerController : ObjectController
             if (GetComponent<AILerp>().target == null || GetComponent<AILerp>().targetReached)
             {
                 GetAnimator().SetBool("isWalking", false);
+                SFXManager.GetComponent<charactersSFX>().StopMusic();
             }
             else
             {
                 GetAnimator().SetBool("isWalking", true);
-                //SFXManager.GetComponent<charactersSFX>().PlayFootstep();
+                SFXManager.GetComponent<charactersSFX>().PlayFootstep();
             }
         }
         
@@ -59,6 +61,7 @@ public class PlayerController : ObjectController
                 {
                     if (ray.collider.tag == "EnemyGroup" || ray.collider.tag == "Nemesy" || ray.collider.tag == "Boss")
                     {
+                        enemyEngaged = ray.collider.tag;
                         GameManager.currentState = GameManager.States.WAIT;
                         TileManager.AddEnemy(ray.collider.gameObject);
                         break;
@@ -149,6 +152,15 @@ public class PlayerController : ObjectController
                     //Destroy(flame, 1.5f);
                 }
                
+            }
+
+            if (playerBehaviour == PlayerType.MELEE)
+            {
+                SFXManager.GetComponent<charactersSFX>().PlayHitMelee();
+            }
+            else if (playerBehaviour == PlayerType.RANGED)
+            {
+                SFXManager.GetComponent<charactersSFX>().PlaySpell();
             }
 
             GetAnimator().SetTrigger(animationName);

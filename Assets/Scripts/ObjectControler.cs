@@ -64,6 +64,7 @@ public class ObjectController : MonoBehaviour {
     {
         UI.GetComponent<UIManager>().ShowPopupDamage(damage, target.transform);
         target.GetComponent<ObjectController>().currentHealth = target.GetComponent<ObjectController>().currentHealth - damage;
+        
         if (target.tag == "Enemy")
         {
             UI.GetComponent<UIManager>().SetEnemyHealth(target.GetComponent<EnemyController>().position, target);

@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour {
 
     public enum States
     {
-        INIT,
         EXPLORATION,
         ENGAGE_ENEMY,
         SELECT,
@@ -42,12 +41,6 @@ public class GameManager : MonoBehaviour {
     TurnManager turnManager;
     static GameObject pathfind;
     string sceneName;
-
-    private void Awake()
-    {
-        GameManager.currentState = States.INIT;
-    }
-
 
     // Use this for initialization
     void Start () {
@@ -305,7 +298,7 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator ShowGameOver()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         gameOver.SetActive(true);
         StopAllCoroutines();
     }
