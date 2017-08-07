@@ -15,7 +15,7 @@ public class CostrizioneCurativa : Ability {
         this.damage = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.cure = GetComponent<PlayerController>().magicAttack / 100f * 50f;
 		this.tileRange = 3;
-		this.cooldown = 3;
+		this.cooldown = 2;
         countCooldown = this.cooldown;
         playerUI = GetComponent<PlayerController>().playerUI;
         buttonPlayerUI = playerUI.GetComponentsInChildren<Button>()[0];
@@ -37,14 +37,15 @@ public class CostrizioneCurativa : Ability {
 
     public override void UsaAbilita()
     {
-        if (TileManager.CheckEnemy())
+        if (TileManager.CheckEnemy() || TileManager.CheckBoss())
         {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null && hit.collider.tag == "Enemy" ||
-                    (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
+            GameObject enemyTarget = null;
+            if (hit.collider != null && hit.collider.tag == "Enemy" || (hit.collider != null && hit.collider.tag == "Tile"
+                && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy) && !TileManager.CheckBoss())
+
             {
 
-                GameObject enemyTarget = null;
                 foreach (GameObject enemy in TileManager.enemyInstance)
                 {
                     if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
@@ -53,10 +54,19 @@ public class CostrizioneCurativa : Ability {
                         break;
                     }
                 }
-                GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-                TileManager.ResetGrid();
-                StartCoroutine(SelectPlayers(0.5f));
             }
+            else if (hit.collider != null && hit.collider.tag == "Enemy" || (hit.collider != null && hit.collider.tag == "Tile"
+                && hit.collider.GetComponent<Tile>().isSelected && (hit.collider.GetComponent<Tile>().isEnemy || hit.collider.GetComponent<Tile>().isAttackable)) && TileManager.CheckBoss())
+            {
+                foreach (GameObject enemy in TileManager.enemyInstance)
+                {
+                    enemyTarget = enemy;
+                }
+
+            }
+            GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
+            TileManager.ResetGrid();
+            StartCoroutine(SelectPlayers(0.5f));
         }
 		else if(isRunning)
         {

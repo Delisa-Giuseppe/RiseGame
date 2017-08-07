@@ -169,77 +169,92 @@ public class Ability : MonoBehaviour
 
     public virtual void UsaAbilita()
 	{
-        if(TileManager.CheckEnemy())
+        if(TileManager.CheckEnemy() || TileManager.CheckBoss())
         {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null && hit.collider.tag == "Enemy" ||
-                    (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
-            {
+            //if (hit.collider != null && hit.collider.tag == "Enemy" || (hit.collider != null && hit.collider.tag == "Tile" && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy))
+            //{
                 GameObject enemyTarget = null;
-                foreach (GameObject enemy in TileManager.enemyInstance)
+                if (hit.collider != null && hit.collider.tag == "Enemy" || (hit.collider != null && hit.collider.tag == "Tile"
+                    && hit.collider.GetComponent<Tile>().isSelected && hit.collider.GetComponent<Tile>().isEnemy) && !TileManager.CheckBoss())
+                    
                 {
-                    if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
+                    
+                    foreach (GameObject enemy in TileManager.enemyInstance)
                     {
-                        enemyTarget = enemy;
-                        break;
+                        if (enemy.GetComponent<EnemyController>().EnemyTile.transform.position == hit.collider.transform.position)
+                        {
+                            enemyTarget = enemy;
+                            break;
+                        }
                     }
                 }
-                if(abilityType == AbilityType.SINGOLO)
+                else if (hit.collider != null && hit.collider.tag == "Enemy" || (hit.collider != null && hit.collider.tag == "Tile"
+                    && hit.collider.GetComponent<Tile>().isSelected && (hit.collider.GetComponent<Tile>().isEnemy || hit.collider.GetComponent<Tile>().isAttackable)) && TileManager.CheckBoss())
+                {
+                    foreach (GameObject enemy in TileManager.enemyInstance)
+                    {
+                        enemyTarget = enemy;
+                    }
+                        
+                }
+
+                if (abilityType == AbilityType.SINGOLO)
                 {
                     GetComponent<PlayerController>().PhysicAttack(enemyTarget, "attack", (int)this.damage);
-					
-					Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+
+                    Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
                     AddAbilityToCooldownList(ability);
 
                     StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                 }
-                else if(abilityType == AbilityType.MOVIMENTO)
+                else if (abilityType == AbilityType.MOVIMENTO)
                 {
-					
-					Vector2 playerPosition = this.gameObject.transform.position;
-					Vector2 enemyPosition = enemyTarget.transform.position;
 
-					GameObject tileToSelect = null;
-					
-					if(playerPosition.x != enemyPosition.x)
-					{
-						if(playerPosition.x < enemyPosition.x)
-						{
-							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.left);
-						}
-						else
-						{
-							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.right);
-						}
-					}
-					else if(playerPosition.y != enemyPosition.y)
-						{
-						if(playerPosition.y < enemyPosition.y)
-						{
-							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.down);
-						}
-						else
-						{
-							tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.up);
-						}
-					}
-					            
-					
-					GetComponent<AILerp>().target = tileToSelect.transform;
-					GetComponent<PlayerController>().PlayerTile = tileToSelect;
+                    Vector2 playerPosition = this.gameObject.transform.position;
+                    Vector2 enemyPosition = enemyTarget.transform.position;
+
+                    GameObject tileToSelect = null;
+
+                    if (playerPosition.x != enemyPosition.x)
+                    {
+                        if (playerPosition.x < enemyPosition.x)
+                        {
+                            tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.left);
+                        }
+                        else
+                        {
+                            tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.right);
+                        }
+                    }
+                    else if (playerPosition.y != enemyPosition.y)
+                    {
+                        if (playerPosition.y < enemyPosition.y)
+                        {
+                            tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.down);
+                        }
+                        else
+                        {
+                            tileToSelect = enemyTarget.GetComponent<EnemyController>().GetTileNearEnemy(Vector2.up);
+                        }
+                    }
+
+
+                    GetComponent<AILerp>().target = tileToSelect.transform;
+                    GetComponent<PlayerController>().PlayerTile = tileToSelect;
 
                     EnemyController enemyController = enemyTarget.GetComponent<EnemyController>();
                     enemyController.stunned = true;
                     enemyController.AddEnemyStunned();
 
-					GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
+                    GetComponent<PlayerController>().PhysicAttack(enemyTarget, "charge", (int)this.damage);
 
-					Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
+                    Ability ability = GetComponent(Type.GetType(Ability.activedAbility)) as Ability;
                     AddAbilityToCooldownList(ability);
 
                     StartCoroutine(TileManager.WaitMoves(this.gameObject, GameManager.States.END_MOVE));
                 }
-            }
+            //}
         }
 
     }
