@@ -86,11 +86,20 @@ public class Tile : MonoBehaviour {
     public void ResetSpriteImage()
     {
         GetComponent<SpriteRenderer>().sprite = borderEmpty;
+        GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1f);
     }
 
     public void SetImageSprite(Sprite image)
     {
         GetComponent<SpriteRenderer>().sprite = image;
+        if(image.name == borderFull.name)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 0.4f);
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().color = new Color(GetComponent<SpriteRenderer>().color.r, GetComponent<SpriteRenderer>().color.g, GetComponent<SpriteRenderer>().color.b, 1f);
+        }
     }
 
     IEnumerator WaitColor(Collider2D collision)
