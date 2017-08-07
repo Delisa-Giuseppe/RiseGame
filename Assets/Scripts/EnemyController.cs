@@ -460,6 +460,10 @@ public class EnemyController : ObjectController {
             {
                 transform.eulerAngles = new Vector3(0f, 180f);
             }
+            if(TileManager.playerInstance.Count <= 0)
+            {
+                GameManager.currentState = GameManager.States.GAME_OVER;
+            }
         }
         else
         {

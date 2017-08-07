@@ -14,7 +14,7 @@ public class TileManager : MonoBehaviour {
     public static int moves;
 
     public static List<GameObject> playerInstance;
-    public static List<GameObject> playerInstanceClone = new List<GameObject>();
+    public static List<GameObject> playerInstanceClone;
     public static List<GameObject> playerDead;
     public static List<GameObject> enemyInstance;
     static GameObject targetInstance;
@@ -34,8 +34,8 @@ public class TileManager : MonoBehaviour {
     {
         UI = GameObject.Find("UI");
         bottomUI = GameObject.Find("Bottom UI");
-
         tilesSelectable = new List<GameObject>();
+        playerInstanceClone = new List<GameObject>();
 
         quadInitialPoint = new Vector2[] {
             new Vector2(-0.58f, 0.58f),
@@ -640,7 +640,7 @@ public class TileManager : MonoBehaviour {
 
             foreach (GameObject player in playerInstance)
             {
-                if(player.name == player1.name)
+                if(player && player.name == player1.name)
                 {
                     player1.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
                     player1.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
@@ -649,7 +649,7 @@ public class TileManager : MonoBehaviour {
                     player1.GetComponent<ObjectController>().CalculateStatistics();
                     Destroy(player);
                 }
-                else if (player.name == player2.name)
+                else if (player && player.name == player2.name)
                 {
                     player2.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
                     player2.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
@@ -659,7 +659,7 @@ public class TileManager : MonoBehaviour {
                     Destroy(player);
                     p2 = true;
                 }
-                else if (player.name == player3.name)
+                else if (player && player.name == player3.name)
                 {
                     player3.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
                     player3.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
@@ -669,7 +669,7 @@ public class TileManager : MonoBehaviour {
                     Destroy(player);
                     p3 = true;
                 }
-                else if (player.name == player4.name)
+                else if (player && player.name == player4.name)
                 {
                     player4.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
                     player4.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;

@@ -16,6 +16,13 @@ public class GameOverManager : MonoBehaviour {
 
     public void OnMenu()
     {
+        GameObject[] GameObjects = (FindObjectsOfType<GameObject>() as GameObject[]);
+
+        for (int i = 0; i < GameObjects.Length; i++)
+        {
+            Destroy(GameObjects[i]);
+        }
+        TileManager.playerInstance = null;
         SceneManager.LoadScene("Menu Gioco");
     }
 }

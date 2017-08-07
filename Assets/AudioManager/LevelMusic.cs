@@ -25,6 +25,7 @@ public class LevelMusic : MonoBehaviour {
 
 	static LevelMusic instance=null;
 	private AudioSource music;
+    private AudioSource currentMusic;
 
 	void Awake ()
 	{
@@ -91,6 +92,12 @@ public class LevelMusic : MonoBehaviour {
     {
         if(GameManager.currentState == GameManager.States.ENGAGE_ENEMY)
         {
+            currentMusic = music;
+            StartCoroutine(FadeOutIn(music, 0.5f, enemyFight));
+        }
+        else
+        {
+            music = currentMusic;
             StartCoroutine(FadeOutIn(music, 0.5f, enemyFight));
         }
     }

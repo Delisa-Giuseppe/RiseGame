@@ -27,11 +27,13 @@ public class ObjectController : MonoBehaviour {
     protected Animator anim;
 
     protected GameObject UI;
+    protected GameObject SFXManager;
 
     private void Awake()
     {
         CalculateStatistics();
         UI = GameObject.Find("UI");
+        SFXManager = GameObject.Find("AudioManager_Sfx");
     }
 
     public void CalculateStatistics()

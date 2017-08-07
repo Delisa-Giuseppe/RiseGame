@@ -24,11 +24,6 @@ public class UIManager : MonoBehaviour {
     private List<GameObject> turnsBarUI;
 
 
-    private void Awake()
-    {
-        StartCoroutine(SetPlayersImage());
-    }
-
     private void Update()
     {
         if(TurnManager.currentObjectTurn && TurnManager.currentObjectTurn.tag == "Player")

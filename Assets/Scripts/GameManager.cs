@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
 
     public enum States
     {
+        INIT,
         EXPLORATION,
         ENGAGE_ENEMY,
         SELECT,
@@ -41,6 +42,11 @@ public class GameManager : MonoBehaviour {
     TurnManager turnManager;
     static GameObject pathfind;
     string sceneName;
+
+    private void Awake()
+    {
+        GameManager.currentState = States.INIT;
+    }
 
 
     // Use this for initialization
@@ -242,9 +248,8 @@ public class GameManager : MonoBehaviour {
             
         }
 
-        if (TileManager.playerInstance != null && TileManager.playerInstance.Count <= 0)
+        if (currentState == States.GAME_OVER)
         {
-            currentState = States.GAME_OVER;
             StartCoroutine(ShowGameOver());
         }
     }
@@ -281,7 +286,7 @@ public class GameManager : MonoBehaviour {
         {
             cutscene.SetActive(false);
         }
-        
+
         tileManager.CreateGrid(width, height);
     }
 

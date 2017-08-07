@@ -12,15 +12,59 @@ public class charactersSFX : MonoBehaviour {
 	public AudioClip warp;
 	public AudioClip healing;
 	public AudioClip death;
+    public AudioClip footstep;
 
-
-	// Use this for initialization
-	void Start () {
-		
+    private AudioSource music;
+    // Use this for initialization
+    void Awake () {
+        music = GetComponent<AudioSource>();
 	}
 	
-	// Update is called once per frame
 	void Update () {
-		
+        music.clip = footstep;
+        StartCoroutine(FadeIn(music, 1f));
 	}
+
+    public void PlayFootstep()
+    {
+        music.clip = footstep;
+        music.Play();
+        //StartCoroutine(FadeIn(music, 1f));
+    }
+
+    public IEnumerator FadeIn(AudioSource audioSource, float FadeTime)
+    {
+
+        float startVolume = 0.2f;
+
+        audioSource.volume = 0;
+        audioSource.Play();
+
+        while (audioSource.volume < 1.0f)
+        {
+            audioSource.volume += startVolume * Time.deltaTime / FadeTime;
+
+            yield return null;
+        }
+
+        audioSource.volume = 1f;
+    }
+
+    public IEnumerator FadeOutIn(AudioSource audioSource, float FadeTime, AudioClip newClip)
+    {
+        float startVolume = 1f;
+
+        while (audioSource.volume > 0f)
+        {
+            audioSource.volume -= startVolume * Time.deltaTime / FadeTime;
+
+            yield return null;
+        }
+
+        audioSource.volume = 0f;
+
+        music.clip = newClip;
+
+        StartCoroutine(FadeIn(music, 0.5f));
+    }
 }
