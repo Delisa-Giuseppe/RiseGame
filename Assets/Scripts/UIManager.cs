@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour {
             int currentHealth = TurnManager.currentObjectTurn.GetComponent<ObjectController>().currentHealth;
             float barHealth = (float)currentHealth / totalHealth;
 
-            healthTurn.transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthTurn.transform.localScale.y, healthTurn.transform.localScale.z);
+            healthTurn.transform.GetChild(0).transform.localScale = new Vector3(Mathf.Clamp(barHealth, 0f, 1f), healthTurn.transform.localScale.y, healthTurn.transform.localScale.z);
             healthTurnText.GetComponent<TextMeshProUGUI>().SetText(currentHealth.ToString() + "/" + totalHealth.ToString() + " HP");
         }
     }

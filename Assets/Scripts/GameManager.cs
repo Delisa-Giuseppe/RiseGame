@@ -130,7 +130,7 @@ public class GameManager : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {   
-           if(currentState == States.EXPLORATION)
+           if(currentState == States.EXPLORATION && TileManager.playerInstance != null && TileManager.playerInstance.Count > 0)
             {
                 tileManager.MovePlayer(TileManager.playerInstance.Count - 1);
             }
