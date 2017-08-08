@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour {
         pathfind = GameObject.FindGameObjectWithTag("Pathfind");
 		bottomUI = GameObject.Find("Bottom UI");
         InitLevel();
-        pathfind.GetComponent<AstarPath>().Scan();
         skipButton.onClick.AddListener(SkipTurn);
         skipButton.interactable = false;
     }
@@ -292,6 +291,7 @@ public class GameManager : MonoBehaviour {
         }
 
         tileManager.CreateGrid(width, height);
+        RefreshPath();
     }
 
     IEnumerator ShowInitialCutscene()
