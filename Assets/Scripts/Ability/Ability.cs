@@ -306,7 +306,7 @@ public class Ability : MonoBehaviour
 
 	public static void CheckTurnDurationList()
 	{
-
+        Ability[] removed = new Ability[turnDurationList.Count];
 		if(turnDurationList.Count > 0)
 		{
 			for (int i = 0; i<turnDurationList.Count; i++)
@@ -315,10 +315,15 @@ public class Ability : MonoBehaviour
 
 				if (turnDurationList[i].countTurnDuration < 0)
 				{
-					turnDurationList[i].ResettaValori ();
-				}
+					turnDurationList[i].ResettaValori();
+                    removed[i] = turnDurationList[i];
+                }
 			}
 
+            foreach(Ability ability in removed)
+            {
+                turnDurationList.Remove(ability);
+            }
 		}
 
 	}

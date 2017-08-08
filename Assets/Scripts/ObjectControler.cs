@@ -35,6 +35,7 @@ public class ObjectController : MonoBehaviour {
         CalculateStatistics();
         UI = GameObject.Find("UI");
         SFXManager = GameObject.Find("AudioManager_Sfx");
+        currentHealth = totalHealth;
     }
 
     public void CalculateStatistics()
@@ -45,7 +46,6 @@ public class ObjectController : MonoBehaviour {
         moves = Mathf.CeilToInt(skill / 3f);
         critic = skill;
         evasion = skill;
-        currentHealth = totalHealth;
     }
 
     protected Animator GetAnimator()

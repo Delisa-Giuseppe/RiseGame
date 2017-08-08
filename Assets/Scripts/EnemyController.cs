@@ -65,6 +65,12 @@ public class EnemyController : ObjectController {
             else
             {
                 GetAnimator().SetBool("isWalking", true);
+                GetComponent<AudioSource>().clip = clipAudio[0];
+                if (!GetComponent<AudioSource>().isPlaying)
+                {
+                    GetComponent<AudioSource>().volume = 0.5f;
+                    GetComponent<AudioSource>().Play();
+                }
             }
         }
 
@@ -95,12 +101,12 @@ public class EnemyController : ObjectController {
         }
         else
         {
+            bool contains = false;
             for (int i = 0; i < players.Count; i++)
             {
-                bool contains = false;
+                contains = false;
                 if (players[i].name == "Thief(Clone)")
                 {
-                    
                     if (Ability.turnDurationList.Count > 0)
                     {
                         foreach (Ability ability in Ability.turnDurationList)
@@ -127,9 +133,18 @@ public class EnemyController : ObjectController {
                 }
             }
 
+            GameObject closerTile = null;
+
+            bool invisible = false;
+            if(contains && TileManager.playerInstance.Count == 1)
+            {
+                invisible = true;
+                closerTile = enemyTile;
+            }
+
             canMove = hasMoved;
             canAttack = false;
-            if (selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
+            if (!invisible && selectableTile.Contains(closerPlayer.GetComponent<PlayerController>().PlayerTile))
             {
                 playerAttacked = new List<GameObject>();
                 if ((enemyBehaviour == EnemyType.RANGED) ||
@@ -168,9 +183,7 @@ public class EnemyController : ObjectController {
                 }
             }
 
-            GameObject closerTile = null;
-
-            for (int i = 0; canMove && i < selectableTile.Count; i++)
+            for (int i = 0; canMove && !invisible && i < selectableTile.Count; i++)
             {
                 if (closerTile != null)
                 {
@@ -431,6 +444,8 @@ public class EnemyController : ObjectController {
     IEnumerator WaitAnimation(GameObject target, int damage)
     {
         yield return new WaitForSeconds(0.7f);
+        GetComponent<AudioSource>().clip = clipAudio[1];
+        GetComponent<AudioSource>().Play();
 
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {
@@ -446,9 +461,17 @@ public class EnemyController : ObjectController {
             TurnManager.turns[TurnManager.turns.IndexOf(target)] = null;
             TurnManager.refreshTurn = true;
             StartCoroutine(ResetColor(target));
+            
+            if(target.name.Contains("Sorceress"))
+            {
+                target.GetComponent<Elementale>().ResettaValori();
+                Ability.turnDurationList.Remove(target.GetComponent<Elementale>());
+            }
+
             target.GetComponentInChildren<Animator>().SetTrigger("isDead");
             target.GetComponentInChildren<Animator>().SetBool("isFighting", false);
             target.GetComponentInChildren<Animator>().SetBool("isWalking", false);
+
             for (int i = 0; i < TileManager.playerInstance.Count; i++)
             {
                 if (TileManager.playerInstance[i])

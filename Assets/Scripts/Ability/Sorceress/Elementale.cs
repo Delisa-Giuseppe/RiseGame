@@ -54,6 +54,7 @@ public class Elementale : Ability {
         GetComponent<PlayerController> ().constitution += 2; 
 		GetComponent<PlayerController> ().mind += 5;
 		GetComponent<PlayerController> ().CalculateStatistics ();
+        GetComponent<PlayerController>().currentHealth = GetComponent<PlayerController>().totalHealth;
         this.tileRange = GetComponent<PlayerController>().moves;
 
         AddAbilityToTurnDurationList(this);
@@ -92,6 +93,7 @@ public class Elementale : Ability {
 		controller.mind = currentMind;
 		controller.constitution = currentConstitution;
 		controller.CalculateStatistics ();
+        this.damage = GetComponent<PlayerController>().magicAttack / 100f * 60f;
         this.tileRange = GetComponent<PlayerController>().moves;
         GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(true);
         GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(false);

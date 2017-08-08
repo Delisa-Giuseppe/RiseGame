@@ -143,11 +143,13 @@ public class PlayerController : ObjectController
 					damage = (int)(physicAttack / 100f * 80f);
 				}
 				GetComponent<RitornoPlanare>().ResettaValori ();
-			}
+                Ability.turnDurationList.Remove(GetComponent<RitornoPlanare>());
+            }
 
             if(name.Contains("Sorceress"))
             {
-                if(Ability.activedAbility == "PallaDiFuoco")
+                damage = (int) (magicAttack / 100f * 60f);
+                if (Ability.activedAbility == "PallaDiFuoco")
                 {
                     (Instantiate(fireBall, target.transform) as GameObject).transform.position = new Vector3(target.transform.position.x, target.transform.position.y + 1f);
                 }
