@@ -89,6 +89,7 @@ public class LevelMusic : MonoBehaviour {
             main.loop = true;
         }
 
+        second.Stop();
         StartCoroutine(FadeIn(main, 1f));
     }
 
