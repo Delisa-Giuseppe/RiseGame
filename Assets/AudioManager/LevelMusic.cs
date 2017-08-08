@@ -143,6 +143,10 @@ public class LevelMusic : MonoBehaviour {
         }
 
         audioSource.volume = 1f;
+        if(audioSource.clip != levelUp)
+        {
+            audioSource.loop = true;
+        }
     }
 
     public IEnumerator FadeOutIn(AudioSource audioSource, float FadeTime, AudioClip newClip)
@@ -159,7 +163,7 @@ public class LevelMusic : MonoBehaviour {
         audioSource.volume = 0f;
         second.clip = newClip;
 
-        StartCoroutine(FadeIn(second, 0.5f));
+        StartCoroutine(FadeIn(second, 2f));
     }
 
 }

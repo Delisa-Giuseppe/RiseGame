@@ -270,6 +270,17 @@ public class GameManager : MonoBehaviour {
             transitionLevel.SetActive(true);
             StartCoroutine(CreateLevel());
         }
+
+        if (SceneManager.GetActiveScene().name == "Castle")
+        {
+            StartCoroutine(PlayRoar());
+        }
+    }
+
+    IEnumerator PlayRoar()
+    {
+        yield return new WaitForSeconds(6.5f);
+        GetComponent<AudioSource>().Play();
     }
 
     IEnumerator CreateLevel()

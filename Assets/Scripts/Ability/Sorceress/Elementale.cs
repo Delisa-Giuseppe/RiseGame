@@ -78,6 +78,8 @@ public class Elementale : Ability {
     IEnumerator TransformMage(GameObject transformMage)
     {
         GetComponent<PlayerController>().gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        GetComponent<AudioSource>().clip = GetComponent<PlayerController>().clipAudio[2];
+        GetComponent<AudioSource>().Play();
         yield return new WaitForSeconds(2f);
         Destroy(transformMage);
         GetComponent<PlayerController>().gameObject.transform.GetChild(1).gameObject.SetActive(true);

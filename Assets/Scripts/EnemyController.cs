@@ -68,7 +68,6 @@ public class EnemyController : ObjectController {
                 GetComponent<AudioSource>().clip = clipAudio[0];
                 if (!GetComponent<AudioSource>().isPlaying)
                 {
-                    GetComponent<AudioSource>().volume = 0.5f;
                     GetComponent<AudioSource>().Play();
                 }
             }

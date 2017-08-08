@@ -494,6 +494,8 @@ public class TileManager : MonoBehaviour {
                 {
                     if (player.name.Contains(nemesyName))
                     {
+                        enemy.GetComponent<ObjectController>().totalHealth = player.GetComponent<ObjectController>().totalHealth;
+                        enemy.GetComponent<ObjectController>().currentHealth = player.GetComponent<ObjectController>().totalHealth;
                         enemy.GetComponent<ObjectController>().mind = player.GetComponent<ObjectController>().mind;
                         enemy.GetComponent<ObjectController>().constitution = player.GetComponent<ObjectController>().constitution;
                         enemy.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
@@ -647,6 +649,7 @@ public class TileManager : MonoBehaviour {
                     player1.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
                     player1.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
                     player1.GetComponent<ObjectController>().CalculateStatistics();
+                    player1.GetComponent<ObjectController>().currentHealth = player1.GetComponent<ObjectController>().totalHealth;
                     Destroy(player);
                 }
                 else if (player && player.name == player2.name)
@@ -656,6 +659,7 @@ public class TileManager : MonoBehaviour {
                     player2.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
                     player2.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
                     player2.GetComponent<ObjectController>().CalculateStatistics();
+                    player2.GetComponent<ObjectController>().currentHealth = player2.GetComponent<ObjectController>().totalHealth;
                     Destroy(player);
                     p2 = true;
                 }
@@ -666,6 +670,7 @@ public class TileManager : MonoBehaviour {
                     player3.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
                     player3.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
                     player3.GetComponent<ObjectController>().CalculateStatistics();
+                    player3.GetComponent<ObjectController>().currentHealth = player3.GetComponent<ObjectController>().totalHealth;
                     Destroy(player);
                     p3 = true;
                 }
@@ -676,6 +681,7 @@ public class TileManager : MonoBehaviour {
                     player4.GetComponent<ObjectController>().skill = player.GetComponent<ObjectController>().skill;
                     player4.GetComponent<ObjectController>().strength = player.GetComponent<ObjectController>().strength;
                     player4.GetComponent<ObjectController>().CalculateStatistics();
+                    player4.GetComponent<ObjectController>().currentHealth = player4.GetComponent<ObjectController>().totalHealth;
                     Destroy(player);
                     p4 = true;
                 }

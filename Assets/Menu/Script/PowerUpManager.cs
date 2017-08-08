@@ -40,6 +40,12 @@ public class PowerUpManager : MonoBehaviour {
             playerPanel.GetComponent<PlayerLevelUp>().Player.GetComponent<ObjectController>().skill = int.Parse(playerPanel.GetComponent<PlayerLevelUp>().skillValue.GetComponent<TextMeshProUGUI>().text);
             playerPanel.GetComponent<PlayerLevelUp>().Player.GetComponent<ObjectController>().strength = int.Parse(playerPanel.GetComponent<PlayerLevelUp>().strengthValue.GetComponent<TextMeshProUGUI>().text);
         }
+        StartCoroutine(Wait());
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(TotemController.nextScene);
     }
 

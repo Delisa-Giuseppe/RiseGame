@@ -43,7 +43,6 @@ public class PlayerController : ObjectController
                 GetComponent<AudioSource>().clip = clipAudio[0];
                 if(!GetComponent<AudioSource>().isPlaying)
                 {
-                    GetComponent<AudioSource>().volume = 0.5f;
                     GetComponent<AudioSource>().Play();
                 }
             }
@@ -202,6 +201,17 @@ public class PlayerController : ObjectController
 
             GetAnimator().SetTrigger(animationName);
 
+            if (Ability.activedAbility == "Devozione")
+            {
+                GetComponent<AudioSource>().clip = GetComponent<PlayerController>().clipAudio[2];
+                GetComponent<AudioSource>().Play();
+            }
+            else if (Ability.activedAbility == "CostrizioneCurativa")
+            {
+                GetComponent<AudioSource>().clip = GetComponent<PlayerController>().clipAudio[3];
+                GetComponent<AudioSource>().Play();
+            }
+
             StartCoroutine(WaitAnimationCure(target, cure));
         }
     }
@@ -210,9 +220,11 @@ public class PlayerController : ObjectController
     {
         yield return new WaitForSeconds(0.6f);
 
+        
         GetComponent<AudioSource>().clip = clipAudio[1];
         GetComponent<AudioSource>().Play();
-
+        
+        
         foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
         {
             mesh.color = Color.red;
@@ -238,9 +250,15 @@ public class PlayerController : ObjectController
 
 	IEnumerator WaitAnimation(List<GameObject> targets, int damage)
 	{
-		yield return new WaitForSeconds(1f);
+        if (Ability.activedAbility == "AttaccoRotante")
+        {
+            GetComponent<AudioSource>().clip = clipAudio[2];
+            GetComponent<AudioSource>().Play();
+        }
 
-		foreach(GameObject target in targets)
+        yield return new WaitForSeconds(1f);
+
+        foreach (GameObject target in targets)
 		{
 			foreach (SpriteMeshInstance mesh in target.GetComponentsInChildren<SpriteMeshInstance>())
 			{
@@ -326,6 +344,8 @@ public class PlayerController : ObjectController
 
     public void SetTransparency()
     {
+        GetComponent<AudioSource>().clip = clipAudio[2];
+        GetComponent<AudioSource>().Play();
         foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
         {
             mesh.color = new Color(1f, 1f, 1f, .5f);
@@ -334,6 +354,8 @@ public class PlayerController : ObjectController
 
     public void DeleteTransparency()
     {
+        GetComponent<AudioSource>().clip = GetComponent<PlayerController>().clipAudio[2];
+        GetComponent<AudioSource>().Play();
         foreach (SpriteMeshInstance mesh in GetComponentsInChildren<SpriteMeshInstance>())
         {
             mesh.color = new Color(1f, 1f, 1f, 1f);
